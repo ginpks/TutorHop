@@ -18,7 +18,7 @@ function Survey() {
       sx={{ boxSizing: "border-box" }}
     >
       <Typography color="#3C3744" variant="h4" fontWeight="bold">
-        This is a question placeholder?
+        What subject do you need help with?
       </Typography>
 
       <Box
