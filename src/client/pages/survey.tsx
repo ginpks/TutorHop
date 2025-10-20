@@ -14,7 +14,7 @@ function Survey() {
       width="100dvw"
       height="100dvh"
       bgcolor="#FBFFF1"
-      pt="20px"
+      pt="30px"
       sx={{ boxSizing: "border-box" }}
     >
       <Typography color="#3C3744" variant="h4" fontWeight="bold">
@@ -27,7 +27,7 @@ function Survey() {
         justifyContent="space-between"
         height="100%"
         pt="50px"
-        pb="20px"
+        pb="30px"
       >
         <Card>
           <CardContent>
