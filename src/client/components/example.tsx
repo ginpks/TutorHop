@@ -6,7 +6,10 @@ interface ExampleCardComponentProps {
   subtitle: string;
 }
 
-function ExampleCardComponent({ title, subtitle }: ExampleCardComponentProps) {
+function ExampleCardComponent({
+  title,
+  subtitle,
+}: Readonly<ExampleCardComponentProps>) {
   return (
     <Box
       sx={{
