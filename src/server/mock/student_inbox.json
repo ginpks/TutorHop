@@ -1,0 +1,23 @@
+[
+  {
+    "id": "msg_0001",
+    "sender": "prof.jennings@umass.edu",
+    "subject": "Tutoring Session Confirmation - CS 187",
+    "timestamp": "2025-10-19T13:42:17.000Z",
+    "snippet": "Hi Fabian, your tutoring slot for CS 187 has been confirmed for Wednesday at 3:30 PM in LGRT 204."
+  },
+  {
+    "id": "msg_0002",
+    "sender": "peer.tutoring@umass.edu",
+    "subject": "New Tutor Match Available",
+    "timestamp": "2025-10-18T10:08:02.000Z",
+    "snippet": "We found a new available tutor for MATH 233. View details on your TutorHop dashboard."
+  },
+  {
+    "id": "msg_0003",
+    "sender": "sara.huang@umass.edu",
+    "subject": "Question about CHEM 111 Review Material",
+    "timestamp": "2025-10-17T21:15:41.000Z",
+    "snippet": "Hey, could we go over the ionic bonding section before tomorrow's quiz? I saw your name on the tutoring list."
+  }
+]
