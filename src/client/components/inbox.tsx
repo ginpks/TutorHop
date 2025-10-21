@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Card, CardContent, List, Typography } from "@mui/material";
 import InboxIcon from "@mui/icons-material/Inbox";
-import { MailPreviewMessages } from "../Interfaces/InboxInterfaces";
+import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces";
 
 interface InboxCardComponentProps {
   userType: string;
@@ -22,7 +22,7 @@ function InboxCardComponent({
     >
       <Card sx={{ margin: 10 }}>
         <Card sx={{ bgcolor: "#B4C5E4" }}>
-          <CardContent>
+          <CardContent sx={{ display: "flex", alignItems: "center" }}>
             <Typography
               sx={{ display: "flex", alignItems: "center" }}
               variant="h5"
@@ -32,15 +32,25 @@ function InboxCardComponent({
             </Typography>
           </CardContent>
         </Card>
-        <CardContent sx={{ minWidth: 300, minHeight: 200 }}>
-          {messages?.length > 0 ? (
-            <List sx={{ bgcolor: "white", flexGrow: 1 }}></List>
-          ) : (
+        {messages?.length > 0 ? (
+          <CardContent sx={{ minWidth: 300, minHeight: 200 }}>
+            <List sx={{ bgcolor: "background.paper", flexGrow: 1 }}></List>
+          </CardContent>
+        ) : (
+          <CardContent
+            sx={{
+              minWidth: 300,
+              minHeight: 200,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <Typography color="text.secondary">
               No messages to display.
             </Typography>
-          )}
-        </CardContent>
+          </CardContent>
+        )}
       </Card>
     </Box>
   );

@@ -3,7 +3,8 @@ import Grid from "@mui/material/Grid";
 import DefaultBanner from "../components/main_banner/banner";
 import InboxCardComponent from "../components/inbox";
 import React from "react";
-import { MailPreviewMessages } from "../Interfaces/InboxInterfaces";
+import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces";
+import { roleLabels, UserRole } from "../../shared/Enums/UserEnums";
 
 function Landing() {
   const [messages, setMessages] = React.useState<MailPreviewMessages[]>([]);
@@ -15,6 +16,7 @@ function Landing() {
         top: 0,
         left: 0,
         width: "100vw",
+        height: "100vh",
         borderRadius: 0,
         alignItems: "top",
         bgcolor: "#FBFFF1",
@@ -29,7 +31,10 @@ function Landing() {
       />
 
       <Grid container spacing={12}>
-        <InboxCardComponent userType="Student" messages={messages} />
+        <InboxCardComponent
+          userType={roleLabels[UserRole?.STUDENT]}
+          messages={messages}
+        />
       </Grid>
     </Card>
   );
