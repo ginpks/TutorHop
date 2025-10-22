@@ -8,34 +8,33 @@ import { useState } from "react";
 function Survey() {
   const [selectedClasses, setSelectedClasses] = useState<string[]>([]);
   const padding = 10;
+  const width = 400;
+  // this sizing sucks
 
   return (
     <Box
       display="flex"
       flexDirection="column"
-      alignItems="center"
       width="100dvw"
       height="100dvh"
       bgcolor="#FBFFF1"
-      pt="30px"
-      sx={{ boxSizing: "border-box" }}
+      sx={{ boxSizing: "border-box", px: 2 }}
     >
-      <Typography color="#3C3744" variant="h4" fontWeight="bold">
-        What subject do you need help with?
-      </Typography>
+      <Box mt={3} textAlign="center">
+        <Typography color="#3C3744" variant="h4" fontWeight="bold">
+          What subject do you need help with?
+        </Typography>
+      </Box>
 
       <Box
+        flexGrow={1}
         display="flex"
-        flexDirection="column"
-        justifyContent="space-between"
-        height="100%"
-        pt="50px"
-        pb="30px"
+        justifyContent="center"
+        alignItems="center"
       >
-        <Card>
+        <Card sx={{ width: width, maxWidth: "90vw" }}>
           <CardContent>
             <PillPicker
-              label="Select all the subjects you want help with"
               options={[
                 "Class1",
                 "Class2",
@@ -54,19 +53,22 @@ function Survey() {
             />
           </CardContent>
         </Card>
+      </Box>
 
-        <Box
-          display="flex"
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-          gap={1}
-        >
-          <IconLabelTextField />
-          <Box display="flex" gap={2}>
-            <SecondaryButton text="Back" px={padding} />
-            <PrimaryButton text="Next" px={padding} />
-          </Box>
+      <Box
+        mb={3}
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        gap={2}
+      >
+        <Box sx={{ width: width, maxWidth: "90vw" }}>
+          <IconLabelTextField sx={{ width: "100%" }} />
+        </Box>
+
+        <Box display="flex" gap={2} sx={{ width: 400, maxWidth: "90vw" }}>
+          <SecondaryButton text="Back" px={padding} />
+          <PrimaryButton text="Next" px={padding} />
         </Box>
       </Box>
     </Box>

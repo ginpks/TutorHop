@@ -134,13 +134,13 @@ const Listbox = styled("ul")({
 });
 
 export default function PillPicker({
-  label,
+  label = "",
   options,
   value,
   onChange,
   placeholder = "",
 }: {
-  label: string;
+  label?: string;
   options: string[];
   value: string[];
   onChange: (newValue: string[]) => void;
