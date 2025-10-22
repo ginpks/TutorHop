@@ -20,7 +20,7 @@ function InboxCardComponent({
         alignItems: "center",
       }}
     >
-      <Card sx={{ margin: 10 }}>
+      <Card sx={{ margin: 5, width: "40vw" }}>
         <Card sx={{ bgcolor: "#B4C5E4" }}>
           <CardContent sx={{ display: "flex", alignItems: "center" }}>
             <Typography
@@ -33,7 +33,7 @@ function InboxCardComponent({
           </CardContent>
         </Card>
         {messages?.length > 0 ? (
-          <CardContent sx={{ minWidth: 300, minHeight: 200 }}>
+          <CardContent>
             <List sx={{ bgcolor: "background.paper", flexGrow: 1 }}></List>
           </CardContent>
         ) : (
