@@ -1,6 +1,7 @@
 import React from "react";
 import { AppBar, Card, Toolbar, Typography } from "@mui/material";
 import ProfileHeader from "./ProfileHeader";
+import { roleLabels, UserRole } from "../../../shared/Enums/UserEnums";
 
 interface DefaultBannerProps {
   title: string;
@@ -19,8 +20,7 @@ const styles: React.CSSProperties = {
   height: "min-content",
   width: "100%",
   display: "flex",
-  justifyContent: "top",
-  alignItems: "center",
+  justifyContent: "flex-start",
   color: "#3C3744",
 };
 
@@ -43,11 +43,11 @@ function DefaultBanner({
         <Typography variant="h2" sx={{ flexGrow: 1 }}>
           {title}
         </Typography>
-        <Card component="div" sx={{ flexGrow: 1 }} />
         <ProfileHeader
           profilePicUrl={profilePicUrl}
           displayName={displayName}
           onClick={() => {}}
+          userType={roleLabels[UserRole?.STUDENT]}
         />
       </Toolbar>
     </AppBar>
