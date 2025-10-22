@@ -2,8 +2,11 @@ import { Box, Card, CardContent, TextField, Typography } from "@mui/material";
 import PrimaryButton from "../components/primary-button";
 import SecondaryButton from "../components/secondary-button";
 import IconLabelTextField from "../components/IconLabelTextField";
+import PillPicker from "../components/pill-picker";
+import { useState } from "react";
 
 function Survey() {
+  const [selectedClasses, setSelectedClasses] = useState<string[]>([]);
   const padding = 10;
 
   return (
@@ -31,12 +34,24 @@ function Survey() {
       >
         <Card>
           <CardContent>
-            <Typography variant="h5" gutterBottom>
-              Placeholder
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Card
-            </Typography>
+            <PillPicker
+              label="Select all the subjects you want help with"
+              options={[
+                "Class1",
+                "Class2",
+                "Class3",
+                "Class4",
+                "Class5",
+                "Class6",
+                "Class7",
+                "Class8",
+                "Class9",
+                "Class10",
+              ]}
+              value={selectedClasses}
+              onChange={setSelectedClasses}
+              placeholder="e.g., Math, History…"
+            />
           </CardContent>
         </Card>
 
