@@ -38,7 +38,7 @@ function DefaultBanner({
         bgcolor: "#B4C5E4",
       }}
     >
-      <Toolbar sx={{ display: "flex", alignItems: "center" }}>
+      <Toolbar sx={{ display: "flex", alignItems: "center", padding: 1 }}>
         {" "}
         <Typography variant="h2" sx={{ flexGrow: 1 }}>
           {title}
