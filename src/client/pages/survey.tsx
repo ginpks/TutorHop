@@ -48,7 +48,7 @@ function Survey() {
           gap={1}
         >
           <IconLabelTextField />
-          <Box display="flex" gap={2}>
+          <Box display="flex" gap={2} sx={{ "& > *": { flex: 1, minHeight: 56 },}}>
             <SecondaryButton text="Back" px={padding} />
             <PrimaryButton text="Next" px={padding} />
           </Box>
