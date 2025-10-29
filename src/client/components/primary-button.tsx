@@ -4,12 +4,14 @@ export interface ButtonProps {
   text: string;
   px?: number;
   py?: number;
+  onClick?: () => void;
 }
 
-function PrimaryButton({ text, px = 1, py = 1 }: ButtonProps) {
+function PrimaryButton({ text, px = 1, py = 1, onClick }: ButtonProps) {
   return (
     <Button
       variant="contained"
+      onClick={onClick}
       sx={{
         px,
         py,
