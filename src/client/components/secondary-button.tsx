@@ -1,10 +1,11 @@
 import { ButtonProps } from "./primary-button";
 import { Button } from "@mui/material";
 
-function SecondaryButton({ text, px = 1, py = 1 }: ButtonProps) {
+function SecondaryButton({ text, px = 1, py = 1, onClick }: ButtonProps) {
   return (
     <Button
       variant="outlined"
+      onClick={onClick}
       sx={{
         px,
         py,
