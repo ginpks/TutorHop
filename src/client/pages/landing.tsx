@@ -1,10 +1,12 @@
-import { Card } from "@mui/material";
+import { Box, Card } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import DefaultBanner from "../components/main_banner/banner";
 import InboxCardComponent from "../components/inbox";
 import React from "react";
 import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces";
 import { roleLabels, UserRole } from "../../shared/Enums/UserEnums";
+import UpcomingAppointment from "../components/UpcomingAppointment";
+import UserSearchBar from "../components/SearchBar";
 
 function Landing() {
   const [messages, setMessages] = React.useState<MailPreviewMessages[]>([]);
@@ -30,12 +32,19 @@ function Landing() {
         displayName="John Doe"
       />
 
-      <Grid container spacing={12}>
+      <Box sx={{ display: "flex" }}>
         <InboxCardComponent
           userType={roleLabels[UserRole?.STUDENT]}
           messages={messages}
         />
-      </Grid>
+        <UpcomingAppointment
+          userType={roleLabels[UserRole?.STUDENT]}
+          appointments={[]}
+        />
+      </Box>
+      {/* <Box>
+        <UserSearchBar userType={roleLabels[UserRole?.STUDENT]}></UserSearchBar>
+      </Box> */}
     </Card>
   );
 }

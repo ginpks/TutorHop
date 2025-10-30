@@ -12,10 +12,11 @@ export default function IconLabelTextField({
   labelText = "Tell us in your own words",
   labelIcon = <TextsmsIcon fontSize="small" />,
   showIconWhenFilled = false,
+  value = "",
+  onChange,
   ...textFieldProps
 }: IconLabelTextFieldProps) {
   const [focused, setFocused] = useState(false);
-  const [value, setValue] = useState("");
 
   const showIcon = !focused && (showIconWhenFilled || value === "");
 
@@ -33,12 +34,11 @@ export default function IconLabelTextField({
         )
       }
       value={value}
-      fullWidth={true}
+      fullWidth
       multiline
       maxRows={3}
       onChange={(e) => {
-        setValue(e.target.value);
-        textFieldProps.onChange?.(e);
+        onChange?.(e);
       }}
       onFocus={(e) => {
         setFocused(true);
