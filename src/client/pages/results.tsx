@@ -32,7 +32,6 @@ const Results: React.FC = () => {
   );
 
   return (
-    // Outer container overrides body flex
     <Box
       sx={{
         display: "block",
@@ -43,7 +42,6 @@ const Results: React.FC = () => {
         backgroundColor: "#FBFFF1",
       }}
     >
-      {/* Inner container with max width and horizontal centering */}
       <Box sx={{ width: "100%", maxWidth: 800, mx: "auto" }}>
         {/* Heading */}
         <Typography
@@ -87,7 +85,7 @@ const Results: React.FC = () => {
                 px: 3,
                 py: 2,
                 width: "100%",
-                backgroundColor: index % 2 === 0 ? "#B4C5E4" : "#E0E7F8", // alternating rows
+                backgroundColor: index % 2 === 0 ? "#B4C5E4" : "#E0E7F8",
                 borderRadius: 2,
                 "&:hover": {
                   backgroundColor: "#3D52D5",
