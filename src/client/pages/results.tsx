@@ -32,94 +32,98 @@ const Results: React.FC = () => {
   );
 
   return (
+    // Outer container overrides body flex
     <Box
       sx={{
+        display: "block",
+        width: "100%",
         minHeight: "100vh",
-        backgroundColor: "#FBFFF1",
-        color: "#000000",
-        px: 4,
+        px: 2,
         py: 6,
+        backgroundColor: "#FBFFF1",
       }}
     >
-      {/* Heading */}
-      <Typography
-        variant="h3"
-        sx={{
-          mb: 4,
-          color: "#3C3744",
-          fontWeight: 600,
-          textAlign: "center",
-        }}
-      >
-        Tutor Results
-      </Typography>
-
-      {/* Sorting Dropdown */}
-      <FormControl sx={{ mb: 4, minWidth: 200 }}>
-        <InputLabel id="sort-label">Sort by</InputLabel>
-        <Select
-          labelId="sort-label"
-          id="sort-select"
-          value={sortBy}
-          label="Sort by"
-          onChange={handleSortChange}
+      {/* Inner container with max width and horizontal centering */}
+      <Box sx={{ width: "100%", maxWidth: 800, mx: "auto" }}>
+        {/* Heading */}
+        <Typography
+          variant="h3"
           sx={{
-            backgroundColor: "#ffffff",
-            color: "#000000",
+            mb: 4,
+            color: "#3C3744",
+            fontWeight: 600,
+            textAlign: "center",
           }}
         >
-          <MenuItem value="rating">Highest Rating</MenuItem>
-          <MenuItem value="name">Name (A–Z)</MenuItem>
-        </Select>
-      </FormControl>
+          Tutor Results
+        </Typography>
 
-      {/* List of Tutors */}
-      <Stack spacing={2}>
-        {sortedTutors.map((tutor) => (
-          <Paper
-            key={tutor.id}
-            elevation={3}
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              px: 3,
-              py: 2,
-              backgroundColor: "#B4C5E4",
-              borderRadius: 2,
-              "&:hover": {
-                backgroundColor: "#3D52D5",
-                color: "#FBFFF1",
-              },
-              transition: "all 0.2s ease",
-            }}
+        {/* Sorting dropdown */}
+        <FormControl sx={{ mb: 4, minWidth: 200 }}>
+          <InputLabel id="sort-label">Sort by</InputLabel>
+          <Select
+            labelId="sort-label"
+            id="sort-select"
+            value={sortBy}
+            label="Sort by"
+            onChange={handleSortChange}
+            sx={{ backgroundColor: "#ffffff", color: "#000000" }}
           >
-            <Box>
-              <Typography variant="h6" sx={{ color: "#090C9B", fontWeight: 600 }}>
-                {tutor.name}
-              </Typography>
-              <Typography variant="body1" sx={{ color: "#3C3744" }}>
-                Subject: {tutor.subject}
-              </Typography>
-              <Typography variant="body2" sx={{ color: "#000000" }}>
-                Rating: ⭐ {tutor.rating}
-              </Typography>
-            </Box>
-            <Button
-              variant="contained"
+            <MenuItem value="rating">Highest Rating</MenuItem>
+            <MenuItem value="name">Name (A–Z)</MenuItem>
+          </Select>
+        </FormControl>
+
+        {/* List of tutors */}
+        <Stack spacing={2}>
+          {sortedTutors.map((tutor, index) => (
+            <Paper
+              key={tutor.id}
+              elevation={3}
               sx={{
-                backgroundColor: "#3D52D5",
-                color: "#FBFFF1",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                px: 3,
+                py: 2,
+                width: "100%",
+                backgroundColor: index % 2 === 0 ? "#B4C5E4" : "#E0E7F8", // alternating rows
+                borderRadius: 2,
                 "&:hover": {
-                  backgroundColor: "#090C9B",
+                  backgroundColor: "#3D52D5",
+                  color: "#FBFFF1",
                 },
+                transition: "all 0.2s ease",
               }}
             >
-              Request Session
-            </Button>
-          </Paper>
-        ))}
-      </Stack>
+              <Box>
+                <Typography
+                  variant="h6"
+                  sx={{ color: "#090C9B", fontWeight: 600 }}
+                >
+                  {tutor.name}
+                </Typography>
+                <Typography variant="body1" sx={{ color: "#3C3744" }}>
+                  Subject: {tutor.subject}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "#000000" }}>
+                  Rating: ⭐ {tutor.rating}
+                </Typography>
+              </Box>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#3D52D5",
+                  color: "#FBFFF1",
+                  "&:hover": { backgroundColor: "#090C9B" },
+                }}
+              >
+                Request Session
+              </Button>
+            </Paper>
+          ))}
+        </Stack>
+      </Box>
     </Box>
   );
 };
