@@ -35,9 +35,8 @@ const Results: React.FC = () => {
     <Box
       sx={{
         display: "block",
-        width: "100%",
-        minHeight: "100vh",
-        px: 2,
+        width: "99dvw",
+        minHeight: "100dvh",
         py: 6,
         backgroundColor: "#FBFFF1",
       }}
