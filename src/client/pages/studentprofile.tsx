@@ -44,7 +44,7 @@ const Pill = ({ label }: { label: string }) => (
   </Box>
 );
 
-const StatusChip = ({ status }: { status: "Open" | "Closed" }) => (
+const StatusChip = ({ status }: { status: "Open" | "Closed" }) => ( //not really sure what this is for just copying the figma mockup
   <Chip
     label={status}
     size="small"

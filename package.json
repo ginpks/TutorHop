@@ -8,16 +8,14 @@
     "start": "cross-env NODE_ENV=production tsx src/server/main.ts",
     "build": "vite build",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.4",
     "@mui/material": "^7.3.4",
-    "@mui/x-date-pickers": "^8.15.0",
+    "@mui/x-date-pickers": "^8.16.0",
     "cross-env": "^7.0.3",
     "express": "^5.1.0",
     "prettier": "^3.6.2",
@@ -29,22 +27,12 @@
     "vite-express": "*"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^4.1.2",
-    "@storybook/addon-a11y": "^10.0.2",
-    "@storybook/addon-docs": "^10.0.2",
-    "@storybook/addon-vitest": "^10.0.2",
-    "@storybook/react-vite": "^10.0.2",
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.2",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
     "nodemon": "^3.1.10",
-    "storybook": "^10.0.2",
-    "vite": "^6.3.3",
-    "vitest": "^4.0.6",
-    "playwright": "^1.56.1",
-    "@vitest/browser-playwright": "^4.0.6",
-    "@vitest/coverage-v8": "^4.0.6"
+    "vite": "^6.3.3"
   }
 }
