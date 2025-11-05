@@ -37,10 +37,22 @@ function Landing() {
           userType={roleLabels[UserRole?.STUDENT]}
           messages={messages}
         />
-        <UpcomingAppointment
-          userType={roleLabels[UserRole?.STUDENT]}
-          appointments={[]}
-        />
+        <Box
+          sx={{
+            display: "flex",
+            overflowY: "scroll",
+            borderRadius: "10px",
+            boxShadow: "inset 0 0 10px grey",
+            margin: 5,
+            width: "40vw",
+            bgcolor: "#D3D3D3",
+          }}
+        >
+          <UpcomingAppointment
+            userType={roleLabels[UserRole?.STUDENT]}
+            appointments={[]}
+          />
+        </Box>
       </Box>
       {/* <Box>
         <UserSearchBar userType={roleLabels[UserRole?.STUDENT]}></UserSearchBar>
