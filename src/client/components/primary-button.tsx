@@ -5,13 +5,21 @@ export interface ButtonProps {
   px?: number;
   py?: number;
   onClick?: () => void;
+  disabled?: boolean;
 }
 
-function PrimaryButton({ text, px = 1, py = 1, onClick }: ButtonProps) {
+function PrimaryButton({
+  text,
+  px = 1,
+  py = 1,
+  onClick,
+  disabled = false,
+}: ButtonProps) {
   return (
     <Button
       variant="contained"
       onClick={onClick}
+      disabled={disabled}
       sx={{
         px,
         py,

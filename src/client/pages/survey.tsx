@@ -22,6 +22,7 @@ function Survey() {
     "Where do you want to study?",
   ];
 
+  // temp data
   const classes = ["CICS 109", "CICS 110", "CICS 127", "CICS 160", "CICS 210"];
 
   const padding = 10;
@@ -116,7 +117,12 @@ function Survey() {
 
         <Box display="flex" gap={2} sx={{ width, maxWidth: "90vw" }}>
           <SecondaryButton onClick={onBack} text="Back" px={padding} />
-          <PrimaryButton onClick={onNext} text="Next" px={padding} />
+          <PrimaryButton
+            onClick={onNext}
+            text="Next"
+            px={padding}
+            disabled={current.primary.length === 0}
+          />
         </Box>
       </Box>
     </Box>

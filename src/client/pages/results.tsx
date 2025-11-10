@@ -1,5 +1,17 @@
 import React, { useState } from "react";
-import { Box, Typography, Paper, Button, Select, MenuItem, FormControl, InputLabel, SelectChangeEvent, Divider, Stack, } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Paper,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  SelectChangeEvent,
+  Divider,
+  Stack,
+} from "@mui/material";
 
 interface TutorDisplay {
   id: number;
@@ -15,7 +27,7 @@ const sampleTutors: TutorDisplay[] = [
   { id: 4, name: "David M.", subject: "Chemistry", rating: 4.5 },
   { id: 5, name: "Fabian D.M.", subject: "Biology", rating: 4.92 },
   { id: 6, name: "Gin P.", subject: "Psychology", rating: 4.85 },
-  { id: 7, name: "Jess B.", subject: "Chemistry", rating: 1.4 }
+  { id: 7, name: "Jess B.", subject: "Chemistry", rating: 1.4 },
 ];
 
 const Results: React.FC = () => {
@@ -26,9 +38,7 @@ const Results: React.FC = () => {
   };
 
   const sortedTutors = [...sampleTutors].sort((a, b) =>
-    sortBy === "rating"
-      ? b.rating - a.rating
-      : a.name.localeCompare(b.name)
+    sortBy === "rating" ? b.rating - a.rating : a.name.localeCompare(b.name),
   );
 
   return (
