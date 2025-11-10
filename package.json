@@ -17,6 +17,7 @@
     "@mui/material": "^7.3.4",
     "@mui/x-date-pickers": "^8.16.0",
     "cross-env": "^7.0.3",
+    "dayjs": "^1.11.19",
     "express": "^5.1.0",
     "prettier": "^3.6.2",
     "react": "^19.1.0",

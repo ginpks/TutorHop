@@ -6,6 +6,8 @@ import Login from "./pages/login";
 import Signup from "./pages/signup";
 import Profile from "./pages/profile";
 import StudentProfile from "./pages/studentprofile";
+import { Box } from "@mui/material";
+import DefaultBanner from "./components/main_banner/banner";
 
 function App() {
   return (
