@@ -2,7 +2,7 @@ import { Box, Card } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import DefaultBanner from "../components/main_banner/banner";
 import InboxCardComponent from "../components/inbox";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces";
 import { roleLabels, UserRole } from "../../shared/Enums/UserEnums";
 import UpcomingAppointment from "../components/UpcomingAppointment";
@@ -10,6 +10,27 @@ import UserSearchBar from "../components/SearchBar";
 
 function Landing() {
   const [messages, setMessages] = React.useState<MailPreviewMessages[]>([]);
+  const [userID, setUserID] = React.useState<number>(0);
+
+  useEffect(() => {
+    setUserID(1);
+
+    async function load() {
+      const res = await fetch(`/api/inbox/${userID}/preview`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          status: ``,
+          startDate: ``,
+          endDate: ``,
+          fromStudent: ``,
+        },
+      });
+      const data = (await res.json()) as MailPreviewMessages[];
+      setMessages(data);
+    }
+    load();
+  });
 
   return (
     <Card
