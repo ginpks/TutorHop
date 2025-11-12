@@ -15,8 +15,8 @@ function ProfileHeader({
   userType,
 }: Readonly<ProfileHeaderProps>) {
   const avatarStyle: React.CSSProperties = {
-    width: "45px",
-    height: "45px",
+    width: "35px",
+    height: "35px",
     borderRadius: "50%",
     objectFit: "cover",
   };
@@ -38,6 +38,7 @@ function ProfileHeader({
           p: 0,
           m: 0,
           bgcolor: "transparent",
+
         }}
       >
         <img
