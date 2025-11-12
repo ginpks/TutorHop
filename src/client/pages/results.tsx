@@ -79,7 +79,7 @@ const Results: React.FC = () => {
                         {card.online ? (<Typography variant="body2" color="success">Virtual Available</Typography>) : (<Typography variant="body2" color="error"> In-person Only </Typography>)}
                         <Typography variant="body2"> {card.location}</Typography>
                       </CardContent>
-                      <CardActions> <PrimaryButton text="Request Appointment" onClick={requestApp()}/></CardActions>
+                      <CardActions> <PrimaryButton text="Request Appointment" onClick={requestApp}/></CardActions>
                     </Card>
                   }
                 </Grid>
