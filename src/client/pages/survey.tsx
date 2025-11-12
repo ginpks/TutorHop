@@ -69,6 +69,7 @@ function Survey() {
         display="flex"
         flexDirection="column"
         minHeight="100dvh"
+        width="100dvw"
         bgcolor="#FBFFF1"
         sx={{
           boxSizing: "border-box",
