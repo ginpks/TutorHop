@@ -43,7 +43,7 @@ export class InboxRepository {
     } else if (endDate) {
       conditions.push(lte(meetingRequests.requestedEnd, endDate));
     }
-
+    console.log("Database Called");
     return await this.database
       .select()
       .from(meetingRequests)

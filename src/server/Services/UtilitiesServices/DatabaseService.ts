@@ -3,6 +3,7 @@ import { Pool } from "pg";
 import * as schema from "../../../../drizzle/schema.js";
 import { InboxRepository } from "../../Repositories/InboxRepository.js";
 import { InboxServices } from "../InboxService.js";
+import "dotenv/config";
 let database: DatabaseService | null = null;
 
 export class DatabaseService {
@@ -23,8 +24,12 @@ export async function getDatabaseService(): Promise<DatabaseService> {
     return database;
   }
   try {
+    const connectionString = process.env.DATABASE_URL;
+    if (!connectionString) {
+      throw new Error("DATABASE_URL is missing");
+    }
     const pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
+      connectionString: connectionString,
     });
     const rawDatabase = drizzle(pool, { schema });
 

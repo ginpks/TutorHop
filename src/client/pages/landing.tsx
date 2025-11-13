@@ -14,23 +14,28 @@ function Landing() {
 
   useEffect(() => {
     setUserID(1);
-
+    if (!userID) return;
     async function load() {
-      const res = await fetch(`/api/inbox/${userID}/preview`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          status: ``,
-          startDate: ``,
-          endDate: ``,
-          fromStudent: ``,
-        },
-      });
-      const data = (await res.json()) as MailPreviewMessages[];
-      setMessages(data);
+      try {
+        const query = new URLSearchParams({});
+
+        const res = await fetch(`/inbox/${userID}/preview?${query.toString()}`);
+
+        if (!res.ok) {
+          const text = await res.text();
+          console.error("HTTP error", res.status, text.slice(0, 300));
+          throw new Error(`HTTP ${res.status}`);
+        }
+
+        const data = (await res.json()) as MailPreviewMessages[];
+        console.log("Data", data);
+        setMessages(data);
+      } catch (err) {
+        console.error("Inbox fetch error: ", err);
+      }
     }
     load();
-  });
+  }, [userID]);
 
   return (
     <Card
@@ -53,7 +58,7 @@ function Landing() {
         displayName="John Doe"
       />
 
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex", flexShrink: 0, flexGrow: 1 }}>
         <InboxCardComponent
           userType={roleLabels[UserRole?.STUDENT]}
           messages={messages}

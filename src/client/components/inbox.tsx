@@ -1,5 +1,12 @@
 import React from "react";
-import { Box, Card, CardContent, List, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  Typography,
+} from "@mui/material";
 import InboxIcon from "@mui/icons-material/Inbox";
 import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces";
 
@@ -16,6 +23,7 @@ function InboxCardComponent({
     <Box
       sx={{
         display: "flex",
+
         justifyContent: "center",
         alignItems: "center",
       }}
@@ -34,7 +42,21 @@ function InboxCardComponent({
         </Card>
         {messages?.length > 0 ? (
           <CardContent>
-            <List sx={{ bgcolor: "background.paper", flexGrow: 1 }}></List>
+            <List sx={{ bgcolor: "background.paper", flexGrow: 1 }}>
+              {messages.map((element) => {
+                return (
+                  <ListItem
+                    key={element.id}
+                    sx={{ boxShadow: "0px 2px 0px grey;" }}
+                  >
+                    <Typography>
+                      {`Sender: ${element.sender}
+                      Timestamp: ${element.timestamp}`}
+                    </Typography>
+                  </ListItem>
+                );
+              })}
+            </List>
           </CardContent>
         ) : (
           <CardContent
