@@ -35,12 +35,12 @@ function DefaultBanner({
       position="static"
       sx={{
         ...(bannerStyle ?? styles),
-        bgcolor: "#B4C5E4",
+        background: "linear-gradient(90deg, #B4C5E4 0%, #7A93C9 100%)",
       }}
     >
-      <Toolbar sx={{ display: "flex", alignItems: "center" }}>
+      <Toolbar sx={{ display: "flex", alignItems: "center", padding: 0.4 }}>
         {" "}
-        <Typography variant="h2" sx={{ flexGrow: 1 }}>
+        <Typography variant="h4" sx={{ flexGrow: 1, fontWeight: "bold" }}>
           {title}
         </Typography>
         <ProfileHeader

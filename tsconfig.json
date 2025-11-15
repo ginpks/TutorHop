@@ -15,5 +15,5 @@
     "isolatedModules": true,
     "noEmit": true
   },
-  "include": ["src"]
+  "include": ["src", "src/server/Services/routes/api/Inbox/inbox_preview.ts"]
 }
