@@ -25,7 +25,7 @@ router.get("/inbox/:id/preview", async (req, res) => {
       status as MeetingStatus,
       startDate,
       endDate,
-      fromStudent
+      fromStudent,
     );
 
     res.status(200).json(data);

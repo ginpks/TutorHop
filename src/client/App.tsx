@@ -8,7 +8,6 @@ import Profile from "./pages/profile";
 import StudentProfile from "./pages/studentprofile";
 import TutorProfile from "./pages/tutorprofile";
 
-
 function App() {
   return (
     <Router>

@@ -18,23 +18,23 @@ export class InboxServices {
     status?: MeetingStatus,
     startDate?: string,
     endDate?: string,
-    fromStudent?: boolean
+    fromStudent?: boolean,
   ): Promise<MailPreviewMessages[]> {
     const userInbox = await this.inboxRepo.getUserInbox(
       userId,
       status,
       startDate,
       endDate,
-      fromStudent
+      fromStudent,
     );
     if (fromStudent) {
       const previews: MailPreviewMessages[] = userInbox.map((message) =>
-        tutorInboxPreviewMapper(message)
+        tutorInboxPreviewMapper(message),
       );
       return previews;
     } else {
       const previews: MailPreviewMessages[] = userInbox.map((message) =>
-        studentInboxPreviewMapper(message)
+        studentInboxPreviewMapper(message),
       );
       return previews;
     }
