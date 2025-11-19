@@ -19,9 +19,9 @@ interface StudentProfileProps {
   meetingMode?: string;
 }
 
-const BG = "#FBFFF1";            // page background (pale yellow)
-const HEADER_PILL = "#B9C1E9";   // “Student Profile” pill
-const SECTION_BG = "#E9F4F4";    
+const BG = "#FBFFF1"; // page background (pale yellow)
+const HEADER_PILL = "#B9C1E9"; // “Student Profile” pill
+const SECTION_BG = "#E9F4F4";
 const TEXT_DARK = "#3C3744";
 
 const Pill = ({ label }: { label: string }) => (
@@ -44,7 +44,9 @@ const Pill = ({ label }: { label: string }) => (
   </Box>
 );
 
-const StatusChip = ({ status }: { status: "Open" | "Closed" }) => ( //not really sure what this is for just copying the figma mockup
+const StatusChip = (
+  { status }: { status: "Open" | "Closed" }, //not really sure what this is for just copying the figma mockup
+) => (
   <Chip
     label={status}
     size="small"
@@ -70,10 +72,7 @@ const Section: React.FC<React.PropsWithChildren<{ title: string }>> = ({
       width: "100%",
     }}
   >
-    <Typography
-      variant="h6"
-      sx={{ fontWeight: 800, color: TEXT_DARK, mb: 1 }}
-    >
+    <Typography variant="h6" sx={{ fontWeight: 800, color: TEXT_DARK, mb: 1 }}>
       {title}
     </Typography>
     {children}
@@ -188,9 +187,13 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
               spacing={3}
               divider={
                 <Divider
-                  orientation={/column/.test(
-                    ({} as any) // placeholder—Divider is controlled only by direction above
-                  ) ? "horizontal" : "vertical"}
+                  orientation={
+                    /column/.test(
+                      {} as any, // placeholder—Divider is controlled only by direction above
+                    )
+                      ? "horizontal"
+                      : "vertical"
+                  }
                   flexItem
                   sx={{ display: { xs: "none", sm: "block" } }}
                 />

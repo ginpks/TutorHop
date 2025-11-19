@@ -1,4 +1,13 @@
-import { Box, Card, CardContent, Typography, Stack, TextField, Button, MenuItem} from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Stack,
+  TextField,
+  Button,
+  MenuItem,
+} from "@mui/material";
 import ExampleCardComponent from "../components/example";
 import DefaultBanner from "../components/main_banner/banner";
 import React from "react";
@@ -6,7 +15,7 @@ import PrimaryButton from "../components/primary-button";
 import SecondaryButton from "../components/secondary-button";
 import type { SelectChangeEvent } from "@mui/material/Select";
 
-type AccountType = "student" | "tutor"
+type AccountType = "student" | "tutor";
 // Sign-Up form variables
 type FormState = {
   accountType: AccountType;
@@ -32,12 +41,12 @@ const initialForm: FormState = {
 };
 
 function Signup() {
-  const [form, setForm] = React.useState<FormState>(initialForm)
+  const [form, setForm] = React.useState<FormState>(initialForm);
 
   //Updates state when input is changed
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, value} = e.target;
-    setForm((prev) => ({...prev, [name]: value}))
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   //sends submission to database and created new account
@@ -46,7 +55,7 @@ function Signup() {
     //TODO
     console.log("Form values:", form);
   };
-  
+
   return (
     <Card
       sx={{
@@ -62,9 +71,7 @@ function Signup() {
         boxShadow: "none",
       }}
     >
-      <DefaultBanner
-        title="Tutor Hop"
-      />
+      <DefaultBanner title="Tutor Hop" />
       <CardContent
         sx={{
           display: "flex",
@@ -73,8 +80,14 @@ function Signup() {
           pt: 6,
         }}
       >
-        <Stack sx = {{width: "100%", maxWidth: 480, mx: "auto", mb: 3}}>
-          <Typography color="#3C3744" variant="h4" fontWeight="bold" align="center" sx={{ mb: 2 }}>
+        <Stack sx={{ width: "100%", maxWidth: 480, mx: "auto", mb: 3 }}>
+          <Typography
+            color="#3C3744"
+            variant="h4"
+            fontWeight="bold"
+            align="center"
+            sx={{ mb: 2 }}
+          >
             Enter Your Account Details
           </Typography>
         </Stack>
@@ -85,7 +98,7 @@ function Signup() {
           noValidate
           sx={{ width: "100%", maxWidth: 480, mx: "auto" }}
         >
-          <Stack spacing = {2}>
+          <Stack spacing={2}>
             <TextField
               select
               label="Account type"
@@ -95,7 +108,7 @@ function Signup() {
               value={form.accountType}
               onChange={(e) => {
                 const next = e.target.value as AccountType;
-                setForm(prev =>
+                setForm((prev) =>
                   next === "student"
                     ? {
                         ...prev,
@@ -104,7 +117,7 @@ function Signup() {
                     : {
                         ...prev,
                         accountType: "tutor",
-                      }
+                      },
                 );
               }}
             >
@@ -119,101 +132,102 @@ function Signup() {
               fullWidth
               value={form.firstName}
               onChange={handleChange}
-              />
+            />
 
-              <TextField
+            <TextField
               label="Last Name"
               name="lastName"
               required
               fullWidth
               value={form.lastName}
               onChange={handleChange}
-              />
+            />
 
-              <TextField
+            <TextField
               label="Email Address"
               name="email"
               required
               fullWidth
               value={form.email}
               onChange={handleChange}
-              />
+            />
 
-              <TextField
+            <TextField
               label="Password"
               name="password"
               required
               fullWidth
               value={form.password}
               onChange={handleChange}
-              />
+            />
 
-              <TextField
+            <TextField
               label="Confirm Password"
               name="confirmPassword"
               required
               fullWidth
               value={form.confirmPassword}
               onChange={handleChange}
-              />
-              
-              {form.accountType === "student" && (
-                  <TextField
-                    label="Subjects of Study"
-                    name="subjects"
-                    value={form.subjects}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                  />
-              )}
+            />
 
-              {form.accountType === "tutor" && (
-                <>
-                  <TextField
-                    label="Subjects of Expertise"
-                    name="subjects"
-                    value={form.subjects}
-                    onChange={handleChange}
-                    required
-                    fullWidth
-                  />
-
-                  <TextField
-                    label="Availability"
-                    name="availability"
-                    value={form.availability}
-                    onChange={handleChange}
-                    required
-                    fullWidth
-                  />
-                </>
-              )}
-
+            {form.accountType === "student" && (
               <TextField
+                label="Subjects of Study"
+                name="subjects"
+                value={form.subjects}
+                onChange={handleChange}
+                fullWidth
+                required
+              />
+            )}
+
+            {form.accountType === "tutor" && (
+              <>
+                <TextField
+                  label="Subjects of Expertise"
+                  name="subjects"
+                  value={form.subjects}
+                  onChange={handleChange}
+                  required
+                  fullWidth
+                />
+
+                <TextField
+                  label="Availability"
+                  name="availability"
+                  value={form.availability}
+                  onChange={handleChange}
+                  required
+                  fullWidth
+                />
+              </>
+            )}
+
+            <TextField
               label="Meeting Preference"
               name="meetingPreference"
               required
               fullWidth
               value={form.meetingPreference}
               onChange={handleChange}
-              />
+            />
 
-            <Stack direction="row" spacing={2} sx={{ mt: 2, width: "100%", "& > *": { flex: 1, minHeight: 56 }, }}>
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{ mt: 2, width: "100%", "& > *": { flex: 1, minHeight: 56 } }}
+            >
               <SecondaryButton text="Back"></SecondaryButton>
               <PrimaryButton text="Create Account"></PrimaryButton>
             </Stack>
 
-
             <Typography variant="body2" color="text.secondary" align="center">
               Already have an account? Sign in
             </Typography>
-
           </Stack>
         </Box>
       </CardContent>
-
-  </Card>
+    </Card>
   );
 }
 
