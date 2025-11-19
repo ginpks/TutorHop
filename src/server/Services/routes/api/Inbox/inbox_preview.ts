@@ -10,13 +10,11 @@ const router = express.Router();
  */
 router.get("/:id/preview", async (req, res) => {
   try {
-    const { ur } = req.query;
-
     const userID = Number(req.params.id);
     const status = req.query.status as MeetingStatus | undefined;
     const startDate = req.query.startDate as string | undefined;
     const endDate = req.query.endDate as string | undefined;
-    const fromStudent = req.query.fromStudent === "true";
+    const fromStudent = req.query.tutor === "true";
     const db = getDatabaseService();
     const inbox_service: InboxServices = (await db).inboxServices;
     const data = await inbox_service.inboxPreviews(

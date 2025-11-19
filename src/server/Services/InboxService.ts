@@ -1,9 +1,6 @@
 import { meetingStatus } from "../../../drizzle/schema.js";
 import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces.js";
-import {
-  studentInboxPreviewMapper,
-  tutorInboxPreviewMapper,
-} from "../../shared/Mappers/InboxMappers.js";
+import { inboxPreviewMapper as inboxPreviewMapper } from "../../shared/Mappers/InboxMappers.js";
 import { InboxRepository } from "../Repositories/InboxRepository.js";
 
 export type MeetingStatus = (typeof meetingStatus.enumValues)[number];
@@ -27,16 +24,9 @@ export class InboxServices {
       endDate,
       fromStudent
     );
-    if (fromStudent) {
-      const previews: MailPreviewMessages[] = userInbox.map((message) =>
-        tutorInboxPreviewMapper(message)
-      );
-      return previews;
-    } else {
-      const previews: MailPreviewMessages[] = userInbox.map((message) =>
-        studentInboxPreviewMapper(message)
-      );
-      return previews;
-    }
+    const previews: MailPreviewMessages[] = userInbox.map((message) =>
+      inboxPreviewMapper(message)
+    );
+    return previews;
   }
 }

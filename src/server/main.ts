@@ -18,6 +18,6 @@ export async function createServer() {
   apiStart(app);
 }
 
-createServer().catch((err) => {
+await createServer().catch((err) => {
   console.error("Failed to start server:", err);
 });
