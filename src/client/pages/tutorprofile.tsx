@@ -49,7 +49,11 @@ const Pill = ({ label }: { label: string }) => (
   </Box>
 );
 
-const StatusChip = ({ status }: { status: "Pending" | "Accepted" | "Rejected" }) => (
+const StatusChip = ({
+  status,
+}: {
+  status: "Pending" | "Accepted" | "Rejected";
+}) => (
   <Chip
     label={status}
     size="small"
@@ -60,14 +64,14 @@ const StatusChip = ({ status }: { status: "Pending" | "Accepted" | "Rejected" })
         status === "Accepted"
           ? "#E0F2E9"
           : status === "Rejected"
-          ? "#FBEAEA"
-          : "#FFF4E5",
+            ? "#FBEAEA"
+            : "#FFF4E5",
       color:
         status === "Accepted"
           ? "#2E7D32"
           : status === "Rejected"
-          ? "#B00020"
-          : "#E65100",
+            ? "#B00020"
+            : "#E65100",
     }}
   />
 );

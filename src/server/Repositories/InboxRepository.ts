@@ -24,7 +24,7 @@ export class InboxRepository {
     status?: MeetingStatus,
     startDate?: string,
     endDate?: string,
-    fromStudent?: boolean
+    fromStudent?: boolean,
   ) {
     const currentUserColumn =
       fromStudent === true
@@ -45,7 +45,7 @@ export class InboxRepository {
     if (startDate && endDate) {
       conditions.push(
         gte(meetingRequests.requestedStart, startDate),
-        lte(meetingRequests.requestedEnd, endDate)
+        lte(meetingRequests.requestedEnd, endDate),
       );
     } else if (startDate && !endDate) {
       conditions.push(gte(meetingRequests.requestedStart, startDate));

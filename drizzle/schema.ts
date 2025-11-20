@@ -58,7 +58,7 @@ export const users = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => [unique("users_email_key").on(table.email)]
+  (table) => [unique("users_email_key").on(table.email)],
 );
 
 export const tutorProfiles = pgTable(
@@ -74,7 +74,7 @@ export const tutorProfiles = pgTable(
       foreignColumns: [users.id],
       name: "tutor_profiles_user_id_fkey",
     }).onDelete("cascade"),
-  ]
+  ],
 );
 
 export const studentProfiles = pgTable(
@@ -89,7 +89,7 @@ export const studentProfiles = pgTable(
       foreignColumns: [users.id],
       name: "student_profiles_user_id_fkey",
     }).onDelete("cascade"),
-  ]
+  ],
 );
 
 export const subjects = pgTable(
@@ -99,7 +99,7 @@ export const subjects = pgTable(
     code: varchar({ length: 32 }).notNull(),
     name: varchar({ length: 120 }).notNull(),
   },
-  (table) => [unique("subjects_code_key").on(table.code)]
+  (table) => [unique("subjects_code_key").on(table.code)],
 );
 
 export const availabilitySlots = pgTable(
@@ -125,9 +125,9 @@ export const availabilitySlots = pgTable(
     }).onDelete("cascade"),
     check(
       "availability_slots_weekday_check",
-      sql`(weekday >= 0) AND (weekday <= 6)`
+      sql`(weekday >= 0) AND (weekday <= 6)`,
     ),
-  ]
+  ],
 );
 
 export const meetingRequests = pgTable(
@@ -168,7 +168,7 @@ export const meetingRequests = pgTable(
       foreignColumns: [users.id],
       name: "meeting_requests_tutor_id_fkey",
     }).onDelete("cascade"),
-  ]
+  ],
 );
 
 export const userSubjects = pgTable(
@@ -195,5 +195,5 @@ export const userSubjects = pgTable(
       columns: [table.userId, table.subjectId, table.role],
       name: "user_subjects_pkey",
     }),
-  ]
+  ],
 );

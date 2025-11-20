@@ -22,7 +22,7 @@ router.get("/:id/preview", async (req, res) => {
       status as MeetingStatus,
       startDate,
       endDate,
-      fromStudent
+      fromStudent,
     );
     res.status(200).json(data);
   } catch (err: any) {
