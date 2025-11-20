@@ -38,6 +38,8 @@ function Login() {
     setMessage(`You typed: ${form.email} / ${form.password}`);
   };
 
+  const isDisabled = !form.email || !form.password;
+
   return (
     <Card
       sx={{
@@ -116,7 +118,7 @@ function Login() {
               }}
             >
               <SecondaryButton text="Back" />
-              <PrimaryButton text="Login" />
+              <PrimaryButton text="Login" disabled={isDisabled} />
             </Stack>
 
             <Typography
