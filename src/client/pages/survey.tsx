@@ -1,20 +1,159 @@
-import { Box, Typography, Stack } from "@mui/material";
+import { Box, Typography, Stack, Button, Card } from "@mui/material";
 import PillPicker from "../components/pill-picker";
 import SecondaryButton from "../components/secondary-button";
 import PrimaryButton from "../components/primary-button";
 import IconLabelTextField from "../components/IconLabelTextField";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
+import { Dayjs } from "dayjs";
+
+interface QuestionSubmission {
+  primary: string[];
+  secondary: string;
+}
 
 export default function Survey() {
-  const [page, setPage] = useState(0);
   const navigate = useNavigate();
+  const [page, setPage] = useState(0);
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
+  const [selectedTime, setSelectedTime] = useState<Dayjs | null>(null);
 
   const classes = ["CICS 109", "CICS 110", "CICS 127", "CICS 160", "CICS 210"];
   const questions = [
     "What subjects do you need help with?",
     "When do you want to study?",
     "Where do you want to study?",
+  ];
+
+  const [answers, setAnswers] = useState<QuestionSubmission[]>(
+    Array.from({ length: questions.length }, () => ({
+      primary: [],
+      secondary: "",
+    })),
+  );
+
+  const current = answers[page];
+
+  const onPrimaryChange = (value: string[]) => {
+    setAnswers((prev) => {
+      const updated = [...prev];
+      updated[page] = { ...updated[page], primary: value };
+      return updated;
+    });
+  };
+
+  const onSecondaryChange = (value: string) => {
+    setAnswers((prev) => {
+      const updated = [...prev];
+      updated[page] = { ...updated[page], secondary: value };
+      return updated;
+    });
+  };
+
+  const onAddDateTime = () => {
+    if (!selectedDate || !selectedTime) return;
+    const combined = `${selectedDate.format("YYYY-MM-DD")} ${selectedTime.format("h:mm A")}`;
+
+    setAnswers((prev) => {
+      const updated = [...prev];
+      updated[page] = {
+        ...updated[page],
+        primary: [...updated[page].primary, combined],
+      };
+      return updated;
+    });
+
+    setSelectedDate(null);
+    setSelectedTime(null);
+  };
+
+  const questionWidgets = [
+    <PillPicker
+      options={classes}
+      value={current.primary}
+      onChange={onPrimaryChange}
+      placeholder="e.g., Math, CS320..."
+    />,
+
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Box
+        maxWidth="480px"
+        maxHeight="200px"
+        display="flex"
+        flexDirection="column"
+      >
+        <Box maxWidth="480px" gap="5px" display="flex" flexDirection="row">
+          <DatePicker
+            label="Pick a day"
+            value={selectedDate}
+            onChange={(v) => setSelectedDate(v)}
+          />
+          <MobileTimePicker
+            orientation="landscape"
+            label="Pick a time"
+            value={selectedTime}
+            onChange={(v) => setSelectedTime(v)}
+          />
+          <PrimaryButton text="ADD" onClick={onAddDateTime} />
+        </Box>
+
+        <Box
+          flex={1}
+          overflow="auto"
+          mt={1}
+          sx={{
+            scrollbarWidth: "thin",
+            scrollbarColor: "#bbb transparent",
+
+            "&::-webkit-scrollbar": {
+              width: "6px",
+            },
+            "&::-webkit-scrollbar-track": {
+              background: "transparent",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "#bbb",
+              borderRadius: "10px",
+            },
+            "&::-webkit-scrollbar-thumb:hover": {
+              backgroundColor: "#999",
+            },
+          }}
+        >
+          {current.primary.map((entry, index) => (
+            <Box key={index} sx={{ mb: 1 }}>
+              <SecondaryButton
+                fullWidth
+                text={entry}
+                onClick={() => {
+                  setAnswers((prev) => {
+                    const updated = [...prev];
+                    updated[page] = {
+                      ...updated[page],
+                      primary: updated[page].primary.filter(
+                        (_, i) => i !== index,
+                      ),
+                    };
+                    return updated;
+                  });
+                }}
+              />
+            </Box>
+          ))}
+        </Box>
+      </Box>
+    </LocalizationProvider>,
+
+    <IconLabelTextField
+      labelText="Where do you want to study?"
+      value=""
+      onChange={() => {}}
+    />,
   ];
 
   const onBack = () => {
@@ -39,7 +178,7 @@ export default function Survey() {
       {/* --- TOP: Question --- */}
       <Box textAlign="center" mb={4}>
         <Typography variant="h4" fontWeight="bold" color="#3C3744">
-          What subjects do you need help with?
+          {questions[page]}
         </Typography>
       </Box>
 
@@ -50,12 +189,7 @@ export default function Survey() {
         justifyContent="center"
         alignItems="center"
       >
-        <PillPicker
-          options={classes}
-          value={[]}
-          onChange={() => {}}
-          placeholder="e.g., Math, History…"
-        />
+        {questionWidgets[page]}
       </Box>
 
       {/* --- BOTTOM: Notes + Buttons --- */}
@@ -67,7 +201,10 @@ export default function Survey() {
         gap={2}
       >
         <Box sx={{ width: "100%", maxWidth: 480 }}>
-          <IconLabelTextField value={""} onChange={() => {}} />
+          <IconLabelTextField
+            value={current.secondary}
+            onChange={(e) => onSecondaryChange(e.target.value)}
+          />
         </Box>
 
         <Stack
