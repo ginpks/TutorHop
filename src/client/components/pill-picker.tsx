@@ -35,6 +35,7 @@ const InputWrapper = styled("div")<{ focused?: boolean }>(({ focused }) => ({
   alignItems: "center",
   padding: "4px 8px",
   minHeight: "40px",
+  minWidth: "480px", // CHANGE THIS SO ITS NOT MAGIC
   border: `2px solid ${focused ? palette.dark : palette.light}`,
   borderRadius: "8px",
   transition: "border-color 0.2s ease",
@@ -86,6 +87,9 @@ const Tag = styled("div")({
 });
 
 const Listbox = styled("ul")({
+  position: "absolute",
+  width: "498px", // CHANGE THIS SO ITS NOT MAGIC
+
   zIndex: 10,
   listStyle: "none",
   margin: "4px 0 0 0",

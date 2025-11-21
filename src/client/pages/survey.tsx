@@ -1,56 +1,25 @@
-import { Box, Card, CardContent, Typography, Stack } from "@mui/material";
-import PrimaryButton from "../components/primary-button";
-import SecondaryButton from "../components/secondary-button";
-import IconLabelTextField from "../components/IconLabelTextField";
+import { Box, Typography, Stack } from "@mui/material";
 import PillPicker from "../components/pill-picker";
+import SecondaryButton from "../components/secondary-button";
+import PrimaryButton from "../components/primary-button";
+import IconLabelTextField from "../components/IconLabelTextField";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import dayjs, { Dayjs } from "dayjs";
 
-interface QuestionSubmission {
-  primary: string[];
-  secondary: string;
-}
-
-function Survey() {
+export default function Survey() {
+  const [page, setPage] = useState(0);
   const navigate = useNavigate();
 
+  const classes = ["CICS 109", "CICS 110", "CICS 127", "CICS 160", "CICS 210"];
   const questions = [
     "What subjects do you need help with?",
     "When do you want to study?",
     "Where do you want to study?",
   ];
 
-  const classes = ["CICS 109", "CICS 110", "CICS 127", "CICS 160", "CICS 210"];
-
-  const [page, setPage] = useState(0);
-
-  const [answers, setAnswers] = useState<QuestionSubmission[]>(
-    Array.from({ length: questions.length }, () => ({
-      primary: [],
-      secondary: "",
-    })),
-  );
-
-  const current = answers[page];
-
-  const handlePrimaryChange = (value: string[]) => {
-    setAnswers((prev) => {
-      const updated = [...prev];
-      updated[page] = { ...updated[page], primary: value };
-      return updated;
-    });
-  };
-
-  const handleSecondaryChange = (value: string) => {
-    setAnswers((prev) => {
-      const updated = [...prev];
-      updated[page] = { ...updated[page], secondary: value };
-      return updated;
-    });
+  const onBack = () => {
+    if (page - 1 < 0) navigate("/Landing");
+    else setPage(page - 1);
   };
 
   const onNext = () => {
@@ -58,113 +27,64 @@ function Survey() {
     else setPage(page + 1);
   };
 
-  const onBack = () => {
-    if (page - 1 < 0) navigate("/");
-    else setPage(page - 1);
-  };
-
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      minHeight="100vh"
+      width="100vw"
+      bgcolor="#FBFFF1"
+      sx={{ boxSizing: "border-box", p: 4 }}
+    >
+      {/* --- TOP: Question --- */}
+      <Box textAlign="center" mb={4}>
+        <Typography variant="h4" fontWeight="bold" color="#3C3744">
+          What subjects do you need help with?
+        </Typography>
+      </Box>
+
+      {/* --- MIDDLE: Widget Area --- */}
       <Box
+        flexGrow={1}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <PillPicker
+          options={classes}
+          value={[]}
+          onChange={() => {}}
+          placeholder="e.g., Math, History…"
+        />
+      </Box>
+
+      {/* --- BOTTOM: Notes + Buttons --- */}
+      <Box
+        mt={6}
         display="flex"
         flexDirection="column"
-        minHeight="100dvh"
-        width="100dvw"
-        bgcolor="#FBFFF1"
-        sx={{
-          boxSizing: "border-box",
-          px: 3,
-          py: 4,
-        }}
+        alignItems="center"
+        gap={2}
       >
-        <Box textAlign="center" mb={4}>
-          <Typography
-            color="#3C3744"
-            variant="h4"
-            fontWeight="bold"
-            sx={{ mb: 1 }}
-          >
-            {questions[page]}
-          </Typography>
+        <Box sx={{ width: "100%", maxWidth: 480 }}>
+          <IconLabelTextField value={""} onChange={() => {}} />
         </Box>
 
-        <Box
-          flexGrow={1}
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{ width: "100%", maxWidth: 480 }}
         >
-          <Card
-            sx={{
-              width: "100%",
-              maxWidth: 480,
-              borderRadius: 4,
-              boxShadow: 3,
-              bgcolor: "#fff",
-            }}
-          >
-            <CardContent sx={{ p: 3 }}>
-              {page === 1 ? (
-                <DatePicker
-                  label="Pick a date"
-                  sx={{ width: "100%" }}
-                  onChange={(date: Dayjs | null) => {
-                    const dateString = date ? date.format("YYYY-MM-DD") : "";
-                    handlePrimaryChange(dateString ? [dateString] : []);
-                  }}
-                  value={
-                    current.primary.length > 0
-                      ? dayjs(current.primary[0])
-                      : null
-                  }
-                />
-              ) : (
-                <PillPicker
-                  options={classes}
-                  value={current.primary}
-                  onChange={handlePrimaryChange}
-                  placeholder="e.g., Math, History…"
-                />
-              )}
-            </CardContent>
-          </Card>
-        </Box>
-
-        <Box
-          mt={6}
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          gap={2}
-        >
-          <Box sx={{ width: "100%", maxWidth: 480 }}>
-            <IconLabelTextField
-              sx={{ width: "100%" }}
-              value={current.secondary}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleSecondaryChange(e.target.value)
-              }
-            />
-          </Box>
-
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            spacing={2}
-            sx={{ width: "100%", maxWidth: 480 }}
-          >
-            <SecondaryButton onClick={onBack} text="Back" px={8} />
-            <PrimaryButton
-              onClick={onNext}
-              text={page + 1 === questions.length ? "Submit" : "Next"}
-              px={8}
-              disabled={current.primary.length === 0}
-            />
-          </Stack>
-        </Box>
+          <SecondaryButton fullWidth onClick={onBack} text="Back" py={1.5} />
+          <PrimaryButton
+            fullWidth
+            onClick={onNext}
+            text={"Next"}
+            py={1.5}
+            disabled={false}
+          />
+        </Stack>
       </Box>
-    </LocalizationProvider>
+    </Box>
   );
 }
-
-export default Survey;
