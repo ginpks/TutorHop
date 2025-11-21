@@ -38,7 +38,6 @@ function ProfileHeader({
           p: 0,
           m: 0,
           bgcolor: "transparent",
-
         }}
       >
         <img

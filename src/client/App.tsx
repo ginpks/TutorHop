@@ -8,19 +8,18 @@ import Profile from "./pages/profile";
 import StudentProfile from "./pages/studentprofile";
 import TutorProfile from "./pages/tutorprofile";
 
-
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/results" element={<Results />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/landing" element={<Landing />} />
         <Route path="/survey" element={<Survey />} />
+        <Route path="/results" element={<Results />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/studentprofile" element={<StudentProfile />} />
         <Route path="/tutorprofile" element={<TutorProfile />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
   );

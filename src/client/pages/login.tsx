@@ -10,6 +10,7 @@ import DefaultBanner from "../components/main_banner/banner";
 import React from "react";
 import PrimaryButton from "../components/primary-button";
 import SecondaryButton from "../components/secondary-button";
+import { useNavigate } from "react-router-dom";
 
 type LoginForm = {
   email: string;
@@ -25,6 +26,8 @@ function Login() {
   const [form, setForm] = React.useState<LoginForm>(initialForm);
   const [message, setMessage] = React.useState("");
 
+  const navigate = useNavigate();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -34,6 +37,8 @@ function Login() {
     e.preventDefault();
     setMessage(`You typed: ${form.email} / ${form.password}`);
   };
+
+  const isDisabled = !form.email || !form.password;
 
   return (
     <Card
@@ -113,11 +118,17 @@ function Login() {
               }}
             >
               <SecondaryButton text="Back" />
-              <PrimaryButton text="Login" />
+              <PrimaryButton text="Login" disabled={isDisabled} />
             </Stack>
 
-            <Typography variant="body2" color="text.secondary" align="center">
-              Don't have an account? Sign up
+            <Typography
+              variant="body2"
+              color="primary"
+              align="center"
+              sx={{ mt: 1, cursor: "pointer", textDecoration: "underline" }}
+              onClick={() => navigate("/signup")}
+            >
+              Don&apos;t have an account? Sign up
             </Typography>
           </Stack>
         </Box>
