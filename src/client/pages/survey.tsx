@@ -11,6 +11,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 import { Dayjs } from "dayjs";
+import DefaultBanner from "../components/main_banner/banner";
+import { Map } from '@vis.gl/react-maplibre';
 
 interface QuestionSubmission {
   primary: string[];
@@ -149,11 +151,16 @@ export default function Survey() {
       </Box>
     </LocalizationProvider>,
 
-    <IconLabelTextField
-      labelText="Where do you want to study?"
-      value=""
-      onChange={() => {}}
-    />,
+    <Map
+      initialViewState={{
+        longitude: 0,
+        latitude: 0,
+        zoom: 2
+      }}
+      // mapStyle="/styles/dark.json"
+      mapStyle="https://tiles.openfreemap.org/styles/liberty"
+    >
+    </Map>,
   ];
 
   const onBack = () => {
@@ -167,60 +174,63 @@ export default function Survey() {
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      minHeight="100vh"
-      width="100vw"
-      bgcolor="#FBFFF1"
-      sx={{ boxSizing: "border-box", p: 4 }}
-    >
-      {/* --- TOP: Question --- */}
-      <Box textAlign="center" mb={4}>
-        <Typography variant="h4" fontWeight="bold" color="#3C3744">
-          {questions[page]}
-        </Typography>
-      </Box>
-
-      {/* --- MIDDLE: Widget Area --- */}
+    <Box display="flex" flexDirection="column" height="100dvh">
+      <DefaultBanner title="Tutor Hop" />
       <Box
-        flexGrow={1}
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-      >
-        {questionWidgets[page]}
-      </Box>
-
-      {/* --- BOTTOM: Notes + Buttons --- */}
-      <Box
-        mt={6}
         display="flex"
         flexDirection="column"
-        alignItems="center"
-        gap={2}
+        flexGrow={1}
+        width="100vw"
+        bgcolor="#FBFFF1"
+        sx={{ boxSizing: "border-box", p: 4 }}
       >
-        <Box sx={{ width: "100%", maxWidth: 480 }}>
-          <IconLabelTextField
-            value={current.secondary}
-            onChange={(e) => onSecondaryChange(e.target.value)}
-          />
+        {/* --- TOP: Question --- */}
+        <Box textAlign="center" mb={4}>
+          <Typography variant="h4" fontWeight="bold" color="#3C3744">
+            {questions[page]}
+          </Typography>
         </Box>
 
-        <Stack
-          direction="row"
-          spacing={2}
-          sx={{ width: "100%", maxWidth: 480 }}
+        {/* --- MIDDLE: Widget Area --- */}
+        <Box
+          flexGrow={1}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
         >
-          <SecondaryButton fullWidth onClick={onBack} text="Back" py={1.5} />
-          <PrimaryButton
-            fullWidth
-            onClick={onNext}
-            text={"Next"}
-            py={1.5}
-            disabled={false}
-          />
-        </Stack>
+          {questionWidgets[page]}
+        </Box>
+
+        {/* --- BOTTOM: Notes + Buttons --- */}
+        <Box
+          mt={6}
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          gap={2}
+        >
+          <Box sx={{ width: "100%", maxWidth: 480 }}>
+            <IconLabelTextField
+              value={current.secondary}
+              onChange={(e) => onSecondaryChange(e.target.value)}
+            />
+          </Box>
+
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{ width: "100%", maxWidth: 480 }}
+          >
+            <SecondaryButton fullWidth onClick={onBack} text="Back" py={1.5} />
+            <PrimaryButton
+              fullWidth
+              onClick={onNext}
+              text={"Next"}
+              py={1.5}
+              disabled={false}
+            />
+          </Stack>
+        </Box>
       </Box>
     </Box>
   );
