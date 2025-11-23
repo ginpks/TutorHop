@@ -1,12 +1,12 @@
 import { Box, Card } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import DefaultBanner from "../components/main_banner/banner";
-import InboxCardComponent from "../components/LandingInbox";
+import DefaultBanner from "../components/main_banner/banner.js";
+import InboxCardComponent from "../components/LandingInbox.js";
 import React, { useEffect, useState } from "react";
-import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces";
-import { roleLabels, UserRole } from "../../shared/Enums/UserEnums";
-import UpcomingAppointment from "../components/UpcomingAppointment";
-import UserSearchBar from "../components/SearchBar";
+import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces.js";
+import { roleLabels, UserRole } from "../../shared/Enums/UserEnums.js";
+import UpcomingAppointment from "../components/UpcomingAppointment.js";
+import UserSearchBar from "../components/SearchBar.js";
 
 function Landing() {
   const [messages, setMessages] = React.useState<MailPreviewMessages[]>([]);
@@ -15,16 +15,19 @@ function Landing() {
   const [loadingInbox, setLoadingInbox] = React.useState<boolean>(true);
 
   useEffect(() => {
+    //set a test user
     setUserID(5);
     if (!userID) return;
     async function load() {
+      //set the inbox as loading to display wheel
       setLoadingInbox(true);
       try {
+        //define the data params to send to the endpoint
         const query = new URLSearchParams({
           tutor: isTutor === true ? "true" : "false",
           status: "pending",
         });
-
+        //fetch the endpoint using the params
         const res = await fetch(`/inbox/${userID}/preview?${query.toString()}`);
 
         if (!res.ok) {
@@ -34,7 +37,6 @@ function Landing() {
         }
 
         const data = (await res.json()) as MailPreviewMessages[];
-        console.log("Data", data);
         setMessages(data);
         setLoadingInbox(false);
       } catch (err) {
@@ -45,7 +47,7 @@ function Landing() {
   }, [userID]);
 
   return (
-    <Card
+    <Box
       sx={{
         position: "fixed",
         top: 0,
@@ -91,7 +93,7 @@ function Landing() {
       {/* <Box>
         <UserSearchBar userType={roleLabels[UserRole?.STUDENT]}></UserSearchBar>
       </Box> */}
-    </Card>
+    </Box>
   );
 }
 

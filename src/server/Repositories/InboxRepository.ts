@@ -26,6 +26,7 @@ export class InboxRepository {
     endDate?: string,
     fromStudent?: boolean,
   ) {
+    //determine whether the perspective the inbox is a tutor or a student
     const currentUserColumn =
       fromStudent === true
         ? meetingRequests.studentId
@@ -37,6 +38,7 @@ export class InboxRepository {
         : meetingRequests.studentId;
     const conditions = [eq(otherUserColumn, Number(userId))];
 
+    //if the parameters are filled we add them as a condition to the array
     if (status) {
       conditions.push(eq(meetingRequests.status, status));
     }
@@ -53,8 +55,10 @@ export class InboxRepository {
       conditions.push(lte(meetingRequests.requestedEnd, endDate));
     }
     console.log("Inbox preview database call made");
+    //using the database that is passed into the class we call the database
     return await this.database
       .select({
+        //specify the information that we want from the schema which includes the foreign keys from the database
         id: meetingRequests.id,
         createdAt: meetingRequests.createdAt,
         receiver: {
@@ -68,8 +72,10 @@ export class InboxRepository {
           topic: meetingRequests.topic,
         },
       })
+      //specify the original table we are pulling from
       .from(meetingRequests)
       .limit(4)
+      //then join the users and subjects that are valid for the user and subject that is being called in the meeting request
       .leftJoin(users, eq(users.id, currentUserColumn))
       .leftJoin(subjects, eq(subjects.id, meetingRequests.subjectId))
       .where(and(...conditions));

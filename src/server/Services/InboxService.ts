@@ -17,6 +17,7 @@ export class InboxServices {
     endDate?: string,
     fromStudent?: boolean,
   ): Promise<MailPreviewMessages[]> {
+    //retrieve raw data from the repo/database
     const userInbox = await this.inboxRepo.getUserInbox(
       userId,
       status,
@@ -24,6 +25,7 @@ export class InboxServices {
       endDate,
       fromStudent,
     );
+    //map it or modify it as you please and then return it.
     const previews: MailPreviewMessages[] = userInbox.map((message) =>
       inboxPreviewMapper(message),
     );
