@@ -155,6 +155,7 @@ function Signup() {
             <TextField
               label="Password"
               name="password"
+              type="password"
               required
               fullWidth
               value={form.password}
@@ -164,6 +165,7 @@ function Signup() {
             <TextField
               label="Confirm Password"
               name="confirmPassword"
+              type="password"
               required
               fullWidth
               value={form.confirmPassword}
