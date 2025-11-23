@@ -84,7 +84,7 @@ const Results: React.FC = () => {
   const sortedTutors = [...sampleTutors].sort((a, b) =>
     sortBy === "location"
       ? a.location.localeCompare(b.location)
-      : a.name.localeCompare(b.name)
+      : a.name.localeCompare(b.name),
   );
   const requestApp = () => {
     useNavigate()("/landing");

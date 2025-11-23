@@ -91,9 +91,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "users_email_key": {
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "nullsNotDistinct": false,
           "name": "users_email_key"
         }
@@ -126,12 +124,8 @@
           "tableFrom": "tutor_profiles",
           "tableTo": "users",
           "schemaTo": "public",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -160,12 +154,8 @@
           "tableFrom": "student_profiles",
           "tableTo": "users",
           "schemaTo": "public",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -204,9 +194,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "subjects_code_key": {
-          "columns": [
-            "code"
-          ],
+          "columns": ["code"],
           "nullsNotDistinct": false,
           "name": "subjects_code_key"
         }
@@ -276,12 +264,8 @@
           "tableFrom": "availability_slots",
           "tableTo": "users",
           "schemaTo": "public",
-          "columnsFrom": [
-            "tutor_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tutor_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -380,12 +364,8 @@
           "tableFrom": "meeting_requests",
           "tableTo": "users",
           "schemaTo": "public",
-          "columnsFrom": [
-            "student_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["student_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -394,12 +374,8 @@
           "tableFrom": "meeting_requests",
           "tableTo": "subjects",
           "schemaTo": "public",
-          "columnsFrom": [
-            "subject_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["subject_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -408,12 +384,8 @@
           "tableFrom": "meeting_requests",
           "tableTo": "users",
           "schemaTo": "public",
-          "columnsFrom": [
-            "tutor_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tutor_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -455,12 +427,8 @@
           "tableFrom": "user_subjects",
           "tableTo": "subjects",
           "schemaTo": "public",
-          "columnsFrom": [
-            "subject_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["subject_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -469,12 +437,8 @@
           "tableFrom": "user_subjects",
           "tableTo": "users",
           "schemaTo": "public",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -482,11 +446,7 @@
       "compositePrimaryKeys": {
         "user_subjects_pkey": {
           "name": "user_subjects_pkey",
-          "columns": [
-            "user_id",
-            "subject_id",
-            "role"
-          ]
+          "columns": ["user_id", "subject_id", "role"]
         }
       },
       "uniqueConstraints": {},
@@ -498,37 +458,22 @@
   "enums": {
     "public.meeting_mode": {
       "name": "meeting_mode",
-      "values": [
-        "in_person",
-        "zoom"
-      ],
+      "values": ["in_person", "zoom"],
       "schema": "public"
     },
     "public.meeting_preference": {
       "name": "meeting_preference",
-      "values": [
-        "in_person",
-        "zoom",
-        "either"
-      ],
+      "values": ["in_person", "zoom", "either"],
       "schema": "public"
     },
     "public.meeting_status": {
       "name": "meeting_status",
-      "values": [
-        "pending",
-        "accepted",
-        "declined",
-        "canceled"
-      ],
+      "values": ["pending", "accepted", "declined", "canceled"],
       "schema": "public"
     },
     "public.role": {
       "name": "role",
-      "values": [
-        "student",
-        "tutor"
-      ],
+      "values": ["student", "tutor"],
       "schema": "public"
     }
   },

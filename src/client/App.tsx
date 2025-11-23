@@ -14,6 +14,7 @@ function App() {
       <Routes>
         <Route path="/results" element={<Results />} />
         <Route path="/survey" element={<Survey />} />
+        <Route path="/results" element={<Results />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/studentprofile" element={<StudentProfile />} />
         <Route path="/tutorprofile" element={<TutorProfile />} />
