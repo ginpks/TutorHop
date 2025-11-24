@@ -1,4 +1,4 @@
-import { Box, Typography, Stack, Button, Card } from "@mui/material";
+import { Box, Typography, Stack } from "@mui/material";
 import PillPicker from "../components/pill-picker";
 import SecondaryButton from "../components/secondary-button";
 import PrimaryButton from "../components/primary-button";
@@ -6,14 +6,11 @@ import IconLabelTextField from "../components/IconLabelTextField";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 import { Dayjs } from "dayjs";
 import DefaultBanner from "../components/main_banner/banner";
-import { Map } from '@vis.gl/react-maplibre';
-
 interface QuestionSubmission {
   primary: string[];
   secondary: string;
@@ -151,16 +148,7 @@ export default function Survey() {
       </Box>
     </LocalizationProvider>,
 
-    <Map
-      initialViewState={{
-        longitude: 0,
-        latitude: 0,
-        zoom: 2
-      }}
-      // mapStyle="/styles/dark.json"
-      mapStyle="https://tiles.openfreemap.org/styles/liberty"
-    >
-    </Map>,
+    <Box width="400px" height="300px"></Box>,
   ];
 
   const onBack = () => {
