@@ -1,4 +1,4 @@
-import { Box, Typography, Stack, Button, Card } from "@mui/material";
+import { Box, Typography, Stack } from "@mui/material";
 import PillPicker from "../components/pill-picker";
 import SecondaryButton from "../components/secondary-button";
 import PrimaryButton from "../components/primary-button";
@@ -6,14 +6,16 @@ import IconLabelTextField from "../components/IconLabelTextField";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 import { Dayjs } from "dayjs";
 import DefaultBanner from "../components/main_banner/banner";
+<<<<<<< HEAD
 import { Map } from "@vis.gl/react-maplibre";
 
+=======
+>>>>>>> 09d5daa904260b100626c8576fcbc0abc1df9d78
 interface QuestionSubmission {
   primary: string[];
   secondary: string;
@@ -154,6 +156,10 @@ export default function Survey() {
 	    <Button> hi</Button>
 	</Box>
 
+<<<<<<< HEAD
+=======
+    <Box width="400px" height="300px"></Box>,
+>>>>>>> 09d5daa904260b100626c8576fcbc0abc1df9d78
   ];
 
   const onBack = () => {

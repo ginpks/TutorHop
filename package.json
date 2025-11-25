@@ -16,7 +16,6 @@
     "@mui/icons-material": "^7.3.4",
     "@mui/material": "^7.3.4",
     "@mui/x-date-pickers": "^8.16.0",
-    "@vis.gl/react-maplibre": "^8.1.0",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.19",
     "dotenv": "^17.2.3",
