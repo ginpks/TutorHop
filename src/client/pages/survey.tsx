@@ -1,4 +1,4 @@
-import { Box, Typography, Stack, Button } from "@mui/material";
+import { Box, Typography, Stack, Button, Switch } from "@mui/material";
 import PillPicker from "../components/pill-picker";
 import SecondaryButton from "../components/secondary-button";
 import PrimaryButton from "../components/primary-button";
@@ -30,6 +30,8 @@ export default function Survey() {
     "When do you want to study?",
     "Where do you want to study?",
   ];
+  const locations = ["LGRT", "LRGC", "WEB Du Bois", "ISB", "PSB"];
+  const [mode, setMode] = useState<boolean>(true);
 
   const [answers, setAnswers] = useState<QuestionSubmission[]>(
     Array.from({ length: questions.length }, () => ({
@@ -149,10 +151,22 @@ export default function Survey() {
         </Box>
       </Box>
     </LocalizationProvider>,
-	<Box>
-	    <Button> hi</Button>
-	</Box>
+    <Box display="flex" flexDirection="column" gap="5px">
+	    <Stack direction="row" spacing={2} alignItems="center">
 
+      <Switch checked={mode} onChange={(e) => setMode(e.target.checked)} />
+		<Typography
+		color="#3C3744">
+		    {mode ? "In-Person" : "Remote"}
+		</Typography>
+	    </Stack>
+      <PillPicker
+        options={locations}
+        value={current.primary}
+        onChange={onPrimaryChange}
+        placeholder="Select locations..."
+      />
+    </Box>,
   ];
 
   const onBack = () => {
