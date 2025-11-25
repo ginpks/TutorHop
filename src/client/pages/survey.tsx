@@ -12,7 +12,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 import { Dayjs } from "dayjs";
 import DefaultBanner from "../components/main_banner/banner";
-import { Map } from '@vis.gl/react-maplibre';
+import { Map } from "@vis.gl/react-maplibre";
 
 interface QuestionSubmission {
   primary: string[];
@@ -150,17 +150,10 @@ export default function Survey() {
         </Box>
       </Box>
     </LocalizationProvider>,
+	<Box>
+	    <Button> hi</Button>
+	</Box>
 
-    <Map
-      initialViewState={{
-        longitude: 0,
-        latitude: 0,
-        zoom: 2
-      }}
-      // mapStyle="/styles/dark.json"
-      mapStyle="https://tiles.openfreemap.org/styles/liberty"
-    >
-    </Map>,
   ];
 
   const onBack = () => {
