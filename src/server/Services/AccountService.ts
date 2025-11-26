@@ -1,34 +1,36 @@
-import { meetingStatus } from "../../../drizzle/schema.js";
-import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces.js";
-import { inboxPreviewMapper as inboxPreviewMapper } from "../../shared/Mappers/InboxMappers.js";
-import { InboxRepository } from "../Repositories/InboxRepository.js";
+import { mapRawSignUpFormToInterface } from "../../shared/Mappers/AccountsMapper.js";
+import { AccountRepository } from "../Repositories/AccountRepository.js";
+import argon2 from "argon2";
 
-export type MeetingStatus = (typeof meetingStatus.enumValues)[number];
-
-const inbox_service: InboxServices | null = null;
-
-export class InboxServices {
-  constructor(private readonly inboxRepo: InboxRepository) {}
-
-  public async inboxPreviews(
-    userId: number,
-    status?: MeetingStatus,
-    startDate?: string,
-    endDate?: string,
-    fromStudent?: boolean
-  ): Promise<MailPreviewMessages[]> {
-    //retrieve raw data from the repo/database
-    const userInbox = await this.inboxRepo.getUserInbox(
-      userId,
-      status,
-      startDate,
-      endDate,
-      fromStudent
-    );
-    //map it or modify it as you please and then return it.
-    const previews: MailPreviewMessages[] = userInbox.map((message) =>
-      inboxPreviewMapper(message)
-    );
-    return previews;
+export class AccountServices {
+  private accountRepo: AccountRepository;
+  constructor(private readonly repo: AccountRepository) {
+    this.accountRepo = repo;
+  }
+  /**
+   * Hashes a string using argon2.
+   *
+   * @param password a raw string passed in by the API.
+   * @returns A hashed string to be used when sending back to the database.
+   */
+  private async hashPassword(password: string): Promise<string> {
+    try {
+      const hashedPassword = await argon2.hash(password);
+      return hashedPassword;
+    } catch (err) {
+      console.error("Hashing password failed: ", err);
+      throw err;
+    }
+  }
+  /**
+   * Prepare signup info to be stored in DB.
+   * send data back to the repo to be stored.
+   *
+   * @param data raw json with signup information.
+   */
+  public async signUp(data: any) {
+    let signUpForm = mapRawSignUpFormToInterface(data);
+    signUpForm.password = await this.hashPassword(signUpForm.password);
+    this.accountRepo.signUpPost(signUpForm);
   }
 }

@@ -14,11 +14,10 @@ import React from "react";
 import PrimaryButton from "../components/primary-button";
 import SecondaryButton from "../components/secondary-button";
 import type { SelectChangeEvent } from "@mui/material/Select";
-
-type AccountType = "student" | "tutor";
+import { UserRole } from "../../shared/Enums/UserEnums";
 // Sign-Up form variables
 type FormState = {
-  accountType: AccountType;
+  accountType: UserRole;
   firstName: string;
   lastName: string;
   email: string;
@@ -30,7 +29,7 @@ type FormState = {
 };
 
 const initialForm: FormState = {
-  accountType: "student",
+  accountType: UserRole.STUDENT,
   firstName: "",
   lastName: "",
   email: "",
@@ -50,11 +49,24 @@ function Signup() {
   };
 
   //sends submission to database and created new account
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    //TODO
-    console.log("Form values:", form);
-  };
+
+    try {
+      const res = await fetch("/accounts/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) {
+        throw new Error("The sign up api call is incorrect");
+      }
+    } catch (err) {
+      console.error("Error fetching the sign up api: ", err);
+    }
+    console.log("Form values:", JSON.stringify(form));
+  }
 
   return (
     <Card
@@ -107,16 +119,16 @@ function Signup() {
               fullWidth
               value={form.accountType}
               onChange={(e) => {
-                const next = e.target.value as AccountType;
+                const next = e.target.value as UserRole;
                 setForm((prev) =>
-                  next === "student"
+                  next === UserRole.STUDENT
                     ? {
                         ...prev,
-                        accountType: "student",
+                        accountType: UserRole.STUDENT,
                       }
                     : {
                         ...prev,
-                        accountType: "tutor",
+                        accountType: UserRole.TUTOR,
                       }
                 );
               }}
@@ -220,7 +232,10 @@ function Signup() {
               sx={{ mt: 2, width: "100%", "& > *": { flex: 1, minHeight: 56 } }}
             >
               <SecondaryButton text="Back"></SecondaryButton>
-              <PrimaryButton text="Create Account"></PrimaryButton>
+              <PrimaryButton
+                text="Create Account"
+                type="submit"
+              ></PrimaryButton>
             </Stack>
 
             <Typography variant="body2" color="text.secondary" align="center">

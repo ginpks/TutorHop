@@ -6,6 +6,7 @@ export interface ButtonProps {
   py?: number;
   onClick?: () => void;
   disabled?: boolean;
+  type?: React.ButtonHTMLAttributes<HTMLButtonElement>["type"];
 }
 
 function PrimaryButton({
@@ -14,6 +15,7 @@ function PrimaryButton({
   py = 1,
   onClick,
   disabled = false,
+  type,
 }: ButtonProps) {
   return (
     <Button
@@ -28,6 +30,7 @@ function PrimaryButton({
         fontWeight: "bold",
         "&:focus": { outline: "none" },
       }}
+      type={type}
     >
       {text}
     </Button>
