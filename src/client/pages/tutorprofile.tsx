@@ -10,6 +10,9 @@ import {
   Typography,
 } from "@mui/material";
 
+import { useEffect } from "react";
+import { MailFullMessages } from "../../shared/Interfaces/InboxInterfaces";
+
 interface PendingRequest {
   student: string;
   subject: string;
@@ -111,6 +114,45 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
   ],
   meetingMode = "Hybrid",
 }) => {
+
+  const [messages, setMessages] = React.useState<MailFullMessages[]>([]);
+  const [userID, setUserID] = React.useState<number>(0);
+  const [isTutor, setIsTutor] = React.useState<boolean>(false);
+  const [loadingInbox, setLoadingInbox] = React.useState<boolean>(true);
+
+  useEffect(() => {
+      setUserID(5);
+      if (!userID) return;
+      async function load() {
+        setLoadingInbox(true);
+        try {
+          const query = new URLSearchParams({
+            tutor: isTutor === true ? "true" : "false",
+            status: "pending",
+          });
+
+
+          const res = await fetch(`/profile-inbox/${userID}/preview?${query.toString()}`);
+
+
+          if (!res.ok) {
+            const text = await res.text();
+            console.error("HTTP error", res.status, text.slice(0, 300));
+            throw new Error(`HTTP ${res.status}`);
+          }
+
+
+          const data = (await res.json()) as MailFullMessages[];
+          console.log("Data", data);
+          setMessages(data);
+          setLoadingInbox(false);
+        } catch (err) {
+          console.error("Inbox fetch error: ", err);
+        }
+      }
+      load();
+    }, [userID]);
+
   return (
     <Box
       sx={{
@@ -280,24 +322,95 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
           </Section>
         </Box>
 
-        {/* Inbox */}
         <Box sx={{ mt: 3, mb: 2 }}>
           <Section title="Inbox">
-            <Box
-              sx={{
-                height: 140,
-                borderRadius: 1,
-                border: "1px dashed rgba(60,55,68,0.2)",
-                bgcolor: "rgba(255,255,255,0.35)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "rgba(60,55,68,0.6)",
-                fontWeight: 500,
-              }}
-            >
-              No new messages
-            </Box>
+
+            {/* 1. Show loading state */}
+            {loadingInbox && (
+              <Box
+                sx={{
+                  height: 140,
+                  borderRadius: 1,
+                  border: "1px dashed rgba(60,55,68,0.2)",
+                  bgcolor: "rgba(255,255,255,0.35)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "rgba(60,55,68,0.6)",
+                  fontWeight: 500,
+                }}
+              >
+                Loading messages...
+              </Box>
+            )}
+
+            {/* 2. If no messages */}
+            {!loadingInbox && messages.length === 0 && (
+              <Box
+                sx={{
+                  height: 140,
+                  borderRadius: 1,
+                  border: "1px dashed rgba(60,55,68,0.2)",
+                  bgcolor: "rgba(255,255,255,0.35)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "rgba(60,55,68,0.6)",
+                  fontWeight: 500,
+                }}
+              >
+                No new messages
+              </Box>
+            )}
+
+            {/* 3. If messages exist → show them in styled rows */}
+            {!loadingInbox && messages.length > 0 && (
+              <Box
+                sx={{
+                  borderRadius: 1,
+                  border: "1px solid rgba(60,55,68,0.2)",
+                  bgcolor: "rgba(255,255,255,0.35)",
+                  padding: 2,
+                }}
+              >
+                {messages.map((msg) => (
+                  <Box
+                    key={msg.id}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      padding: 2,
+                      borderBottom: "1px solid rgba(60,55,68,0.2)",
+                    }}
+                  >
+                    <strong>
+                      {msg.senderFirstName} {msg.senderLastName}
+                    </strong>
+
+                    <div style={{ fontWeight: 600 }}>
+                      {msg.subject}
+                    </div>
+
+                    <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
+                      {msg.snippet}
+                    </div>
+
+                    <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
+                      Meeting Time: {msg.requestedStart ? new Date(msg.requestedStart).toLocaleString(): "No requested time"} - {msg.requestedEnd ? new Date(msg.requestedEnd).toLocaleString(): "No requested time"}
+                    </div>
+
+                    <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
+                      Status: {msg.status ? msg.status : "None"}
+                    </div>
+
+                    <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
+                      Meeting Mode: {msg.meetingMode?.replace(/_/g, " ")}
+                    </div>
+                  </Box>
+                ))}
+              </Box>
+            )}
+
           </Section>
         </Box>
       </Box>
