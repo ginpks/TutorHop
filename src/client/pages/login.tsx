@@ -11,6 +11,7 @@ import React from "react";
 import PrimaryButton from "../components/primary-button";
 import SecondaryButton from "../components/secondary-button";
 import { useNavigate } from "react-router-dom";
+import { getDatabaseService } from "../../server/Services/UtilitiesServices/DatabaseService";
 
 type LoginForm = {
   email: string;
@@ -33,11 +34,23 @@ function Login() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setMessage(`You typed: ${form.email} / ${form.password}`);
-  };
 
+    try {
+      const res = await fetch("/accounts/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) {
+        throw new Error("The sign up api call is incorrect");
+      }
+    } catch (err) {
+      console.error("Error fetching the login api: ", err);
+    }
+  }
   const isDisabled = !form.email || !form.password;
 
   return (
@@ -54,7 +67,7 @@ function Login() {
         boxShadow: "none",
       }}
     >
-      <DefaultBanner title="Tutor Hop" />
+      <DefaultBanner title="Tutor Hop" isLoggedIn={false} />
 
       <CardContent
         sx={{
@@ -118,7 +131,7 @@ function Login() {
               }}
             >
               <SecondaryButton text="Back" />
-              <PrimaryButton text="Login" disabled={isDisabled} />
+              <PrimaryButton text="Login" disabled={false} type="submit" />
             </Stack>
 
             <Typography

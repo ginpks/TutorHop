@@ -6,7 +6,7 @@ import {
   subjects,
 } from "../../../drizzle/schema.js";
 import * as schema from "../../../drizzle/schema.js";
-import { eq, and, lte, gte, or } from "drizzle-orm";
+import { eq, and, lte, gte } from "drizzle-orm";
 
 type MeetingStatus = (typeof meetingStatus.enumValues)[number];
 export type InboxRow = Awaited<
@@ -24,7 +24,7 @@ export class InboxRepository {
     status?: MeetingStatus,
     startDate?: string,
     endDate?: string,
-    fromStudent?: boolean,
+    fromStudent?: boolean
   ) {
     //determine whether the perspective the inbox is a tutor or a student
     const currentUserColumn =
@@ -47,7 +47,7 @@ export class InboxRepository {
     if (startDate && endDate) {
       conditions.push(
         gte(meetingRequests.requestedStart, startDate),
-        lte(meetingRequests.requestedEnd, endDate),
+        lte(meetingRequests.requestedEnd, endDate)
       );
     } else if (startDate && !endDate) {
       conditions.push(gte(meetingRequests.requestedStart, startDate));

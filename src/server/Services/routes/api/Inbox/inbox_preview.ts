@@ -24,7 +24,7 @@ router.get("/:id/preview", async (req, res) => {
       status as MeetingStatus,
       startDate,
       endDate,
-      fromStudent,
+      fromStudent
     );
     //respond with the data retrieved as a JSon
     res.status(200).json(data);

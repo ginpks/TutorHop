@@ -8,6 +8,8 @@ import { ProfileInboxServices } from "../ProfileInboxService.js";
 import { AuthRepository } from "../../Repositories/AuthRepository.js";
 import { AuthService } from "../AuthService.js";
 import "dotenv/config";
+import { AccountRepository } from "../../Repositories/AccountRepository.js";
+import { AccountServices } from "../AccountService.js";
 let database: DatabaseService | null = null;
 
 export class DatabaseService {
@@ -16,6 +18,8 @@ export class DatabaseService {
   public authServices: AuthService;
   public inboxRepository: InboxRepository;
   public inboxServices: InboxServices;
+  public accountRepository: AccountRepository;
+  public accountServices: AccountServices;
   public profileInboxRepository: ProfileInboxRepository;
   public profileInboxServices: ProfileInboxServices;
   constructor(db: NodePgDatabase<typeof schema>) {
@@ -27,6 +31,10 @@ export class DatabaseService {
 
     // Inbox
     this.inboxRepository = new InboxRepository(db);
+    this.accountRepository = new AccountRepository(db);
+    //services
+    this.inboxServices = new InboxServices(this.inboxRepository);
+    this.accountServices = new AccountServices(this.accountRepository);
     this.inboxServices = new InboxServices(this.inboxRepository);
 
     // Profile Inbox
