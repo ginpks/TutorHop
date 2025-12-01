@@ -20,7 +20,7 @@ export class DatabaseService {
   public profileInboxServices: ProfileInboxServices;
   constructor(db: NodePgDatabase<typeof schema>) {
     this.db = db;
-    
+
     // Auth
     this.authRepository = new AuthRepository(db);
     this.authServices = new AuthService(this.authRepository);
@@ -31,7 +31,9 @@ export class DatabaseService {
 
     // Profile Inbox
     this.profileInboxRepository = new ProfileInboxRepository(db);
-    this.profileInboxServices = new ProfileInboxServices(this.profileInboxRepository);
+    this.profileInboxServices = new ProfileInboxServices(
+      this.profileInboxRepository,
+    );
   }
 }
 

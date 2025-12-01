@@ -1,6 +1,9 @@
 import { meetingStatus } from "../../../drizzle/schema.js";
 import { InboxRow } from "../../server/Repositories/ProfileInboxRepository.js";
-import { MailPreviewMessages, MailFullMessages } from "../Interfaces/InboxInterfaces.js";
+import {
+  MailPreviewMessages,
+  MailFullMessages,
+} from "../Interfaces/InboxInterfaces.js";
 
 type MeetingStatus = (typeof meetingStatus.enumValues)[number];
 

@@ -14,7 +14,7 @@ export interface MailFullMessages {
   subject: string | undefined;
   timestamp: string | Date;
   snippet?: string;
-  
+
   requestedStart?: string | Date;
   requestedEnd?: string | Date;
   status?: string | undefined;
