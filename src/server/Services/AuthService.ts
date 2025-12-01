@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { AuthRepository } from "../Repositories/AuthRepository.js";
+import { meetingPreference } from "../../../drizzle/schema.js";
 
 interface JWTPayload {
   userId: number;
@@ -36,17 +37,18 @@ export class AuthService {
     }
   }
 
-  public async login(email: string, password: string) {
+  public async login(raw_data: any) {
+    console.log(raw_data);
+
+    const email = raw_data.email;
+    const password = raw_data.password;
+
     const user = await this.authRepo.findUserByEmail(email);
 
-    if (!user) {
-      throw new Error("Invalid credentials");
-    }
+    if (!user) return;
 
     const passwordMatches = await bcrypt.compare(password, user.password);
-    if (!passwordMatches) {
-      throw new Error("Invalid credentials");
-    }
+    if (!passwordMatches) return;
 
     const token = this.generateToken({
       userId: user.id,
@@ -66,19 +68,23 @@ export class AuthService {
     };
   }
 
-  public async register(userData: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-    role: "student" | "tutor";
-    meetingPreference: "in_person" | "zoom" | "either";
-  }) {
+  public async register(raw_data: any) {
+	
+    console.log(raw_data);
+
+    const userData = {
+      email: raw_data.email,
+      password: raw_data.password,
+      firstName: raw_data.firstName,
+      lastName: raw_data.lastName,
+      role: raw_data.role,
+      meetingPreference: raw_data.meetingPreference,
+    };
+
     const existingUser = await this.authRepo.findUserByEmail(userData.email);
 
-    if (existingUser) {
-      throw new Error("Email already in use");
-    }
+    if (existingUser) 
+	return
 
     const hashedPassword = await bcrypt.hash(userData.password, 10);
 

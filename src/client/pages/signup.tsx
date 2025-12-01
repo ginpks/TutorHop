@@ -130,7 +130,7 @@ function Signup() {
                     : {
                         ...prev,
                         accountType: UserRole.TUTOR,
-                      }
+                      },
                 );
               }}
             >
