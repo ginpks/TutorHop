@@ -8,6 +8,7 @@ interface DefaultBannerProps {
   profilePicUrl?: string;
   displayName?: string;
   bannerStyle?: React.CSSProperties;
+  isLoggedIn: boolean;
 }
 
 const avatarStyle: React.CSSProperties = {

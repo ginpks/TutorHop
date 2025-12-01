@@ -1,4 +1,7 @@
-import { mapRawSignUpFormToInterface } from "../../shared/Mappers/AccountsMapper.js";
+import {
+  mapRawSignUpFormToInterface,
+  UserSelect,
+} from "../../shared/Mappers/AccountsMapper.js";
 import { AccountRepository } from "../Repositories/AccountRepository.js";
 import argon2 from "argon2";
 
@@ -28,9 +31,14 @@ export class AccountServices {
    *
    * @param data raw json with signup information.
    */
-  public async signUp(data: any) {
+  public async signUp(data: any): Promise<UserSelect[]> {
     let signUpForm = mapRawSignUpFormToInterface(data);
     signUpForm.password = await this.hashPassword(signUpForm.password);
-    this.accountRepo.signUpPost(signUpForm);
+    return await this.accountRepo.signUpPost(signUpForm);
+    //TO DO Create some way of storing the user as the current user.
+  }
+
+  public async logIn(data: any) {
+    console.log(data);
   }
 }

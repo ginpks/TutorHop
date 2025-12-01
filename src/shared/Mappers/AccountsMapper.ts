@@ -3,9 +3,14 @@ import {
   meetingPreference,
   availabilitySlots,
 } from "../../../drizzle/schema.js";
-import { InferInsertModel } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 export type UserInsert = InferInsertModel<typeof users>;
+export type UserSelect = Omit<
+  User,
+  "password" | "emailVerifiedAt" | "createdAt" | "updatedAt"
+>;
+export type User = InferSelectModel<typeof users>;
 export type AvailabilityInsert = InferInsertModel<typeof availabilitySlots>;
 
 export function mapRawSignUpFormToInterface(data: any): UserInsert {

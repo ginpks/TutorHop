@@ -41,6 +41,7 @@ const initialForm: FormState = {
 
 function Signup() {
   const [form, setForm] = React.useState<FormState>(initialForm);
+  const [signUpCompleted, setSignUpCompleted] = React.useState<Boolean>(false);
 
   //Updates state when input is changed
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,10 +63,10 @@ function Signup() {
       if (!res.ok) {
         throw new Error("The sign up api call is incorrect");
       }
+      setSignUpCompleted(true);
     } catch (err) {
       console.error("Error fetching the sign up api: ", err);
     }
-    console.log("Form values:", JSON.stringify(form));
   }
 
   return (
@@ -83,7 +84,7 @@ function Signup() {
         boxShadow: "none",
       }}
     >
-      <DefaultBanner title="Tutor Hop" />
+      <DefaultBanner title="Tutor Hop" isLoggedIn={false} />
       <CardContent
         sx={{
           display: "flex",

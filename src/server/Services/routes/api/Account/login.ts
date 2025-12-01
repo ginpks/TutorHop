@@ -8,7 +8,7 @@ const router = express.Router();
  *
  *
  */
-router.post("/signup", async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     //retrieve the parameters sent through the query
     //get the database and the service
@@ -16,9 +16,9 @@ router.post("/signup", async (req, res) => {
     const data = await req.body;
     const account_service: AccountServices = (await db).accountServices;
 
-    const newUser = account_service.signUp(data);
+    account_service.logIn(data);
     //respond with the data retrieved as a JSon
-    res.status(200).json(newUser);
+    res.status(200).json(data);
   } catch (err: any) {
     console.log(err);
   }
