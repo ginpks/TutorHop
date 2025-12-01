@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 import { AuthRepository } from "../Repositories/AuthRepository.js";
 
 interface JWTPayload {
@@ -35,15 +36,16 @@ export class AuthService {
     }
   }
 
+  // LOGIN
   public async login(email: string, password: string) {
     const user = await this.authRepo.findUserByEmail(email);
-    
+
     if (!user) {
       throw new Error("Invalid credentials");
     }
 
-    // TODO: Add password hashing with bcrypt
-    if (user.password !== password) {
+    const passwordMatches = await bcrypt.compare(password, user.password);
+    if (!passwordMatches) {
       throw new Error("Invalid credentials");
     }
 
@@ -65,6 +67,7 @@ export class AuthService {
     };
   }
 
+  // REGISTER
   public async register(userData: {
     email: string;
     password: string;
@@ -74,13 +77,17 @@ export class AuthService {
     meetingPreference: "in_person" | "zoom" | "either";
   }) {
     const existingUser = await this.authRepo.findUserByEmail(userData.email);
-    
+
     if (existingUser) {
       throw new Error("Email already in use");
     }
 
-    // TODO: Hash password with bcrypt before saving
-    const newUser = await this.authRepo.createUser(userData);
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+    const newUser = await this.authRepo.createUser({
+      ...userData,
+      password: hashedPassword,
+    });
 
     const token = this.generateToken({
       userId: newUser.id,
