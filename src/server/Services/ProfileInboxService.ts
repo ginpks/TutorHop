@@ -16,7 +16,6 @@ export class ProfileInboxServices {
     startDate?: string,
     endDate?: string,
     fromStudent?: boolean,
-
   ): Promise<MailFullMessages[]> {
     //retrieve raw data from the repo/database
     const userInbox = await this.inboxRepo.getUserInbox(

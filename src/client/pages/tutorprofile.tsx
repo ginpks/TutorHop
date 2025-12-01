@@ -114,44 +114,42 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
   ],
   meetingMode = "Hybrid",
 }) => {
-
   const [messages, setMessages] = React.useState<MailFullMessages[]>([]);
   const [userID, setUserID] = React.useState<number>(0);
   const [isTutor, setIsTutor] = React.useState<boolean>(false);
   const [loadingInbox, setLoadingInbox] = React.useState<boolean>(true);
 
   useEffect(() => {
-      setUserID(5);
-      if (!userID) return;
-      async function load() {
-        setLoadingInbox(true);
-        try {
-          const query = new URLSearchParams({
-            tutor: isTutor === true ? "true" : "false",
-            status: "pending",
-          });
+    setUserID(5);
+    if (!userID) return;
+    async function load() {
+      setLoadingInbox(true);
+      try {
+        const query = new URLSearchParams({
+          tutor: isTutor === true ? "true" : "false",
+          status: "pending",
+        });
 
+        const res = await fetch(
+          `/profile-inbox/${userID}/preview?${query.toString()}`,
+        );
 
-          const res = await fetch(`/profile-inbox/${userID}/preview?${query.toString()}`);
-
-
-          if (!res.ok) {
-            const text = await res.text();
-            console.error("HTTP error", res.status, text.slice(0, 300));
-            throw new Error(`HTTP ${res.status}`);
-          }
-
-
-          const data = (await res.json()) as MailFullMessages[];
-          console.log("Data", data);
-          setMessages(data);
-          setLoadingInbox(false);
-        } catch (err) {
-          console.error("Inbox fetch error: ", err);
+        if (!res.ok) {
+          const text = await res.text();
+          console.error("HTTP error", res.status, text.slice(0, 300));
+          throw new Error(`HTTP ${res.status}`);
         }
+
+        const data = (await res.json()) as MailFullMessages[];
+        console.log("Data", data);
+        setMessages(data);
+        setLoadingInbox(false);
+      } catch (err) {
+        console.error("Inbox fetch error: ", err);
       }
-      load();
-    }, [userID]);
+    }
+    load();
+  }, [userID]);
 
   return (
     <Box
@@ -324,7 +322,6 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
 
         <Box sx={{ mt: 3, mb: 2 }}>
           <Section title="Inbox">
-
             {/* 1. Show loading state */}
             {loadingInbox && (
               <Box
@@ -387,16 +384,21 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
                       {msg.senderFirstName} {msg.senderLastName}
                     </strong>
 
-                    <div style={{ fontWeight: 600 }}>
-                      {msg.subject}
-                    </div>
+                    <div style={{ fontWeight: 600 }}>{msg.subject}</div>
 
                     <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
                       {msg.snippet}
                     </div>
 
                     <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
-                      Meeting Time: {msg.requestedStart ? new Date(msg.requestedStart).toLocaleString(): "No requested time"} - {msg.requestedEnd ? new Date(msg.requestedEnd).toLocaleString(): "No requested time"}
+                      Meeting Time:{" "}
+                      {msg.requestedStart
+                        ? new Date(msg.requestedStart).toLocaleString()
+                        : "No requested time"}{" "}
+                      -{" "}
+                      {msg.requestedEnd
+                        ? new Date(msg.requestedEnd).toLocaleString()
+                        : "No requested time"}
                     </div>
 
                     <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
@@ -410,7 +412,6 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
                 ))}
               </Box>
             )}
-
           </Section>
         </Box>
       </Box>

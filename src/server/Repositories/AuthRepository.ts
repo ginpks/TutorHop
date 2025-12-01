@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 
 export class AuthRepository {
   private readonly database: NodePgDatabase<typeof schema>;
-  
+
   constructor(db: NodePgDatabase<typeof schema>) {
     this.database = db;
   }
@@ -16,7 +16,7 @@ export class AuthRepository {
       .from(users)
       .where(eq(users.email, email))
       .limit(1);
-    
+
     return result[0] || null;
   }
 
@@ -26,7 +26,7 @@ export class AuthRepository {
       .from(users)
       .where(eq(users.id, id))
       .limit(1);
-    
+
     return result[0] || null;
   }
 
@@ -42,7 +42,7 @@ export class AuthRepository {
       .insert(users)
       .values(userData)
       .returning();
-    
+
     return result[0];
   }
 }

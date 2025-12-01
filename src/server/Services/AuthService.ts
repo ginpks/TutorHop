@@ -14,7 +14,7 @@ export class AuthService {
 
   constructor(private readonly authRepo: AuthRepository) {
     this.JWT_SECRET = process.env.JWT_SECRET || "something-went-wrong";
-    
+
     if (!process.env.JWT_SECRET) {
       console.warn("JWT_SECRET not set in environment variables!");
     }
@@ -36,7 +36,6 @@ export class AuthService {
     }
   }
 
-  // LOGIN
   public async login(email: string, password: string) {
     const user = await this.authRepo.findUserByEmail(email);
 
@@ -67,7 +66,6 @@ export class AuthService {
     };
   }
 
-  // REGISTER
   public async register(userData: {
     email: string;
     password: string;
