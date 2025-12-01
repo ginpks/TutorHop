@@ -30,7 +30,16 @@ export default function Survey() {
     "When do you want to study?",
     "Where do you want to study?",
   ];
-  const locations = ["LGRT", "LRGC", "WEB Du Bois", "ISB", "PSB"];
+  const locations = [
+    "Remote/Zoom",
+    "CSB",
+    "LGRT",
+    "LGRC",
+    "WEB DB",
+    "ISB",
+    "PSB",
+    "SEL",
+  ];
   const [mode, setMode] = useState<boolean>(true);
 
   const [answers, setAnswers] = useState<QuestionSubmission[]>(
@@ -80,7 +89,7 @@ export default function Survey() {
       options={classes}
       value={current.primary}
       onChange={onPrimaryChange}
-      placeholder="e.g., Math, CS320..."
+      placeholder="Select classes or subjects..."
     />,
 
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -102,7 +111,11 @@ export default function Survey() {
             value={selectedTime}
             onChange={(v) => setSelectedTime(v)}
           />
-          <PrimaryButton text="ADD" onClick={onAddDateTime} />
+          <PrimaryButton
+            text="ADD"
+            disabled={!selectedDate || !selectedTime}
+            onClick={onAddDateTime}
+          />
         </Box>
 
         <Box
@@ -151,22 +164,13 @@ export default function Survey() {
         </Box>
       </Box>
     </LocalizationProvider>,
-    <Box display="flex" flexDirection="column" gap="5px">
-	    <Stack direction="row" spacing={2} alignItems="center">
 
-      <Switch checked={mode} onChange={(e) => setMode(e.target.checked)} />
-		<Typography
-		color="#3C3744">
-		    {mode ? "In-Person" : "Remote"}
-		</Typography>
-	    </Stack>
-      <PillPicker
-        options={locations}
-        value={current.primary}
-        onChange={onPrimaryChange}
-        placeholder="Select locations..."
-      />
-    </Box>,
+    <PillPicker
+      options={locations}
+      value={current.primary}
+      onChange={onPrimaryChange}
+      placeholder="Select locations..."
+    />,
   ];
 
   const onBack = () => {
@@ -192,7 +196,7 @@ export default function Survey() {
       >
         {/* --- TOP: Question --- */}
         <Box textAlign="center" mb={4}>
-          <Typography variant="h4" fontWeight="bold" color="#3C3744">
+          <Typography variant="h2" fontWeight="bold" color="#3C3744">
             {questions[page]}
           </Typography>
         </Box>
@@ -233,7 +237,7 @@ export default function Survey() {
               onClick={onNext}
               text={"Next"}
               py={1.5}
-              disabled={false}
+              disabled={current.primary.length == 0}
             />
           </Stack>
         </Box>
