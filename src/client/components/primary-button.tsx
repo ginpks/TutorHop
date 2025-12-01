@@ -6,6 +6,7 @@ export interface ButtonProps {
   py?: number;
   onClick?: () => void;
   disabled?: boolean;
+  fullWidth?: boolean;
 }
 
 function PrimaryButton({
@@ -14,10 +15,12 @@ function PrimaryButton({
   py = 1,
   onClick,
   disabled = false,
+  fullWidth = false,
 }: ButtonProps) {
   return (
     <Button
       variant="contained"
+      fullWidth={fullWidth}
       onClick={onClick}
       disabled={disabled}
       sx={{
