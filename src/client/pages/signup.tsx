@@ -117,7 +117,7 @@ function Signup() {
                     : {
                         ...prev,
                         accountType: "tutor",
-                      }
+                      },
                 );
               }}
             >
