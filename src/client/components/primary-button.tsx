@@ -7,6 +7,7 @@ export interface ButtonProps {
   onClick?: () => void;
   disabled?: boolean;
   type?: React.ButtonHTMLAttributes<HTMLButtonElement>["type"];
+  fullWidth?: boolean;
 }
 
 function PrimaryButton({
@@ -16,10 +17,12 @@ function PrimaryButton({
   onClick,
   disabled = false,
   type,
+  fullWidth = false,
 }: ButtonProps) {
   return (
     <Button
       variant="contained"
+      fullWidth={fullWidth}
       onClick={onClick}
       disabled={disabled}
       sx={{
