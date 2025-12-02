@@ -6,7 +6,5 @@ export interface SignUpForm {
   lastName: string;
   email: string;
   password: string;
-  subjects: string;
-  availability?: string;
   meetingPreference: string;
 }

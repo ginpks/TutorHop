@@ -2,6 +2,10 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { AuthRepository } from "../Repositories/AuthRepository.js";
 import { meetingPreference } from "../../../drizzle/schema.js";
+import {
+  mapRawLoginInfoToInterface,
+  mapRawSignUpFormToInterface,
+} from "../../shared/Mappers/AccountsMapper.js";
 
 interface JWTPayload {
   userId: number;
@@ -40,14 +44,13 @@ export class AuthService {
   public async login(raw_data: any) {
     console.log(raw_data);
 
-    const email = raw_data.email;
-    const password = raw_data.password;
+    const data = mapRawLoginInfoToInterface(raw_data);
 
-    const user = await this.authRepo.findUserByEmail(email);
+    const user = await this.authRepo.findUserByEmail(data.email);
 
     if (!user) return;
 
-    const passwordMatches = await bcrypt.compare(password, user.password);
+    const passwordMatches = await bcrypt.compare(data.password, user.password);
     if (!passwordMatches) return;
 
     const token = this.generateToken({
@@ -69,22 +72,12 @@ export class AuthService {
   }
 
   public async register(raw_data: any) {
-	
     console.log(raw_data);
 
-    const userData = {
-      email: raw_data.email,
-      password: raw_data.password,
-      firstName: raw_data.firstName,
-      lastName: raw_data.lastName,
-      role: raw_data.role,
-      meetingPreference: raw_data.meetingPreference,
-    };
-
+    const userData = mapRawSignUpFormToInterface(raw_data);
     const existingUser = await this.authRepo.findUserByEmail(userData.email);
 
-    if (existingUser) 
-	return
+    if (existingUser) return;
 
     const hashedPassword = await bcrypt.hash(userData.password, 10);
 
