@@ -7,20 +7,65 @@ import Signup from "./pages/signup";
 import Profile from "./pages/profile";
 import StudentProfile from "./pages/studentprofile";
 import TutorProfile from "./pages/tutorprofile";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/results" element={<Results />} />
-        <Route path="/survey" element={<Survey />} />
-        <Route path="/results" element={<Results />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/studentprofile" element={<StudentProfile />} />
-        <Route path="/tutorprofile" element={<TutorProfile />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/landing" element={<Landing />} />
+        {/* Public routes */}
         <Route path="/" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+
+        {/* Protected routes */}
+        <Route
+          path="/landing"
+          element={
+            <ProtectedRoute>
+              <Landing />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/results"
+          element={
+            <ProtectedRoute>
+              <Results />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/survey"
+          element={
+            <ProtectedRoute>
+              <Survey />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/studentprofile"
+          element={
+            <ProtectedRoute>
+              <StudentProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tutorprofile"
+          element={
+            <ProtectedRoute>
+              <TutorProfile />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );

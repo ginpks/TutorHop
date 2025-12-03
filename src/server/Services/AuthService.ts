@@ -41,19 +41,17 @@ export class AuthService {
   }
 
   public async login(raw_data: any): Promise<object | boolean> {
-    console.log(raw_data);
-
     const data = mapRawLoginInfoToInterface(raw_data);
 
     const user = await this.authRepo.findUserByEmail(data.email);
-    console.log("cannot find user", data.email);
     if (!user) {
-      console.log("cannot find user", data.email);
       return false;
     }
+
     const passwordMatches = await bcrypt.compare(data.password, user.password);
-    console.log("cannot find password", user.password);
-    if (!passwordMatches) return false;
+    if (!passwordMatches) {
+      return false;
+    }
 
     const token = this.generateToken({
       userId: user.id,
@@ -74,8 +72,6 @@ export class AuthService {
   }
 
   public async register(raw_data: any) {
-    console.log(raw_data);
-
     const userData = mapRawSignUpFormToInterface(raw_data);
     const existingUser = await this.authRepo.findUserByEmail(userData.email);
 

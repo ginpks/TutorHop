@@ -11,10 +11,6 @@ import React from "react";
 import PrimaryButton from "../components/primary-button";
 import SecondaryButton from "../components/secondary-button";
 import { useNavigate } from "react-router-dom";
-import { getDatabaseService } from "../../server/Services/UtilitiesServices/DatabaseService";
-import { error } from "console";
-import { AuthProvider } from "../components/AuthenticationComponent";
-import login from "../../server/Services/routes/api/Account/login";
 
 type LoginForm = {
   email: string;
@@ -41,6 +37,7 @@ function Login() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setMessage("");
 
     try {
       const res = await fetch("/accounts/login", {
@@ -52,31 +49,39 @@ function Login() {
         const loginData = await res.json();
         const jwt = loginData.token;
 
+        // Store token in localStorage
+        localStorage.setItem("token", jwt);
+
         const query = new URLSearchParams({ token: jwt });
         const dataRes = await fetch(`/accounts/data?${query.toString()}`);
 
         if (!dataRes.ok) {
-          throw new Error("Could not reach the data route");
+          setMessage("Authentication verification failed. Please try again.");
+          return;
         }
 
         const verified = await dataRes.json();
 
-        setJwtToken(verified.token);
+        setJwtToken(jwt);
         setUser(loginData.user);
 
-        navigate("/landing", { state: jwtToken });
+        navigate("/landing");
+      } else if (res.status === 403) {
+        setMessage("Invalid email or password. Please try again.");
       } else {
-        throw new Error("The sign up api call is incorrect");
+        setMessage("Login failed. Please try again.");
       }
     } catch (err) {
       console.error("Error fetching the login api: ", err);
+      setMessage(
+        "An error occurred. Please check your connection and try again.",
+      );
     }
   }
   const isDisabled = !form.email || !form.password;
 
   return (
     <>
-      <AuthProvider token={jwtToken} logIn={true} />
       <Card
         sx={{
           position: "fixed",
@@ -139,7 +144,7 @@ function Login() {
               />
 
               {message && (
-                <Typography color="primary" align="center">
+                <Typography color="error" align="center" sx={{ mt: 1 }}>
                   {message}
                 </Typography>
               )}

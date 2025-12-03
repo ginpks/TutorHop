@@ -15,7 +15,7 @@ import PrimaryButton from "../components/primary-button";
 import SecondaryButton from "../components/secondary-button";
 import type { SelectChangeEvent } from "@mui/material/Select";
 import { UserRole } from "../../shared/Enums/UserEnums";
-// Sign-Up form variables
+import { useNavigate } from "react-router-dom";
 type FormState = {
   accountType: UserRole;
   firstName: string;
@@ -42,30 +42,48 @@ const initialForm: FormState = {
 function Signup() {
   const [form, setForm] = React.useState<FormState>(initialForm);
   const [signUpCompleted, setSignUpCompleted] = React.useState<Boolean>(false);
+  const [errorMessage, setErrorMessage] = React.useState<string>("");
+  const navigate = useNavigate();
 
-  //Updates state when input is changed
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  //sends submission to database and created new account
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setErrorMessage("");
+
+    if (form.password !== form.confirmPassword) {
+      setErrorMessage("Passwords do not match");
+      return;
+    }
 
     try {
+      // Prepare signup data with hardcoded defaults
+      const signupData = {
+        ...form,
+        subjects: "NA",
+        meetingPreference: "either",
+      };
+
       const res = await fetch("/accounts/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(signupData),
       });
 
       if (!res.ok) {
-        throw new Error("The sign up api call is incorrect");
+        const errorData = await res.text();
+        setErrorMessage("Failed to create account. Please try again.");
+        return;
       }
+
       setSignUpCompleted(true);
+      navigate("/");
     } catch (err) {
       console.error("Error fetching the sign up api: ", err);
+      setErrorMessage("An error occurred. Please try again.");
     }
   }
 
@@ -185,47 +203,11 @@ function Signup() {
               onChange={handleChange}
             />
 
-            {form.accountType === "student" && (
-              <TextField
-                label="Subjects of Study"
-                name="subjects"
-                value={form.subjects}
-                onChange={handleChange}
-                fullWidth
-                required
-              />
+            {errorMessage && (
+              <Typography color="error" align="center" sx={{ mt: 1 }}>
+                {errorMessage}
+              </Typography>
             )}
-
-            {form.accountType === "tutor" && (
-              <>
-                <TextField
-                  label="Subjects of Expertise"
-                  name="subjects"
-                  value={form.subjects}
-                  onChange={handleChange}
-                  required
-                  fullWidth
-                />
-
-                <TextField
-                  label="Availability"
-                  name="availability"
-                  value={form.availability}
-                  onChange={handleChange}
-                  required
-                  fullWidth
-                />
-              </>
-            )}
-
-            <TextField
-              label="Meeting Preference"
-              name="meetingPreference"
-              required
-              fullWidth
-              value={form.meetingPreference}
-              onChange={handleChange}
-            />
 
             <Stack
               direction="row"
@@ -239,7 +221,13 @@ function Signup() {
               ></PrimaryButton>
             </Stack>
 
-            <Typography variant="body2" color="text.secondary" align="center">
+            <Typography
+              variant="body2"
+              color="primary"
+              align="center"
+              sx={{ mt: 1, cursor: "pointer", textDecoration: "underline" }}
+              onClick={() => navigate("/")}
+            >
               Already have an account? Sign in
             </Typography>
           </Stack>

@@ -15,14 +15,35 @@ router.get("/data", async (req, res) => {
     const token = auth_service.verifyToken(raw_token);
 
     if (token === null) {
-      res.status(403);
-      throw new Error("JWT Token is null.");
-    } else {
-      res.json({ message: "successful login", token });
+      res.status(403).json({ error: "Invalid token" });
+      return;
     }
-    console.log("successfully connected to protected route");
+
+    // Fetch the user data from the database using the userId from token
+    const userId = token.userId;
+    const user = await auth_service.getUserById(userId);
+
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    // Return user data without sensitive fields
+    res.json({
+      message: "successful login",
+      token,
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        meetingPreference: user.meetingPreference,
+      },
+    });
   } catch (err: any) {
-    console.log(err);
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 

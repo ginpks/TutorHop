@@ -61,7 +61,7 @@ export const AuthProvider = ({ children, token, logIn }: AuthProviderProps) => {
 
   const value = useMemo(
     () => ({ token, logIn, login, logout, allowed }),
-    [token, logIn, login, logout, allowed]
+    [token, logIn, login, logout, allowed],
   );
 
   if (!allowed) return null;

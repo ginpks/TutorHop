@@ -19,13 +19,14 @@ router.post("/login", async (req, res) => {
     const token = await auth_service.login(data);
 
     if (token === false) {
-      res.status(403);
-      throw new Error("Could not get the JWT token.");
+      res.status(403).json({ error: "Invalid email or password" });
+      return;
     } else {
       res.status(200).send(token as object);
     }
   } catch (err: any) {
     console.log(err);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
