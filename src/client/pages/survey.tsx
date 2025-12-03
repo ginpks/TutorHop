@@ -11,7 +11,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 import { Dayjs } from "dayjs";
 import DefaultBanner from "../components/main_banner/banner";
-import { Map } from "@vis.gl/react-maplibre";
 
 interface QuestionSubmission {
   primary: string[];
@@ -30,17 +29,7 @@ export default function Survey() {
     "When do you want to study?",
     "Where do you want to study?",
   ];
-  const locations = [
-    "Remote/Zoom",
-    "CSB",
-    "LGRT",
-    "LGRC",
-    "WEB DB",
-    "ISB",
-    "PSB",
-    "SEL",
-  ];
-  const [mode, setMode] = useState<boolean>(true);
+  const locations = ["Remote / Zoom", "In-person"];
 
   const [answers, setAnswers] = useState<QuestionSubmission[]>(
     Array.from({ length: questions.length }, () => ({
@@ -185,7 +174,7 @@ export default function Survey() {
 
   return (
     <Box display="flex" flexDirection="column" height="100dvh">
-      <DefaultBanner title="Tutor Hop" />
+      <DefaultBanner title="Tutor Hop" isLoggedIn={false} />
       <Box
         display="flex"
         flexDirection="column"

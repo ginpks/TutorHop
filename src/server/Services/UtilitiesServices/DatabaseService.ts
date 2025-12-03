@@ -34,7 +34,7 @@ export class DatabaseService {
     // Profile Inbox
     this.profileInboxRepository = new ProfileInboxRepository(db);
     this.profileInboxServices = new ProfileInboxServices(
-      this.profileInboxRepository
+      this.profileInboxRepository,
     );
   }
 }
