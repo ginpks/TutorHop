@@ -57,7 +57,38 @@ export default function Survey() {
     fetchData();
   }, []);
 
-  const classes = ["CICS 109", "CICS 110", "CICS 127", "CICS 160", "CICS 210"];
+  const classes = [
+    "CICS 109",
+    "CICS 110",
+    "CICS 127",
+    "CICS 160",
+    "CICS 210",
+    "CICS 256",
+    "CICS 291C",
+    "CICS 291T",
+    "CICS 296P",
+    "CICS 298A",
+    "CICS 305",
+    "CICS 396A",
+    "CICS590P",
+    "COMPSCI 119",
+    "COMPSCI 198C",
+    "COMPSCI 220",
+    "COMPSCI 230",
+    "COMPSCI 240",
+    "COMPSCI 250",
+    "COMPSCI 311",
+    "COMPSCI 320",
+    "COMPSCI 325",
+    "COMPSCI 326",
+    "COMPSCI 345",
+    "COMPSCI 348",
+    "COMPSCI 360",
+    "COMPSCI 377",
+    "COMPSCI 383",
+    "COMPSCI 389",
+    "COMPSCI 390B",
+  ];
   const questions = [
     "What subjects do you need help with?",
     "When do you want to study?",
