@@ -128,7 +128,7 @@ function Signup() {
   };
 
   return (
-    <Card
+    <Card //use a Box
       sx={{
         minHeight: "100vh",
         width: "100vw",
@@ -138,7 +138,6 @@ function Signup() {
         bgcolor: "#FBFFF1",
         border: "none",
         boxShadow: "none",
-
       }}
     >
     <DefaultBanner title="Tutor Hop" isLoggedIn={false} />
