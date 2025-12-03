@@ -30,7 +30,6 @@ export default function Survey() {
     "Where do you want to study?",
   ];
   const locations = ["Remote / Zoom", "In-person"];
-  const [mode, setMode] = useState<boolean>(true);
 
   const [answers, setAnswers] = useState<QuestionSubmission[]>(
     Array.from({ length: questions.length }, () => ({
