@@ -65,6 +65,7 @@ function Landing() {
         title="Tutor Hop"
         profilePicUrl=""
         displayName="John Doe"
+        isLoggedIn
       />
 
       <Box sx={{ display: "flex", flexShrink: 0, flexGrow: 1 }}>

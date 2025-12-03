@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { AuthRepository } from "../Repositories/AuthRepository.js";
-import { meetingPreference } from "../../../drizzle/schema.js";
 import {
   mapRawLoginInfoToInterface,
   mapRawSignUpFormToInterface,
@@ -41,17 +40,17 @@ export class AuthService {
     }
   }
 
-  public async login(raw_data: any) {
+  public async login(raw_data: any): Promise<object | boolean> {
     console.log(raw_data);
 
     const data = mapRawLoginInfoToInterface(raw_data);
 
     const user = await this.authRepo.findUserByEmail(data.email);
 
-    if (!user) return;
+    if (!user) return false;
 
     const passwordMatches = await bcrypt.compare(data.password, user.password);
-    if (!passwordMatches) return;
+    if (!passwordMatches) return false;
 
     const token = this.generateToken({
       userId: user.id,

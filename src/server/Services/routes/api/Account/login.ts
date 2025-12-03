@@ -16,9 +16,14 @@ router.post("/login", async (req, res) => {
     const data = await req.body;
     const auth_service: AuthService = (await db).authServices;
 
-    auth_service.login(data);
-    //respond with the data retrieved as a JSon
-    res.status(200).json(data);
+    const token = await auth_service.login(data);
+
+    if (token === false) {
+      res.status(403);
+      throw new Error("Could not get the JWT token.");
+    } else {
+      res.status(200).send(token as object);
+    }
   } catch (err: any) {
     console.log(err);
   }
