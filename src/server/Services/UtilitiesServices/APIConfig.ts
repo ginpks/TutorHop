@@ -1,5 +1,5 @@
 import previewRouter from "../routes/api/Inbox/inbox_preview.js";
-import signUpRouter from "../routes/api/Account/sign_up.js";
+import signUpRouter from "../routes/api/Account/signup.js";
 import loginRouter from "../routes/api/Account/login.js";
 import express from "express";
 import profileInboxRouter from "../routes/api/Inbox/profile_inbox_endpoint.js";
