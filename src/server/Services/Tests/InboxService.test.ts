@@ -1,7 +1,7 @@
-import { InboxServices } from '../../server/Services/InboxService.js';
-import { InboxRepository } from '../../server/Repositories/InboxRepository.js';
-import { inboxPreviewMapper } from '../Mappers/InboxMappers.js';
-import mockInboxData from '../../server/mock/student_inbox.json' with { type: "json" };
+import { InboxServices } from '../InboxService.js';
+import { InboxRepository } from '../../Repositories/InboxRepository.js';
+import { inboxPreviewMapper } from '../../../shared/Mappers/InboxMappers.js';
+import mockInboxData from '../../mock/student_inbox.json' with { type: "json" };
 
 /* 
   Some general tips:
