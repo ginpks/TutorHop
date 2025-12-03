@@ -70,7 +70,7 @@ export default function Survey() {
     "CICS 298A",
     "CICS 305",
     "CICS 396A",
-    "CICS590P",
+    "CICS 590P",
     "COMPSCI 119",
     "COMPSCI 198C",
     "COMPSCI 220",
