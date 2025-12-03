@@ -27,6 +27,8 @@ export class DatabaseService {
 
     // Inbox
     this.inboxRepository = new InboxRepository(db);
+    //services
+    this.inboxServices = new InboxServices(this.inboxRepository);
     this.inboxServices = new InboxServices(this.inboxRepository);
 
     // Profile Inbox

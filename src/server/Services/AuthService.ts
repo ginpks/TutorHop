@@ -1,6 +1,10 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { AuthRepository } from "../Repositories/AuthRepository.js";
+import {
+  mapRawLoginInfoToInterface,
+  mapRawSignUpFormToInterface,
+} from "../../shared/Mappers/AccountsMapper.js";
 
 interface JWTPayload {
   userId: number;
@@ -36,16 +40,17 @@ export class AuthService {
     }
   }
 
-  public async login(email: string, password: string) {
-    const user = await this.authRepo.findUserByEmail(email);
+  public async login(raw_data: any): Promise<object | boolean> {
+    const data = mapRawLoginInfoToInterface(raw_data);
 
+    const user = await this.authRepo.findUserByEmail(data.email);
     if (!user) {
-      throw new Error("Invalid credentials");
+      return false;
     }
 
-    const passwordMatches = await bcrypt.compare(password, user.password);
+    const passwordMatches = await bcrypt.compare(data.password, user.password);
     if (!passwordMatches) {
-      throw new Error("Invalid credentials");
+      return false;
     }
 
     const token = this.generateToken({
@@ -66,19 +71,11 @@ export class AuthService {
     };
   }
 
-  public async register(userData: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-    role: "student" | "tutor";
-    meetingPreference: "in_person" | "zoom" | "either";
-  }) {
+  public async register(raw_data: any) {
+    const userData = mapRawSignUpFormToInterface(raw_data);
     const existingUser = await this.authRepo.findUserByEmail(userData.email);
 
-    if (existingUser) {
-      throw new Error("Email already in use");
-    }
+    if (existingUser) return;
 
     const hashedPassword = await bcrypt.hash(userData.password, 10);
 

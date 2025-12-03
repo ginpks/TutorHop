@@ -1,39 +1,59 @@
-import { Box, Card, CardActions } from "@mui/material";
-import Grid from "@mui/material/Grid";
-import DefaultBanner from "../components/main_banner/banner.js";
-import InboxCardComponent from "../components/LandingInbox.js";
-import React, { useEffect, useState } from "react";
-import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces.js";
-import { roleLabels, UserRole } from "../../shared/Enums/UserEnums.js";
-import UpcomingAppointment from "../components/UpcomingAppointment.js";
-import PrimaryButton from "../components/primary-button.js";
-import UserSearchBar from "../components/SearchBar.js";
+import { Box } from "@mui/material";
+import DefaultBanner from "../components/main_banner/banner";
+import InboxCardComponent from "../components/LandingInbox";
+import React, { useEffect } from "react";
+import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces";
+import { roleLabels, UserRole } from "../../shared/Enums/UserEnums";
+import UpcomingAppointment from "../components/UpcomingAppointment";
 import { useNavigate } from "react-router-dom";
 
 function Landing() {
   const [messages, setMessages] = React.useState<MailPreviewMessages[]>([]);
+  const [upcoming, setUpcoming] = React.useState<MailPreviewMessages[]>([]);
   const [userID, setUserID] = React.useState<number>(0);
   const [isTutor, setIsTutor] = React.useState<boolean>(false);
   const [loadingInbox, setLoadingInbox] = React.useState<boolean>(true);
-  const [upcoming, setUpcoming] = React.useState<MailPreviewMessages[]>([])
-  const createReq = () => {
-      useNavigate()("/survey");
-    };
+  const [userName, setUserName] = React.useState<string>("");
+  const [userRole, setUserRole] = React.useState<string>("");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    //set a test user
+    // Token check is handled by ProtectedRoute wrapper
     setUserID(5);
+
+    // Get user data from localStorage or token
+    const token = localStorage.getItem("token");
+    if (token) {
+      // Decode JWT to get user info
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        setUserName(payload.email || "User");
+        setUserRole(payload.role || "student");
+      } catch (e) {
+        console.error("Failed to decode token", e);
+      }
+    }
+  }, []);
+
+  const handleProfileClick = () => {
+    if (userRole === "tutor") {
+      navigate("/tutorprofile");
+    } else {
+      navigate("/studentprofile");
+    }
+  };
+
+  useEffect(() => {
     if (!userID) return;
+
     async function load() {
-      //set the inbox as loading to display wheel
       setLoadingInbox(true);
       try {
-        //define the data params to send to the endpoint
         const query = new URLSearchParams({
           tutor: isTutor === true ? "true" : "false",
           status: "pending",
         });
-        //fetch the endpoint using the params
+
         const res = await fetch(`/inbox/${userID}/preview?${query.toString()}`);
 
         if (!res.ok) {
@@ -55,13 +75,14 @@ function Landing() {
 
         setMessages(data);
         setUpcoming(apps);
-        setLoadingInbox(false);
       } catch (err) {
         console.error("Inbox fetch error: ", err);
+      } finally {
+        setLoadingInbox(false);
       }
     }
     load();
-  }, [userID]);
+  }, [userID, isTutor]);
 
   return (
     <Box
@@ -81,7 +102,10 @@ function Landing() {
       <DefaultBanner
         title="Tutor Hop"
         profilePicUrl=""
-        displayName="John Doe"
+        displayName={userName}
+        isLoggedIn
+        onProfileClick={handleProfileClick}
+        userType={roleLabels[userRole as UserRole] || "Student"}
       />
 
       <Box sx={{ display: "flex", flexShrink: 0, flexGrow: 1 }}>
@@ -107,13 +131,6 @@ function Landing() {
           />
         </Box>
       </Box>
-      {/* <Box>
-        <UserSearchBar userType={roleLabels[UserRole?.STUDENT]}></UserSearchBar>
-      </Box> */}
-      <Box display={"flex"} justifyContent={"center"}>
-        <PrimaryButton px={20} text="Request New Appointment" onClick={createReq}/>
-      </Box>
-      
     </Box>
     
   );

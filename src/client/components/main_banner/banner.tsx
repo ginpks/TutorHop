@@ -1,13 +1,17 @@
 import React from "react";
-import { AppBar, Card, Toolbar, Typography } from "@mui/material";
+import { AppBar, Button, Card, Toolbar, Typography } from "@mui/material";
 import ProfileHeader from "./ProfileHeader";
 import { roleLabels, UserRole } from "../../../shared/Enums/UserEnums";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface DefaultBannerProps {
   title: string;
   profilePicUrl?: string;
   displayName?: string;
   bannerStyle?: React.CSSProperties;
+  isLoggedIn: boolean;
+  onProfileClick?: () => void;
+  userType?: string;
 }
 
 const avatarStyle: React.CSSProperties = {
@@ -29,7 +33,13 @@ function DefaultBanner({
   profilePicUrl,
   displayName,
   bannerStyle,
+  isLoggedIn,
+  onProfileClick,
+  userType,
 }: Readonly<DefaultBannerProps>) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <AppBar
       position="static"
@@ -38,17 +48,52 @@ function DefaultBanner({
         background: "linear-gradient(90deg, #B4C5E4 0%, #7A93C9 100%)",
       }}
     >
-      <Toolbar sx={{ display: "flex", alignItems: "center", padding: 0.4 }}>
+      <Toolbar
+        sx={{ display: "flex", alignItems: "center", padding: 0.4, gap: 2 }}
+      >
         {" "}
-        <Typography variant="h4" sx={{ flexGrow: 1, fontWeight: "bold" }}>
+        <Typography
+          variant="h4"
+          sx={{
+            flexGrow: 1,
+            fontWeight: "bold",
+            cursor: isLoggedIn ? "pointer" : "default",
+            "&:hover": isLoggedIn ? { opacity: 0.85 } : {},
+          }}
+          onClick={() => isLoggedIn && navigate("/landing")}
+        >
           {title}
         </Typography>
-        <ProfileHeader
-          profilePicUrl={profilePicUrl}
-          displayName={displayName}
-          onClick={() => {}}
-          userType={roleLabels[UserRole?.STUDENT]}
-        />
+        {isLoggedIn &&
+          userType === "Student" &&
+          location.pathname !== "/survey" && (
+            <Button
+              variant="contained"
+              sx={{
+                bgcolor: "#FBFFF1",
+                color: "#3C3744",
+                fontWeight: 700,
+                textTransform: "none",
+                px: 3,
+                py: 1,
+                borderRadius: 2,
+                "&:hover": {
+                  bgcolor: "#F0F5E1",
+                },
+              }}
+              onClick={() => navigate("/survey")}
+            >
+              Find Tutor
+            </Button>
+          )}
+        {isLoggedIn && (
+          <ProfileHeader
+            profilePicUrl={profilePicUrl}
+            displayName={displayName}
+            onClick={onProfileClick}
+            userType={userType || roleLabels[UserRole?.STUDENT]}
+          />
+        )}
       </Toolbar>
     </AppBar>
   );
