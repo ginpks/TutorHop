@@ -63,6 +63,8 @@ function Login() {
 
         setJwtToken(verified.token);
         setUser(loginData.user);
+
+        navigate("/landing", { state: jwtToken });
       } else {
         throw new Error("The sign up api call is incorrect");
       }
@@ -74,7 +76,7 @@ function Login() {
 
   return (
     <>
-      <AuthProvider token={jwtToken} />
+      <AuthProvider token={jwtToken} logIn={true} />
       <Card
         sx={{
           position: "fixed",

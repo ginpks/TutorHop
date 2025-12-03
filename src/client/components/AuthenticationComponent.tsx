@@ -1,33 +1,71 @@
-import React, { createContext, useContext, useEffect, useMemo } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
+import { useNavigate } from "react-router-dom";
 
-interface AuthProps {
+interface AuthContextType {
+  token?: string;
+  logIn?: boolean;
+  login?: (token?: string) => void;
+  logout?: () => void;
+  allowed: boolean;
+}
+
+interface AuthProviderProps {
   token?: string;
   children?: React.ReactNode;
-  login?: any;
-  logout?: any;
+  logIn?: boolean;
 }
-const AuthContext = createContext<AuthProps>({});
-export const AuthProvider = ({ children, token }: AuthProps) => {
-  const login = (token?: string) => {
-    if (typeof token === "string") {
-      localStorage.setItem("token", token);
-    }
-  };
 
-  const logout = () => {
+const AuthContext = createContext<AuthContextType>({ allowed: false });
+
+export const AuthProvider = ({ children, token, logIn }: AuthProviderProps) => {
+  const navigate = useNavigate();
+  const [allowed, setAllowed] = useState(false);
+
+  const login = useCallback((t?: string) => {
+    if (typeof t === "string") {
+      localStorage.setItem("token", t);
+    }
+    setAllowed(true);
+  }, []);
+
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
-  };
+    setAllowed(false);
+  }, []);
 
   useEffect(() => {
-    login(token);
-  }, [token]);
+    if (logIn === true) {
+      login(token);
+      return;
+    }
+    if (logIn === false) {
+      logout();
+      navigate("/");
+      return;
+    }
+    const stored = localStorage.getItem("token");
+    if (stored) {
+      setAllowed(true);
+    } else {
+      setAllowed(false);
+      navigate("/");
+    }
+  }, [token, logIn, login, logout, navigate]);
 
-  return (
-    <AuthContext.Provider
-      value={useMemo(() => ({ token, login, logout }), [token])}
-    >
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({ token, logIn, login, logout, allowed }),
+    [token, logIn, login, logout, allowed]
   );
+
+  if (!allowed) return null;
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-export const useAuth = () => useContext(AuthContext);
+export default AuthProvider;

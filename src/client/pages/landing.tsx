@@ -7,6 +7,7 @@ import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces.js"
 import { roleLabels, UserRole } from "../../shared/Enums/UserEnums.js";
 import UpcomingAppointment from "../components/UpcomingAppointment.js";
 import UserSearchBar from "../components/SearchBar.js";
+import { AuthProvider } from "../components/AuthenticationComponent.js";
 
 function Landing() {
   const [messages, setMessages] = React.useState<MailPreviewMessages[]>([]);
@@ -47,54 +48,56 @@ function Landing() {
   }, [userID]);
 
   return (
-    <Box
-      sx={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        borderRadius: 0,
-        alignItems: "top",
-        bgcolor: "#FBFFF1",
-        border: "none",
-        boxShadow: "none",
-      }}
-    >
-      <DefaultBanner
-        title="Tutor Hop"
-        profilePicUrl=""
-        displayName="John Doe"
-        isLoggedIn
-      />
-
-      <Box sx={{ display: "flex", flexShrink: 0, flexGrow: 1 }}>
-        <InboxCardComponent
-          userType={roleLabels[UserRole?.STUDENT]}
-          messages={messages}
-          loading={loadingInbox}
+    <AuthProvider>
+      <Box
+        sx={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          borderRadius: 0,
+          alignItems: "top",
+          bgcolor: "#FBFFF1",
+          border: "none",
+          boxShadow: "none",
+        }}
+      >
+        <DefaultBanner
+          title="Tutor Hop"
+          profilePicUrl=""
+          displayName="John Doe"
+          isLoggedIn
         />
-        <Box
-          sx={{
-            display: "flex",
-            overflowY: "scroll",
-            borderRadius: "10px",
-            boxShadow: "inset 0 0 10px grey",
-            margin: 5,
-            width: "40vw",
-            bgcolor: "#D3D3D3",
-          }}
-        >
-          <UpcomingAppointment
+
+        <Box sx={{ display: "flex", flexShrink: 0, flexGrow: 1 }}>
+          <InboxCardComponent
             userType={roleLabels[UserRole?.STUDENT]}
-            appointments={[]}
+            messages={messages}
+            loading={loadingInbox}
           />
+          <Box
+            sx={{
+              display: "flex",
+              overflowY: "scroll",
+              borderRadius: "10px",
+              boxShadow: "inset 0 0 10px grey",
+              margin: 5,
+              width: "40vw",
+              bgcolor: "#D3D3D3",
+            }}
+          >
+            <UpcomingAppointment
+              userType={roleLabels[UserRole?.STUDENT]}
+              appointments={[]}
+            />
+          </Box>
         </Box>
-      </Box>
-      {/* <Box>
+        {/* <Box>
         <UserSearchBar userType={roleLabels[UserRole?.STUDENT]}></UserSearchBar>
       </Box> */}
-    </Box>
+      </Box>
+    </AuthProvider>
   );
 }
 
