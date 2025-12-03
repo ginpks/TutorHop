@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 function Landing() {
   const [messages, setMessages] = React.useState<MailPreviewMessages[]>([]);
+  const [upcoming, setUpcoming] = React.useState<MailPreviewMessages[]>([]);
   const [userID, setUserID] = React.useState<number>(0);
   const [isTutor, setIsTutor] = React.useState<boolean>(false);
   const [loadingInbox, setLoadingInbox] = React.useState<boolean>(true);
@@ -73,6 +74,7 @@ function Landing() {
         const apps = (await res2.json()) as MailPreviewMessages[];
 
         setMessages(data);
+        setUpcoming(apps);
       } catch (err) {
         console.error("Inbox fetch error: ", err);
       } finally {
