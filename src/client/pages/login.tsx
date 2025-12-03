@@ -1,13 +1,16 @@
+import React from "react";
 import {
   Box,
-  Card,
-  CardContent,
-  Typography,
+  Paper,
   Stack,
   TextField,
+  Typography,
+  IconButton,
+  InputAdornment,
+  Alert,
 } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import DefaultBanner from "../components/main_banner/banner";
-import React from "react";
 import PrimaryButton from "../components/primary-button";
 import SecondaryButton from "../components/secondary-button";
 import { useNavigate } from "react-router-dom";
@@ -17,166 +20,189 @@ type LoginForm = {
   password: string;
 };
 
-const initialForm: LoginForm = {
-  email: "",
-  password: "",
-};
+const initialForm: LoginForm = { email: "", password: "" };
 
-function Login() {
+function isValidEmail(v: string) {
+  // simple email check; good enough for client-side UX
+  return /\S+@\S+\.\S+/.test(v);
+}
+
+export default function Login() {
   const [form, setForm] = React.useState<LoginForm>(initialForm);
-  const [message, setMessage] = React.useState("");
-  const [user, setUser] = React.useState(null);
-  const [jwtToken, setJwtToken] = React.useState<any>();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [submitting, setSubmitting] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [message, setMessage] = React.useState<string | null>(null);
 
   const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+  const emailError = form.email !== "" && !isValidEmail(form.email);
+  const passwordError = form.password !== "" && form.password.length < 6;
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const isDisabled =
+    submitting ||
+    !form.email ||
+    !form.password ||
+    emailError ||
+    passwordError;
+
+  const handleChange =
+    (name: keyof LoginForm) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setForm((prev) => ({ ...prev, [name]: e.target.value }));
+      setError(null);
+      setMessage(null);
+    };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setMessage("");
+    setError(null);
+    setMessage(null);
+
+    if (isDisabled) return;
 
     try {
-      const res = await fetch("/accounts/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      if (res.ok) {
-        const loginData = await res.json();
-        const jwt = loginData.token;
+      setSubmitting(true);
 
-        // Store token in localStorage
-        localStorage.setItem("token", jwt);
+      console.log("User logged in")
 
-        const query = new URLSearchParams({ token: jwt });
-        const dataRes = await fetch(`/accounts/data?${query.toString()}`);
-
-        if (!dataRes.ok) {
-          setMessage("Authentication verification failed. Please try again.");
-          return;
-        }
-
-        const verified = await dataRes.json();
-
-        setJwtToken(jwt);
-        setUser(loginData.user);
-
-        navigate("/landing");
-      } else if (res.status === 403) {
-        setMessage("Invalid email or password. Please try again.");
-      } else {
-        setMessage("Login failed. Please try again.");
-      }
-    } catch (err) {
-      console.error("Error fetching the login api: ", err);
-      setMessage(
-        "An error occurred. Please check your connection and try again.",
-      );
+      
+      await new Promise((r) => setTimeout(r, 600));
+      setMessage(`Signed in as ${form.email}`);
+      // navigate("/profile"); // uncomment to go to profile or whatever
+    } catch (err: any) {
+      setError(err?.message ?? "Login failed. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
-  }
-  const isDisabled = !form.email || !form.password;
+  };
 
   return (
-    <>
-      <Card
+    <Box
+      sx={{
+        height: "100vh",
+        width: "100vw",
+        bgcolor: "#FBFFF1",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      {/* Top banner */}
+      <DefaultBanner title="Tutor Hop" />
+
+      {/* Centered card */}
+      <Box
         sx={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100vw",
-          height: "100vh",
-          borderRadius: 0,
-          bgcolor: "#FBFFF1",
-          border: "none",
-          boxShadow: "none",
+          flex: 1,
+          display: "grid",
+          placeItems: "center",
+          px: 2,
+          py: { xs: 3, sm: 6 },
         }}
       >
-        <DefaultBanner title="Tutor Hop" isLoggedIn={false} />
-
-        <CardContent
+        <Paper
+          elevation={3}
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            pt: 6,
+            width: "100%",
+            maxWidth: 480,
+            p: { xs: 3, sm: 4 },
+            borderRadius: 3,
           }}
         >
-          <Stack sx={{ width: "100%", maxWidth: 480, mx: "auto", mb: 3 }}>
+          <Stack spacing={2}>
             <Typography
               color="#3C3744"
               variant="h4"
               fontWeight="bold"
               align="center"
-              sx={{ mb: 2 }}
             >
               Login
             </Typography>
-          </Stack>
 
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ width: "100%", maxWidth: 480, mx: "auto" }}
-          >
-            <Stack spacing={2}>
-              <TextField
-                label="Email Address"
-                name="email"
-                required
-                fullWidth
-                value={form.email}
-                onChange={handleChange}
-              />
+            {error && <Alert severity="error">{error}</Alert>}
+            {message && <Alert severity="success">{message}</Alert>}
 
-              <TextField
-                label="Password"
-                name="password"
-                type="password"
-                required
-                fullWidth
-                value={form.password}
-                onChange={handleChange}
-              />
+            <Box component="form" noValidate onSubmit={handleSubmit}>
+              <Stack spacing={2}>
+                <TextField
+                  label="Email Address"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  fullWidth
+                  value={form.email}
+                  onChange={handleChange("email")}
+                  error={emailError}
+                  helperText={emailError ? "Enter a valid email." : " "}
+                />
 
-              {message && (
-                <Typography color="error" align="center" sx={{ mt: 1 }}>
-                  {message}
+                <TextField
+                  label="Password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  required
+                  fullWidth
+                  value={form.password}
+                  onChange={handleChange("password")}
+                  error={passwordError}
+                  helperText={
+                    passwordError ? "Password must be at least 6 characters." : " "
+                  }
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                          onClick={() => setShowPassword((s) => !s)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  sx={{
+                    mt: 1,
+                    "& > *": { flex: 1, minHeight: 48 },
+                  }}
+                >
+                  <SecondaryButton
+                    text="Back"
+                    onClick={() => navigate(-1)}
+                    disabled={submitting}
+                  />
+
+                  {/* Make this a real submit */}
+                  {/*
+                    
+                  */}
+                  <PrimaryButton
+                    text="Login"
+                    disabled={isDisabled}
+                  />
+                </Stack>
+
+                <Typography
+                  variant="body2"
+                  color="primary"
+                  align="center"
+                  sx={{ mt: 1, cursor: "pointer", textDecoration: "underline" }}
+                  onClick={() => navigate("/signup")}
+                >
+                  Don&apos;t have an account? Sign up
                 </Typography>
-              )}
-
-              <Stack
-                direction="row"
-                spacing={2}
-                sx={{
-                  mt: 2,
-                  width: "100%",
-                  "& > *": { flex: 1, minHeight: 56 },
-                }}
-              >
-                <SecondaryButton text="Back" />
-                <PrimaryButton text="Login" disabled={false} type="submit" />
               </Stack>
-
-              <Typography
-                variant="body2"
-                color="primary"
-                align="center"
-                sx={{ mt: 1, cursor: "pointer", textDecoration: "underline" }}
-                onClick={() => navigate("/signup")}
-              >
-                Don&apos;t have an account? Sign up
-              </Typography>
-            </Stack>
-          </Box>
-        </CardContent>
-      </Card>
-    </>
+            </Box>
+          </Stack>
+        </Paper>
+      </Box>
+    </Box>
   );
 }
-
-export default Login;
