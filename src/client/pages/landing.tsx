@@ -61,7 +61,17 @@ function Landing() {
           throw new Error(`HTTP ${res.status}`);
         }
 
+        const res2 = await fetch(`/appointments/${userID}/upcoming?${query.toString()}`);
+
+        if(!res2.ok) {
+          const text = await res2.text();
+          console.error("HTTP error", res2.status, text.slice(0, 300));
+          throw new Error(`HTTP ${res2.status}`);
+        }
+        
         const data = (await res.json()) as MailPreviewMessages[];
+        const apps = (await res2.json()) as MailPreviewMessages[];
+
         setMessages(data);
       } catch (err) {
         console.error("Inbox fetch error: ", err);
@@ -115,11 +125,12 @@ function Landing() {
         >
           <UpcomingAppointment
             userType={roleLabels[UserRole?.STUDENT]}
-            appointments={[]}
+            appointments={upcoming}
           />
         </Box>
       </Box>
     </Box>
+    
   );
 }
 
