@@ -22,7 +22,7 @@ type AccountType = "student" | "tutor";
 type MeetingPreference = "in_person" | "zoom" | "hybrid";
 
 type FormState = {
-  accountType: AccountType;
+  accountType: UserRole;
   firstName: string;
   lastName: string;
   email: string;
@@ -34,7 +34,7 @@ type FormState = {
 };
 
 const initialForm: FormState = {
-  accountType: "student",
+  accountType: UserRole.STUDENT,
   firstName: "",
   lastName: "",
   email: "",

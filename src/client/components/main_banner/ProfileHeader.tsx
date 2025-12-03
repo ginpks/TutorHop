@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Typography, Avatar } from "@mui/material";
 
 interface ProfileHeaderProps {
   profilePicUrl?: string;
@@ -14,42 +14,39 @@ function ProfileHeader({
   onClick,
   userType,
 }: Readonly<ProfileHeaderProps>) {
-  const avatarStyle: React.CSSProperties = {
-    width: "35px",
-    height: "35px",
-    borderRadius: "50%",
-    objectFit: "cover",
+  const getInitial = () => {
+    if (displayName) {
+      return displayName.charAt(0).toUpperCase();
+    }
+    return "?";
   };
 
   return (
-    <Box
+    <IconButton
+      onClick={onClick}
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 0.5,
         p: 0,
+        m: 0,
+        bgcolor: "transparent",
       }}
     >
-      <IconButton
-        onClick={onClick}
+      <Avatar
+        src={profilePicUrl}
+        alt={displayName || "Profile"}
         sx={{
-          p: 0,
-          m: 0,
-          bgcolor: "transparent",
+          width: 40,
+          height: 40,
+          bgcolor: "#3C3744",
+          fontSize: "1.2rem",
+          fontWeight: "bold",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        <img
-          src={profilePicUrl || "src/client/assets/icons/blank_pp.png"}
-          alt={displayName || "Default Profile"}
-          style={avatarStyle}
-        />
-      </IconButton>
-      <Typography variant="body2" sx={{ fontWeight: 500 }}>
-        {userType} Account
-      </Typography>
-    </Box>
+        {getInitial()}
+      </Avatar>
+    </IconButton>
   );
 }
 

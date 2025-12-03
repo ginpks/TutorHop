@@ -6,7 +6,7 @@ import {
   subjects,
 } from "../../../drizzle/schema.js";
 import * as schema from "../../../drizzle/schema.js";
-import { eq, and, lte, gte, or } from "drizzle-orm";
+import { eq, and, lte, gte } from "drizzle-orm";
 
 type MeetingStatus = (typeof meetingStatus.enumValues)[number];
 export type InboxRow = Awaited<

@@ -3,7 +3,7 @@ import PillPicker from "../components/pill-picker";
 import SecondaryButton from "../components/secondary-button";
 import PrimaryButton from "../components/primary-button";
 import IconLabelTextField from "../components/IconLabelTextField";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -11,7 +11,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 import { Dayjs } from "dayjs";
 import DefaultBanner from "../components/main_banner/banner";
-import { Map } from "@vis.gl/react-maplibre";
+import { roleLabels, UserRole } from "../../shared/Enums/UserEnums";
 
 interface QuestionSubmission {
   primary: string[];
@@ -24,23 +24,77 @@ export default function Survey() {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [selectedTime, setSelectedTime] = useState<Dayjs | null>(null);
 
-  const classes = ["CICS 109", "CICS 110", "CICS 127", "CICS 160", "CICS 210"];
+  const [firstName, setFirstName] = useState<string>("");
+  const [userName, setUserName] = useState<string>("");
+  const [userRole, setUserRole] = useState<string>("");
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setIsLoggedIn(false);
+        return;
+      }
+
+      setIsLoggedIn(true);
+
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        setUserName(payload.email || "User");
+        setUserRole(payload.role || "student");
+
+        const userRes = await fetch(`/accounts/data?token=${token}`);
+        if (userRes.ok) {
+          const userData = await userRes.json();
+          setFirstName(userData.user?.firstName || "");
+        }
+      } catch (err) {
+        console.error("Fetch error: ", err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const classes = [
+    "CICS 109",
+    "CICS 110",
+    "CICS 127",
+    "CICS 160",
+    "CICS 210",
+    "CICS 256",
+    "CICS 291C",
+    "CICS 291T",
+    "CICS 296P",
+    "CICS 298A",
+    "CICS 305",
+    "CICS 396A",
+    "CICS 590P",
+    "COMPSCI 119",
+    "COMPSCI 198C",
+    "COMPSCI 220",
+    "COMPSCI 230",
+    "COMPSCI 240",
+    "COMPSCI 250",
+    "COMPSCI 311",
+    "COMPSCI 320",
+    "COMPSCI 325",
+    "COMPSCI 326",
+    "COMPSCI 345",
+    "COMPSCI 348",
+    "COMPSCI 360",
+    "COMPSCI 377",
+    "COMPSCI 383",
+    "COMPSCI 389",
+    "COMPSCI 390B",
+  ];
   const questions = [
     "What subjects do you need help with?",
     "When do you want to study?",
-    "Where do you want to study?",
+    "How do you want to study?",
   ];
-  const locations = [
-    "Remote/Zoom",
-    "CSB",
-    "LGRT",
-    "LGRC",
-    "WEB DB",
-    "ISB",
-    "PSB",
-    "SEL",
-  ];
-  const [mode, setMode] = useState<boolean>(true);
+  const locations = ["Remote / Zoom", "In-person"];
 
   const [answers, setAnswers] = useState<QuestionSubmission[]>(
     Array.from({ length: questions.length }, () => ({
@@ -169,23 +223,51 @@ export default function Survey() {
       options={locations}
       value={current.primary}
       onChange={onPrimaryChange}
-      placeholder="Select locations..."
+      placeholder="Select mode..."
     />,
   ];
 
   const onBack = () => {
-    if (page - 1 < 0) navigate("/Landing");
+    if (page - 1 < 0) navigate("/landing");
     else setPage(page - 1);
   };
 
   const onNext = () => {
-    if (page + 1 >= questions.length) navigate("/results");
-    else setPage(page + 1);
+    if (page + 1 >= questions.length) {
+      // Store survey data and navigate to results with the data
+      const surveyData = {
+        subjects: answers[0].primary, // subjects from first question
+        times: answers[1].primary, // times from second question
+        meetingMode: answers[2].primary[0] || "either", // meeting mode from third question
+      };
+
+      // Store in localStorage for results page to access
+      localStorage.setItem("surveyData", JSON.stringify(surveyData));
+
+      navigate("/results");
+    } else {
+      setPage(page + 1);
+    }
+  };
+
+  const handleProfileClick = () => {
+    if (userRole === "tutor") {
+      navigate("/tutorprofile");
+    } else {
+      navigate("/studentprofile");
+    }
   };
 
   return (
     <Box display="flex" flexDirection="column" height="100dvh">
-      <DefaultBanner title="Tutor Hop" />
+      <DefaultBanner
+        title="Tutor Hop"
+        profilePicUrl=""
+        displayName={firstName || userName}
+        isLoggedIn={isLoggedIn}
+        onProfileClick={handleProfileClick}
+        userType={roleLabels[userRole as UserRole] || "Student"}
+      />
       <Box
         display="flex"
         flexDirection="column"

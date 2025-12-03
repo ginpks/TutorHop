@@ -1,6 +1,6 @@
 import { meetingStatus } from "../../../drizzle/schema.js";
 import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces.js";
-import { inboxPreviewMapper as inboxPreviewMapper } from "../../shared/Mappers/InboxMappers.js";
+import { inboxPreviewMapper } from "../../shared/Mappers/InboxMappers.js";
 import { InboxRepository } from "../Repositories/InboxRepository.js";
 
 export type MeetingStatus = (typeof meetingStatus.enumValues)[number];
