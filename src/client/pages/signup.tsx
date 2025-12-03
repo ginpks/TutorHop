@@ -16,6 +16,8 @@ import SecondaryButton from "../components/secondary-button";
 import { useNavigate } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { UserRole } from "../../shared/Enums/UserEnums";
+
 
 
 type AccountType = "student" | "tutor";
@@ -72,15 +74,16 @@ function Signup() {
   };
 
   const handleAccountTypeChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const next = e.target.value as AccountType;
-    setForm((prev) => ({
-      ...prev,
-      accountType: next,
-      availability: next === "tutor" ? prev.availability : "",
-    }));
-  };
+  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+) => {
+  const next = e.target.value as UserRole;
+  setForm((prev) => ({
+    ...prev,
+    accountType: next,
+    availability: next === UserRole.TUTOR ? prev.availability : "",
+  }));
+};
+
 
   // ----- validation booleans (always based on current values) -----
   const emailError =
@@ -138,8 +141,7 @@ function Signup() {
 
       }}
     >
-      <DefaultBanner title="Tutor Hop" />
-
+    <DefaultBanner title="Tutor Hop" isLoggedIn={false} />
       <CardContent
         sx={{
           display: "flex",
@@ -373,7 +375,7 @@ function Signup() {
               color="primary"
               align="center"
               sx={{ cursor: "pointer", mt: 1, textDecoration: "underline" }}
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/")}
             >
               Already have an account? Sign in
             </Typography>

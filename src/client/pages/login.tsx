@@ -88,7 +88,8 @@ export default function Login() {
       }}
     >
       {/* Top banner */}
-      <DefaultBanner title="Tutor Hop" />
+      <DefaultBanner title="Tutor Hop" isLoggedIn={false} />
+
 
       {/* Centered card */}
       <Box
