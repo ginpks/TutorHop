@@ -68,4 +68,3 @@ export const AuthProvider = ({ children, token, logIn }: AuthProviderProps) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-export default AuthProvider;

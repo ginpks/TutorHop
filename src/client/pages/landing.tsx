@@ -8,13 +8,14 @@ import { roleLabels, UserRole } from "../../shared/Enums/UserEnums.js";
 import UpcomingAppointment from "../components/UpcomingAppointment.js";
 import UserSearchBar from "../components/SearchBar.js";
 import { AuthProvider } from "../components/AuthenticationComponent.js";
+import { useLocation } from "react-router-dom";
 
 function Landing() {
   const [messages, setMessages] = React.useState<MailPreviewMessages[]>([]);
   const [userID, setUserID] = React.useState<number>(0);
   const [isTutor, setIsTutor] = React.useState<boolean>(false);
   const [loadingInbox, setLoadingInbox] = React.useState<boolean>(true);
-
+  const { token } = useLocation().state || {};
   useEffect(() => {
     //set a test user
     setUserID(5);
@@ -48,7 +49,7 @@ function Landing() {
   }, [userID]);
 
   return (
-    <AuthProvider>
+    <AuthProvider token={token.state}>
       <Box
         sx={{
           position: "fixed",

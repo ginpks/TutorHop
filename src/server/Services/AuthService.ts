@@ -46,11 +46,13 @@ export class AuthService {
     const data = mapRawLoginInfoToInterface(raw_data);
 
     const user = await this.authRepo.findUserByEmail(data.email);
-    console.log(raw_data);
-    if (!user) return false;
-
+    console.log("cannot find user", data.email);
+    if (!user) {
+      console.log("cannot find user", data.email);
+      return false;
+    }
     const passwordMatches = await bcrypt.compare(data.password, user.password);
-    
+    console.log("cannot find password", user.password);
     if (!passwordMatches) return false;
 
     const token = this.generateToken({
