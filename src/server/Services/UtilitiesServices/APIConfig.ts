@@ -6,6 +6,7 @@ import profileInboxRouter from "../routes/api/Inbox/profile_inbox_endpoint.js";
 import userDataRouter from "../routes/api/Account/user_data.js";
 import tutorSearchRouter from "../routes/api/Tutor/search.js";
 import meetingRequestRouter from "../routes/api/MeetingRequest/create.js";
+import appointmentsRouter from "../routes/api/Inbox/upcoming_apps.js";
 
 export async function apiStart(mainApp: any) {
   mainApp.use(express.json());
@@ -16,4 +17,5 @@ export async function apiStart(mainApp: any) {
   mainApp.use("/accounts", userDataRouter);
   mainApp.use("/tutors", tutorSearchRouter);
   mainApp.use("/meeting-requests", meetingRequestRouter);
+  mainApp.use("/inbox", appointmentsRouter);
 }
