@@ -1,5 +1,5 @@
 import React from "react";
-import { AppBar, Button, Card, Toolbar, Typography } from "@mui/material";
+import { AppBar, Button, Toolbar, Typography } from "@mui/material";
 import ProfileHeader from "./ProfileHeader";
 import { roleLabels, UserRole } from "../../../shared/Enums/UserEnums";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -13,12 +13,6 @@ interface DefaultBannerProps {
   onProfileClick?: () => void;
   userType?: string;
 }
-
-const avatarStyle: React.CSSProperties = {
-  width: "50px",
-  height: "50px",
-  borderRadius: "100%",
-};
 
 const styles: React.CSSProperties = {
   height: "min-content",
@@ -51,7 +45,6 @@ function DefaultBanner({
       <Toolbar
         sx={{ display: "flex", alignItems: "center", padding: 0.4, gap: 2 }}
       >
-        {" "}
         <Typography
           variant="h4"
           sx={{
@@ -64,6 +57,7 @@ function DefaultBanner({
         >
           {title}
         </Typography>
+        
         {isLoggedIn &&
           userType === "Student" &&
           location.pathname !== "/survey" && (
@@ -86,12 +80,13 @@ function DefaultBanner({
               Find Tutor
             </Button>
           )}
+        
         {isLoggedIn && (
           <ProfileHeader
             profilePicUrl={profilePicUrl}
             displayName={displayName}
-            onClick={onProfileClick}
             userType={userType || roleLabels[UserRole?.STUDENT]}
+            onProfileClick={onProfileClick}
           />
         )}
       </Toolbar>
