@@ -57,12 +57,11 @@ function UpcomingAppointment({
                     sx={{ fontWeight: "bold" }}
                   >{`${element.senderFirstName} ${element.senderLastName}`}</Typography>
                 </Box>
-                <Box sx={{}}>
+                <Box>
                   <Typography
                     sx={{ fontWeight: "bold" }}
                   >{`${element.subject}`}</Typography>
                   <Typography
-                    sx={{}}
                   >{`${element.snippet ?? "No Preview"}`}</Typography>
                   <Typography>{`${element.startDate ?? "No date provided"}`}</Typography>
                 </Box>
