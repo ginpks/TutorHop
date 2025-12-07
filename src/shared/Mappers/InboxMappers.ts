@@ -7,13 +7,14 @@ import {
 
 type MeetingStatus = (typeof meetingStatus.enumValues)[number];
 
-export function inboxPreviewMapper(mail: InboxRow): MailPreviewMessages {
+export function inboxPreviewMapper(mail: any): MailPreviewMessages {
+  console.log("mail", mail);
   return {
     id: mail.id.toString(),
     senderFirstName: mail.receiver?.firstName ?? undefined,
     senderLastName: mail.receiver?.lastName ?? undefined,
     subject: mail.subjects.name ?? undefined,
-    timestamp: mail.createdAt,
+    startDate: mail.requestedStart,
     snippet: mail.subjects.topic ?? undefined,
   };
 }

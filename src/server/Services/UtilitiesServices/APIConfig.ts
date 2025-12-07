@@ -10,6 +10,7 @@ import appointmentsRouter from "../routes/api/Inbox/upcoming_apps.js";
 
 export async function apiStart(mainApp: any) {
   mainApp.use(express.json());
+  mainApp.use("/inbox", appointmentsRouter);
   mainApp.use("/inbox", previewRouter);
   mainApp.use("/accounts", signUpRouter);
   mainApp.use("/accounts", loginRouter);
@@ -17,5 +18,4 @@ export async function apiStart(mainApp: any) {
   mainApp.use("/accounts", userDataRouter);
   mainApp.use("/tutors", tutorSearchRouter);
   mainApp.use("/meeting-requests", meetingRequestRouter);
-  mainApp.use("/inbox", appointmentsRouter);
 }

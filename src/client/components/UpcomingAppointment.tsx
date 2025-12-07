@@ -5,6 +5,8 @@ import {
   CardContent,
   List,
   ListItem,
+  ListItemButton,
+
   Typography,
 } from "@mui/material";
 import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces";
@@ -43,9 +45,28 @@ function UpcomingAppointment({
       ) : (
         appointments.map((element) => {
           return (
-            <Card key={element.id}>
-              <CardContent>
-                <Typography>{element.subject}</Typography>
+            <Card
+              key={element.id}
+              sx={{
+                display: "flex",
+                gap: 5,
+              }}
+            >
+              <CardContent sx={{ display: "flex", gap: 5 }}>
+                <Box>
+                  <Typography
+                    sx={{ fontWeight: "bold" }}
+                  >{`${element.senderFirstName} ${element.senderLastName}`}</Typography>
+                </Box>
+                <Box sx={{}}>
+                  <Typography
+                    sx={{ fontWeight: "bold" }}
+                  >{`${element.subject}`}</Typography>
+                  <Typography
+                    sx={{}}
+                  >{`${element.snippet ?? "No Preview"}`}</Typography>
+                  <Typography>{`${element.startDate ?? "No date provided"}`}</Typography>
+                </Box>
               </CardContent>
             </Card>
           );

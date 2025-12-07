@@ -3,7 +3,7 @@ export interface MailPreviewMessages {
   senderFirstName: string | undefined;
   senderLastName?: string;
   subject: string | undefined;
-  timestamp: string | Date;
+  startDate: string | Date;
   snippet?: string;
 }
 
