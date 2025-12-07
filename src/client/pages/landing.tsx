@@ -19,7 +19,6 @@ function Landing() {
 
   useEffect(() => {
     // Token check is handled by ProtectedRoute wrapper
-    setUserID(5);
 
     // Get user data from localStorage or token
     const token = localStorage.getItem("token");
@@ -29,6 +28,8 @@ function Landing() {
         const payload = JSON.parse(atob(token.split(".")[1]));
         setUserName(payload.email || "User");
         setUserRole(payload.role || "student");
+        setUserID(payload.userId);
+        console.log(payload.userId);
       } catch (e) {
         console.error("Failed to decode token", e);
       }
@@ -62,18 +63,19 @@ function Landing() {
           throw new Error(`HTTP ${res.status}`);
         }
 
-        const res2 = await fetch(`/appointments/${userID}/upcoming?${query.toString()}`);
+        const res2 = await fetch(
+          `/inbox/${userID}/upcoming?${query.toString()}`
+        );
 
-        if(!res2.ok) {
+        if (!res2.ok) {
           const text = await res2.text();
           console.error("HTTP error", res2.status, text.slice(0, 300));
           throw new Error(`HTTP ${res2.status}`);
         }
-        
-        const data = (await res.json()) as MailPreviewMessages[];
-        const apps = (await res2.json()) as MailPreviewMessages[];
 
+        const data = (await res.json()) as MailPreviewMessages[];
         setMessages(data);
+        const apps = (await res2.json()) as MailPreviewMessages[];
         setUpcoming(apps);
       } catch (err) {
         console.error("Inbox fetch error: ", err);
@@ -132,7 +134,6 @@ function Landing() {
         </Box>
       </Box>
     </Box>
-    
   );
 }
 

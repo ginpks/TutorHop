@@ -1,6 +1,6 @@
 import express from "express";
-import { InboxServices } from "../../InboxService.js";
-import { getDatabaseService } from "../../UtilitiesServices/DatabaseService.js";
+import { InboxServices } from "../../../InboxService.js";
+import { getDatabaseService } from "../../../UtilitiesServices/DatabaseService.js";
 
 const router = express.Router();
 
@@ -26,9 +26,12 @@ router.get("/:id/upcoming", async (req, res) => {
       fromStudent
     );
 
+    console.log("appointments: ", appointments);
     res.status(200).json(appointments);
   } catch (err: any) {
     console.error("Upcoming appointments error:", err);
     res.status(500).json({ error: "Failed to load upcoming appointments" });
   }
 });
+
+export default router;
