@@ -6,7 +6,6 @@ import {
   List,
   ListItem,
   ListItemButton,
-
   Typography,
 } from "@mui/material";
 import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces";
