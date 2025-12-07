@@ -13,7 +13,7 @@ export function inboxPreviewMapper(mail: InboxRow): MailPreviewMessages {
     senderFirstName: mail.receiver?.firstName ?? undefined,
     senderLastName: mail.receiver?.lastName ?? undefined,
     subject: mail.subjects.name ?? undefined,
-    timestamp: mail.createdAt,
+    startDate: mail.requestedStart,
     snippet: mail.subjects.topic ?? undefined,
   };
 }

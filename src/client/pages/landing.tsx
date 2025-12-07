@@ -110,9 +110,9 @@ function Landing() {
         userType={roleLabels[userRole as UserRole] || "Student"}
       />
 
-      <Box sx={{ display: "flex", flexShrink: 0, flexGrow: 1 }}>
+      <Box sx={{ display: "flex", flexShrink: 0, flexGrow: 1, justifyContent: "center"}}>
         <InboxCardComponent
-          userType={roleLabels[UserRole?.STUDENT]}
+          userType={userRole}
           messages={messages}
           loading={loadingInbox}
         />
@@ -127,10 +127,7 @@ function Landing() {
             bgcolor: "#D3D3D3",
           }}
         >
-          <UpcomingAppointment
-            userType={roleLabels[UserRole?.STUDENT]}
-            appointments={upcoming}
-          />
+          <UpcomingAppointment userType={userRole} appointments={upcoming} />
         </Box>
       </Box>
     </Box>

@@ -25,8 +25,6 @@ router.get("/:id/upcoming", async (req, res) => {
       undefined,
       fromStudent
     );
-
-    console.log("appointments: ", appointments);
     res.status(200).json(appointments);
   } catch (err: any) {
     console.error("Upcoming appointments error:", err);
