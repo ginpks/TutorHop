@@ -7,7 +7,7 @@ import {
 
 type MeetingStatus = (typeof meetingStatus.enumValues)[number];
 
-export function inboxPreviewMapper(mail: InboxRow): MailPreviewMessages {
+export function inboxPreviewMapper(mail: any): MailPreviewMessages {
   return {
     id: mail.id.toString(),
     senderFirstName: mail.receiver?.firstName ?? undefined,
