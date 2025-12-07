@@ -110,7 +110,7 @@ function Landing() {
         userType={roleLabels[userRole as UserRole] || "Student"}
       />
 
-      <Box sx={{ display: "flex", flexShrink: 0, flexGrow: 1,  justifyContent: "center"}}>
+      <Box sx={{ display: "flex", flexShrink: 0, flexGrow: 1, justifyContent: "center"}}>
         <InboxCardComponent
           userType={userRole}
           messages={messages}
