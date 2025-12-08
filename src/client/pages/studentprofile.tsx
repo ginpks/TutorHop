@@ -126,16 +126,19 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
           setUserEmail(userData.user?.email || "");
         }
 
+        const isTutorLocal = payload.role === "tutor";
+        setIsTutor(isTutorLocal);
+
         // Fetch inbox messages
         if (userId) {
           setLoadingInbox(true);
           const query = new URLSearchParams({
-            tutor: isTutor === true ? "true" : "false",
+            tutor: isTutorLocal === true ? "true" : "false",
             status: "pending",
           });
 
           const res = await fetch(
-            `/profile-inbox/${userId}/preview?${query.toString()}`,
+            `/inbox/${userId}/full?${query.toString()}`,
           );
 
           if (res.ok) {

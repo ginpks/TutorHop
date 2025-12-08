@@ -29,14 +29,14 @@ export class InboxRepository {
     //determine whether the perspective the inbox is a tutor or a student
     const currentUserColumn =
       fromStudent === true
-        ? meetingRequests.studentId
-        : meetingRequests.tutorId;
+        ? meetingRequests.tutorId
+        : meetingRequests.studentId;
 
     const otherUserColumn =
       fromStudent === true
-        ? meetingRequests.tutorId
-        : meetingRequests.studentId;
-    const conditions = [eq(otherUserColumn, Number(userId))];
+        ? meetingRequests.studentId
+        : meetingRequests.tutorId;
+    const conditions = [eq(currentUserColumn, Number(userId))];
 
     //if the parameters are filled we add them as a condition to the array
     if (status) {
@@ -71,12 +71,16 @@ export class InboxRepository {
           name: subjects.name,
           topic: meetingRequests.topic,
         },
+        requestedStart: meetingRequests.requestedStart,
+        requestedEnd: meetingRequests.requestedEnd,
+        status: meetingRequests.status,
+        meetingMode: meetingRequests.mode,
       })
       //specify the original table we are pulling from
       .from(meetingRequests)
       .limit(4)
       //then join the users and subjects that are valid for the user and subject that is being called in the meeting request
-      .leftJoin(users, eq(users.id, currentUserColumn))
+      .leftJoin(users, eq(users.id, otherUserColumn))
       .leftJoin(subjects, eq(subjects.id, meetingRequests.subjectId))
       .where(and(...conditions));
   }

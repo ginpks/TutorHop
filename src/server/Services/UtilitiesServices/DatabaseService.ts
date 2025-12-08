@@ -3,8 +3,6 @@ import { Pool } from "pg";
 import * as schema from "../../../../drizzle/schema.js";
 import { InboxRepository } from "../../Repositories/InboxRepository.js";
 import { InboxServices } from "../InboxService.js";
-import { ProfileInboxRepository } from "../../Repositories/ProfileInboxRepository.js";
-import { ProfileInboxServices } from "../ProfileInboxService.js";
 import { AuthRepository } from "../../Repositories/AuthRepository.js";
 import { AuthService } from "../AuthService.js";
 import "dotenv/config";
@@ -16,8 +14,6 @@ export class DatabaseService {
   public authServices: AuthService;
   public inboxRepository: InboxRepository;
   public inboxServices: InboxServices;
-  public profileInboxRepository: ProfileInboxRepository;
-  public profileInboxServices: ProfileInboxServices;
   constructor(db: NodePgDatabase<typeof schema>) {
     this.db = db;
 
@@ -29,13 +25,6 @@ export class DatabaseService {
     this.inboxRepository = new InboxRepository(db);
     //services
     this.inboxServices = new InboxServices(this.inboxRepository);
-    this.inboxServices = new InboxServices(this.inboxRepository);
-
-    // Profile Inbox
-    this.profileInboxRepository = new ProfileInboxRepository(db);
-    this.profileInboxServices = new ProfileInboxServices(
-      this.profileInboxRepository,
-    );
   }
 }
 
