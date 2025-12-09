@@ -10,6 +10,7 @@ import meetingDecisionRouter from "../routes/api/MeetingRequest/meeting_req_acc_
 
 export async function apiStart(mainApp: any) {
   mainApp.use(express.json());
+  mainApp.use("/inbox", appointmentsRouter);
   mainApp.use("/inbox", previewRouter);
   mainApp.use("/accounts", signUpRouter);
   mainApp.use("/accounts", loginRouter);
