@@ -133,7 +133,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
         if (userId) {
           setLoadingInbox(true);
           const query = new URLSearchParams({
-            tutor: isTutorLocal === true ? "true" : "false",
+            tutor: isTutor === true ? "true" : "false",
             status: "pending",
           });
 

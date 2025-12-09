@@ -53,4 +53,22 @@ export class InboxServices {
     );
     return fullMessages;
   }
+
+  public async meetingService(
+    meetingRequestId: number,
+    answer: MeetingStatus,
+  ): Promise<any> {
+    
+    try {
+      const updated = await this.inboxRepo.updateMeetingStatus(
+        meetingRequestId,
+        answer
+      );
+
+    return updated;
+    } catch (err) {
+      console.error("Error inside meetingService:", err);
+      throw err;
+    }
+  }
 }

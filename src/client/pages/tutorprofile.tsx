@@ -190,7 +190,7 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
     try {
       setUpdatingId(meetingId);
 
-      const res = await fetch(`/profile-inbox/${meetingId}/status`, {
+      const res = await fetch(`/accept-deny/${meetingId}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
@@ -200,7 +200,14 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
         console.error("Failed to update status");
         return;
       }
-      
+
+      setMessages(prev =>
+        prev.map(m =>
+          Number(m.id) === meetingId
+            ? { ...m, status: newStatus }
+            : m
+        )
+      );
     } catch (err) {
       console.error("Error updating status", err);
     } finally {
@@ -433,7 +440,7 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
                     padding: 2,
                   }}
                 >
-                  {messages.map((msg) => (
+                  {messages.filter(msg => msg.status === "pending").map((msg) => (
                     <Box
                       key={msg.id}
                       sx={{
