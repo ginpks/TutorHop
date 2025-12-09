@@ -6,7 +6,7 @@ import {
   subjects,
 } from "../../../drizzle/schema.js";
 import * as schema from "../../../drizzle/schema.js";
-import { eq, and, lte, gte } from "drizzle-orm";
+import { eq, and, lte, gte, or } from "drizzle-orm";
 
 type MeetingStatus = (typeof meetingStatus.enumValues)[number];
 export type InboxRow = Awaited<
@@ -29,18 +29,23 @@ export class InboxRepository {
     //determine whether the perspective the inbox is a tutor or a student
     const currentUserColumn =
       fromStudent === true
-        ? meetingRequests.studentId
-        : meetingRequests.tutorId;
+        ? meetingRequests.tutorId
+        : meetingRequests.studentId;
 
     const otherUserColumn =
       fromStudent === true
-        ? meetingRequests.tutorId
-        : meetingRequests.studentId;
-    const conditions = [eq(otherUserColumn, Number(userId))];
+        ? meetingRequests.studentId
+        : meetingRequests.tutorId;
+    const conditions = [eq(currentUserColumn, Number(userId))];
 
-    //if the parameters are filled we add them as a condition to the array
-    if (status) {
-      conditions.push(eq(meetingRequests.status, status));
+    //if student, return "accepted" and "declined" meetings and if tutor return "pending" meetings
+    if (fromStudent === false) {
+      const statusCondition = or(eq(meetingRequests.status, "declined"), eq(meetingRequests.status, "accepted"));
+      if (statusCondition) {
+        conditions.push(statusCondition);
+      }
+    } else {
+      conditions.push(eq(meetingRequests.status, "pending"));
     }
 
     //dates should be formatted as yyyy-mm-dd
@@ -71,13 +76,29 @@ export class InboxRepository {
           name: subjects.name,
           topic: meetingRequests.topic,
         },
+        requestedStart: meetingRequests.requestedStart,
+        requestedEnd: meetingRequests.requestedEnd,
+        status: meetingRequests.status,
+        meetingMode: meetingRequests.mode,
       })
       //specify the original table we are pulling from
       .from(meetingRequests)
       .limit(4)
       //then join the users and subjects that are valid for the user and subject that is being called in the meeting request
-      .leftJoin(users, eq(users.id, currentUserColumn))
+      .leftJoin(users, eq(users.id, otherUserColumn))
       .leftJoin(subjects, eq(subjects.id, meetingRequests.subjectId))
       .where(and(...conditions));
+  }
+
+  public async updateMeetingStatus(
+    meetingRequestId: number,
+    answer: MeetingStatus,
+  )
+  {
+    return await this.database
+      .update(meetingRequests)
+      .set({ status: answer })
+      .where(eq(meetingRequests.id, BigInt(meetingRequestId))
+    ).returning();
   }
 }

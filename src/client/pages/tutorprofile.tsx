@@ -128,6 +128,7 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
   const [firstName, setFirstName] = React.useState<string>("");
   const [lastName, setLastName] = React.useState<string>("");
   const [userEmail, setUserEmail] = React.useState<string>("");
+  const [updatingId, setUpdatingId] = React.useState<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -142,6 +143,9 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
         const userId = payload.userId || 0;
         setUserID(userId);
 
+        const isTutorLocal = payload.role === "tutor";
+        setIsTutor(isTutorLocal);
+
         // Fetch user details from API
         const userRes = await fetch(`/accounts/data?token=${token}`);
         if (userRes.ok) {
@@ -149,18 +153,19 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
           setFirstName(userData.user?.firstName || "");
           setLastName(userData.user?.lastName || "");
           setUserEmail(userData.user?.email || "");
+          setIsTutor(userData.role === "tutor");
         }
 
         // Fetch inbox messages
         if (userId) {
           setLoadingInbox(true);
           const query = new URLSearchParams({
-            tutor: isTutor === true ? "true" : "false",
+            tutor: isTutorLocal === true ? "true" : "false",
             status: "pending",
           });
 
           const res = await fetch(
-            `/profile-inbox/${userId}/preview?${query.toString()}`,
+            `/inbox/${userId}/full?${query.toString()}`,
           );
 
           if (res.ok) {
@@ -177,6 +182,38 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
 
     fetchData();
   }, []);
+
+  const handleUpdateStatus = async (
+    meetingId: number,
+    newStatus: "accepted" | "declined"
+  ) => {
+    try {
+      setUpdatingId(meetingId);
+
+      const res = await fetch(`/accept-deny/${meetingId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!res.ok) {
+        console.error("Failed to update status");
+        return;
+      }
+
+      setMessages(prev =>
+        prev.map(m =>
+          Number(m.id) === meetingId
+            ? { ...m, status: newStatus }
+            : m
+        )
+      );
+    } catch (err) {
+      console.error("Error updating status", err);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   const handleProfileClick = () => {
     if (userRole === "tutor") {
@@ -403,48 +440,79 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
                     padding: 2,
                   }}
                 >
-                  {messages.map((msg) => (
+                  {messages.filter(msg => msg.status === "pending").map((msg) => (
                     <Box
                       key={msg.id}
                       sx={{
                         display: "flex",
-                        flexDirection: "column",
-                        padding: 2,
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        paddingY: 2,
                         borderBottom: "1px solid rgba(60,55,68,0.2)",
+                        ":last-of-type": { borderBottom: "none" },
                       }}
                     >
-                      <strong>
-                        {msg.senderFirstName} {msg.senderLastName}
-                      </strong>
+                      <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+                        <strong>
+                          {msg.senderFirstName} {msg.senderLastName}
+                        </strong>
 
-                      <div style={{ fontWeight: 600 }}>{msg.subject}</div>
+                        <div style={{ fontWeight: 600 }}>{msg.subject}</div>
 
-                      <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
-                        {msg.snippet}
-                      </div>
+                        <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
+                          {msg.snippet}
+                        </div>
 
-                      <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
-                        Meeting Time:{" "}
-                        {msg.requestedStart
-                          ? new Date(msg.requestedStart).toLocaleString()
-                          : "No requested time"}{" "}
-                        -{" "}
-                        {msg.requestedEnd
-                          ? new Date(msg.requestedEnd).toLocaleString()
-                          : "No requested time"}
-                      </div>
+                        <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
+                          Meeting Time:{" "}
+                          {msg.requestedStart
+                            ? new Date(msg.requestedStart).toLocaleString()
+                            : "No requested time"}{" "}
+                          -{" "}
+                          {msg.requestedEnd
+                            ? new Date(msg.requestedEnd).toLocaleString()
+                            : "No requested time"}
+                        </div>
 
-                      <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
-                        Status: {msg.status ? msg.status : "None"}
-                      </div>
+                        <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
+                          Status: {msg.status ? msg.status : "None"}
+                        </div>
 
-                      <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
-                        Meeting Mode: {msg.meetingMode?.replace(/_/g, " ")}
-                      </div>
+                        <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
+                          Meeting Mode: {msg.meetingMode?.replace(/_/g, " ")}
+                        </div>
+                      </Box>
+
+                      {userRole === "tutor" && msg.status === "pending" && (
+                        <Stack direction="row" spacing={1} sx={{ ml: 2 }}>
+                          <Button
+                            variant="contained"
+                            color="success"
+                            size="small"
+                            disabled={updatingId === Number(msg.id)}
+                            onClick={() =>
+                              handleUpdateStatus(Number(msg.id), "accepted")
+                            }
+                          >
+                            Accept
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            color="error"
+                            size="small"
+                            disabled={updatingId === Number(msg.id)}
+                            onClick={() =>
+                              handleUpdateStatus(Number(msg.id), "declined")
+                            }
+                          >
+                            Deny
+                          </Button>
+                        </Stack>
+                      )}
                     </Box>
                   ))}
                 </Box>
-              )}
+              )}            
             </Section>
           </Box>
         </Box>
