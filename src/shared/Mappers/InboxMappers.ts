@@ -1,5 +1,5 @@
 import { meetingStatus } from "../../../drizzle/schema.js";
-import { InboxRow } from "../../server/Repositories/ProfileInboxRepository.js";
+import { InboxRow } from "../../server/Repositories/InboxRepository.js";
 import {
   MailPreviewMessages,
   MailFullMessages,
