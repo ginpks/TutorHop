@@ -24,13 +24,13 @@ router.get("/:id/preview", async (req, res) => {
       status as MeetingStatus,
       startDate,
       endDate,
-      isCurrentUserAStudent
+      isCurrentUserAStudent,
     );
     //respond with the data retrieved as a JSon
     res.status(200).json(data);
   } catch (err: any) {
-    res.status(500);
     console.log(err);
+    res.status(500).json({ error: "Failed to retrieve inbox previews" });
   }
 });
 
@@ -48,11 +48,12 @@ router.get("/:id/full", async (req, res) => {
       status as MeetingStatus,
       startDate,
       endDate,
-      isCurrentUserAStudent
+      isCurrentUserAStudent,
     );
     res.status(200).json(data);
   } catch (err: any) {
     console.log(err);
+    res.status(500).json({ error: "Failed to retrieve full inbox data" });
   }
 });
 
