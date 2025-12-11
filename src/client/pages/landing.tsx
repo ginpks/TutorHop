@@ -11,7 +11,7 @@ function Landing() {
   const [messages, setMessages] = React.useState<MailPreviewMessages[]>([]);
   const [upcoming, setUpcoming] = React.useState<MailPreviewMessages[]>([]);
   const [userID, setUserID] = React.useState<number>(0);
-  const [isTutor, setIsTutor] = React.useState<boolean>(false);
+  const [isCurrentUserAStudent, setIsTutor] = React.useState<boolean>(false);
   const [loadingInbox, setLoadingInbox] = React.useState<boolean>(true);
   const [userName, setUserName] = React.useState<string>("");
   const [userRole, setUserRole] = React.useState<string>("");
@@ -51,7 +51,7 @@ function Landing() {
       setLoadingInbox(true);
       try {
         const query = new URLSearchParams({
-          tutor: isTutor === true ? "true" : "false",
+          tutor: isCurrentUserAStudent === true ? "false" : "true",
           status: "pending",
         });
 
@@ -84,7 +84,7 @@ function Landing() {
       }
     }
     load();
-  }, [userID, isTutor]);
+  }, [userID, isCurrentUserAStudent]);
 
   return (
     <Box
@@ -110,7 +110,14 @@ function Landing() {
         userType={roleLabels[userRole as UserRole] || "Student"}
       />
 
-      <Box sx={{ display: "flex", flexShrink: 0, flexGrow: 1, justifyContent: "center"}}>
+      <Box
+        sx={{
+          display: "flex",
+          flexShrink: 0,
+          flexGrow: 1,
+          justifyContent: "center",
+        }}
+      >
         <InboxCardComponent
           userType={userRole}
           messages={messages}

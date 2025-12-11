@@ -15,7 +15,7 @@ router.get("/:id/preview", async (req, res) => {
     const status = req.query.status as MeetingStatus | undefined;
     const startDate = req.query.startDate as string | undefined;
     const endDate = req.query.endDate as string | undefined;
-    const fromStudent = req.query.tutor === "true";
+    const isCurrentUserAStudent = req.query.tutor === "false";
     //get the database and the service
     const db = getDatabaseService();
     const inbox_service: InboxServices = (await db).inboxServices;
@@ -24,35 +24,36 @@ router.get("/:id/preview", async (req, res) => {
       status as MeetingStatus,
       startDate,
       endDate,
-      fromStudent,
+      isCurrentUserAStudent
     );
     //respond with the data retrieved as a JSon
     res.status(200).json(data);
   } catch (err: any) {
+    res.status(500);
     console.log(err);
   }
 });
 
 router.get("/:id/full", async (req, res) => {
-    try {
-      const userID = Number(req.params.id);
-      const status = req.query.status as MeetingStatus | undefined;
-      const startDate = req.query.startDate as string | undefined;
-      const endDate = req.query.endDate as string | undefined;
-      const fromStudent = req.query.tutor === "true";
-      const db = getDatabaseService();
-      const inbox_service: InboxServices = (await db).inboxServices;
-      const data = await inbox_service.inboxFull(
-        userID,
-        status as MeetingStatus,
-        startDate,
-        endDate,
-        fromStudent
-      );
-      res.status(200).json(data);
-    } catch (err: any) {
-      console.log(err);
-    }
-  });
+  try {
+    const userID = Number(req.params.id);
+    const status = req.query.status as MeetingStatus | undefined;
+    const startDate = req.query.startDate as string | undefined;
+    const endDate = req.query.endDate as string | undefined;
+    const fromStudent = req.query.tutor === "true";
+    const db = getDatabaseService();
+    const inbox_service: InboxServices = (await db).inboxServices;
+    const data = await inbox_service.inboxFull(
+      userID,
+      status as MeetingStatus,
+      startDate,
+      endDate,
+      fromStudent
+    );
+    res.status(200).json(data);
+  } catch (err: any) {
+    console.log(err);
+  }
+});
 
 export default router;
