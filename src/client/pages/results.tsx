@@ -38,6 +38,7 @@ interface TutorDisplay {
   subjects?: Array<{ id: number; code: string; name: string }>;
   online: boolean;
   location: string;
+  meetingPreference?: "in_person" | "zoom" | "either";
 }
 
 const sampleTutors: TutorDisplay[] = [
@@ -108,9 +109,7 @@ const Results: React.FC = () => {
   const [requestedStart, setRequestedStart] = useState<Dayjs | null>(
     dayjs().add(1, "day"),
   );
-  const [requestedEnd, setRequestedEnd] = useState<Dayjs | null>(
-    dayjs().add(1, "day").add(1, "hour"),
-  );
+  const [duration, setDuration] = useState<number>(60); // Duration in minutes
   const [topic, setTopic] = useState<string>("");
   const [requestError, setRequestError] = useState<string>("");
   const [requestSuccess, setRequestSuccess] = useState<string>("");
@@ -144,6 +143,7 @@ const Results: React.FC = () => {
         const surveyDataStr = localStorage.getItem("surveyData");
         if (surveyDataStr) {
           const surveyData = JSON.parse(surveyDataStr);
+          console.log("Survey data from localStorage:", surveyData);
 
           // Build query parameters
           const params = new URLSearchParams();
@@ -151,31 +151,34 @@ const Results: React.FC = () => {
             params.append("subjects", surveyData.subjects.join(","));
           }
           if (surveyData.meetingMode) {
-            // Convert "Remote / Zoom" to "zoom", "In-person" to "in_person"
-            let mode = surveyData.meetingMode.toLowerCase();
-            if (mode.includes("zoom") || mode.includes("remote")) {
-              mode = "zoom";
-            } else if (mode.includes("person")) {
-              mode = "in_person";
-            }
-            params.append("meetingMode", mode);
+            // meetingMode is already in correct format from survey page
+            params.append("meetingMode", surveyData.meetingMode);
           }
           if (surveyData.times && surveyData.times.length > 0) {
             params.append("times", JSON.stringify(surveyData.times));
           }
 
-          const tutorRes = await fetch(`/tutors/search?${params.toString()}`);
+          const queryUrl = `/tutors/search?${params.toString()}`;
+          console.log("Fetching tutors from:", queryUrl);
+
+          const tutorRes = await fetch(queryUrl);
           if (tutorRes.ok) {
             const tutorData = await tutorRes.json();
+            console.log("Received tutor data:", tutorData);
             // If no results, fall back to sample tutors
             if (tutorData.length === 0) {
+              console.log("No tutors found, using sample data");
               setTutors(sampleTutors);
             } else {
               setTutors(tutorData);
             }
+          } else {
+            console.error("Failed to fetch tutors:", tutorRes.status, tutorRes.statusText);
+            setTutors(sampleTutors);
           }
         } else {
           // No survey data, use sample tutors
+          console.log("No survey data found, using sample tutors");
           setTutors(sampleTutors);
         }
       } catch (err) {
@@ -208,12 +211,16 @@ const Results: React.FC = () => {
   };
 
   const handleOpenRequestDialog = (tutor: TutorDisplay) => {
+    console.log("Opening request dialog for tutor:", tutor);
     setSelectedTutor(tutor);
     setRequestError("");
     setRequestSuccess("");
     // Pre-select first subject if available
     if (tutor.subjects && tutor.subjects.length > 0) {
       setSelectedSubjectId(tutor.subjects[0].id);
+    } else {
+      // Reset subject if no subjects available
+      setSelectedSubjectId("");
     }
     // Set meeting mode based on tutor's availability
     if (tutor.online) {
@@ -237,8 +244,7 @@ const Results: React.FC = () => {
     if (
       !selectedTutor ||
       !selectedSubjectId ||
-      !requestedStart ||
-      !requestedEnd
+      !requestedStart
     ) {
       setRequestError("Please fill in all required fields");
       return;
@@ -249,7 +255,21 @@ const Results: React.FC = () => {
       return;
     }
 
+    // Calculate end time based on start time and duration
+    const requestedEnd = requestedStart.add(duration, "minute");
+
     try {
+      console.log("Submitting appointment request:", {
+        studentId: userId,
+        tutorId: selectedTutor.id,
+        subjectId: selectedSubjectId,
+        requestedStart: requestedStart.toISOString(),
+        requestedEnd: requestedEnd.toISOString(),
+        mode: selectedMode,
+        topic: topic || undefined,
+        duration: duration,
+      });
+
       const res = await fetch("/meeting-requests/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -265,12 +285,15 @@ const Results: React.FC = () => {
       });
 
       if (res.ok) {
+        const data = await res.json();
+        console.log("Request created successfully:", data);
         setRequestSuccess("Appointment request sent successfully!");
         setTimeout(() => {
           handleCloseDialog();
         }, 2000);
       } else {
         const errorData = await res.json();
+        console.error("Request failed:", errorData);
         setRequestError(
           errorData.error || "Failed to create appointment request",
         );
@@ -365,10 +388,20 @@ const Results: React.FC = () => {
                     <Typography variant="body2">{card.location}</Typography>
                   </CardContent>
                   <CardActions>
-                    <PrimaryButton
-                      text="Request Appointment"
-                      onClick={() => handleOpenRequestDialog(card)}
-                    />
+                    {isLoggedIn && userRole === "student" ? (
+                      <PrimaryButton
+                        text="Request Appointment"
+                        onClick={() => handleOpenRequestDialog(card)}
+                      />
+                    ) : !isLoggedIn ? (
+                      <Typography variant="body2" color="text.secondary">
+                        Log in to request an appointment
+                      </Typography>
+                    ) : (
+                      <Typography variant="body2" color="text.secondary">
+                        Only students can request appointments
+                      </Typography>
+                    )}
                   </CardActions>
                 </Card>
               </Grid>
@@ -418,7 +451,7 @@ const Results: React.FC = () => {
                 </Select>
               </FormControl>
 
-              {/* Meeting Mode Selection */}
+              {/* Meeting Mode Selection - only show available options */}
               <FormControl fullWidth>
                 <InputLabel>Meeting Mode</InputLabel>
                 <Select
@@ -428,8 +461,14 @@ const Results: React.FC = () => {
                     setSelectedMode(e.target.value as "in_person" | "zoom")
                   }
                 >
-                  <MenuItem value="zoom">Virtual / Zoom</MenuItem>
-                  <MenuItem value="in_person">In-Person</MenuItem>
+                  {selectedTutor?.online && (
+                    <MenuItem value="zoom">Virtual / Zoom</MenuItem>
+                  )}
+                  {(!selectedTutor?.online ||
+                    selectedTutor?.meetingPreference === "either" ||
+                    selectedTutor?.meetingPreference === "in_person") && (
+                    <MenuItem value="in_person">In-Person</MenuItem>
+                  )}
                 </Select>
               </FormControl>
 
@@ -441,13 +480,27 @@ const Results: React.FC = () => {
                 slotProps={{ textField: { fullWidth: true } }}
               />
 
-              {/* End Time */}
-              <DateTimePicker
-                label="End Time"
-                value={requestedEnd}
-                onChange={(newValue) => setRequestedEnd(newValue)}
-                slotProps={{ textField: { fullWidth: true } }}
-              />
+              {/* Duration Selection */}
+              <FormControl fullWidth>
+                <InputLabel>Duration</InputLabel>
+                <Select
+                  value={duration}
+                  label="Duration"
+                  onChange={(e) => setDuration(Number(e.target.value))}
+                >
+                  <MenuItem value={30}>30 minutes</MenuItem>
+                  <MenuItem value={60}>1 hour</MenuItem>
+                  <MenuItem value={90}>1.5 hours</MenuItem>
+                  <MenuItem value={120}>2 hours</MenuItem>
+                </Select>
+              </FormControl>
+
+              {/* Display calculated end time */}
+              {requestedStart && (
+                <Typography variant="body2" color="text.secondary">
+                  End time: {requestedStart.add(duration, "minute").format("MMM D, YYYY h:mm A")}
+                </Typography>
+              )}
 
               {/* Topic */}
               <TextField
@@ -467,7 +520,7 @@ const Results: React.FC = () => {
           <PrimaryButton
             text="Send Request"
             onClick={handleSubmitRequest}
-            disabled={!selectedSubjectId || !requestedStart || !requestedEnd}
+            disabled={!selectedSubjectId || !requestedStart}
           />
         </DialogActions>
       </Dialog>

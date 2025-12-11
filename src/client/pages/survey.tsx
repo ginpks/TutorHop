@@ -234,11 +234,28 @@ export default function Survey() {
 
   const onNext = () => {
     if (page + 1 >= questions.length) {
+      // Convert meeting mode: if both selected, use "either"
+      let meetingMode = "either";
+      const selectedModes = answers[2].primary;
+
+      if (selectedModes.length === 1) {
+        // Only one mode selected, convert it to proper format
+        const mode = selectedModes[0].toLowerCase();
+        if (mode.includes("zoom") || mode.includes("remote")) {
+          meetingMode = "zoom";
+        } else if (mode.includes("person")) {
+          meetingMode = "in_person";
+        }
+      } else if (selectedModes.length === 2) {
+        // Both modes selected, use "either"
+        meetingMode = "either";
+      }
+
       // Store survey data and navigate to results with the data
       const surveyData = {
         subjects: answers[0].primary, // subjects from first question
         times: answers[1].primary, // times from second question
-        meetingMode: answers[2].primary[0] || "either", // meeting mode from third question
+        meetingMode: meetingMode, // meeting mode from third question
       };
 
       // Store in localStorage for results page to access

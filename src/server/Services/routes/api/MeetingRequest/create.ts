@@ -23,6 +23,16 @@ router.post("/create", async (req, res) => {
       topic,
     } = req.body;
 
+    console.log("Meeting request creation attempt:", {
+      studentId,
+      tutorId,
+      subjectId,
+      requestedStart,
+      requestedEnd,
+      mode,
+      topic,
+    });
+
     // Validate required fields
     if (
       !studentId ||
@@ -32,12 +42,14 @@ router.post("/create", async (req, res) => {
       !requestedEnd ||
       !mode
     ) {
+      console.log("Missing required fields");
       res.status(400).json({ error: "Missing required fields" });
       return;
     }
 
     // Validate mode
     if (mode !== "in_person" && mode !== "zoom") {
+      console.log("Invalid mode:", mode);
       res
         .status(400)
         .json({ error: "Invalid meeting mode. Must be 'in_person' or 'zoom'" });
@@ -58,6 +70,8 @@ router.post("/create", async (req, res) => {
         status: "pending",
       })
       .returning();
+
+    console.log("Meeting request created successfully:", newRequest[0]);
 
     res.status(201).json({
       message: "Meeting request created successfully",
