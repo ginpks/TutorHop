@@ -11,7 +11,8 @@ function Landing() {
   const [messages, setMessages] = React.useState<MailPreviewMessages[]>([]);
   const [upcoming, setUpcoming] = React.useState<MailPreviewMessages[]>([]);
   const [userID, setUserID] = React.useState<number>(0);
-  const [isCurrentUserAStudent, setIsTutor] = React.useState<boolean>(false);
+  const [isCurrentUserAStudent, setIsCurrentUserAStudent] =
+    React.useState<boolean>(false);
   const [loadingInbox, setLoadingInbox] = React.useState<boolean>(true);
   const [userName, setUserName] = React.useState<string>("");
   const [userRole, setUserRole] = React.useState<string>("");

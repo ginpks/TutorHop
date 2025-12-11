@@ -84,8 +84,6 @@ export class InboxRepository {
       .leftJoin(users, eq(users.id, otherUserColumn))
       .leftJoin(subjects, eq(subjects.id, meetingRequests.subjectId))
       .where(and(...conditions));
-
-    console.log("repo call:", databaseCall);
     return databaseCall;
   }
 

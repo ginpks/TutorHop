@@ -143,7 +143,7 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
         const userId = payload.userId || 0;
         setUserID(userId);
 
-        const isCurrentUserAStudent = payload.role === "tutor";
+        const isCurrentUserAStudent = payload.role === "student";
         setIsTutor(isCurrentUserAStudent);
 
         // Fetch user details from API
