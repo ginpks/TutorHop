@@ -40,7 +40,7 @@ router.get("/:id/full", async (req, res) => {
     const status = req.query.status as MeetingStatus | undefined;
     const startDate = req.query.startDate as string | undefined;
     const endDate = req.query.endDate as string | undefined;
-    const fromStudent = req.query.tutor === "true";
+    const isCurrentUserAStudent = req.query.tutor === "true";
     const db = getDatabaseService();
     const inbox_service: InboxServices = (await db).inboxServices;
     const data = await inbox_service.inboxFull(
@@ -48,7 +48,7 @@ router.get("/:id/full", async (req, res) => {
       status as MeetingStatus,
       startDate,
       endDate,
-      fromStudent
+      isCurrentUserAStudent
     );
     res.status(200).json(data);
   } catch (err: any) {

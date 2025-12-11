@@ -101,7 +101,7 @@ function InboxCardComponent({
               variant="h5"
               gutterBottom
             >
-              <InboxIcon /> {userType} Inbox
+              <InboxIcon /> {userType === "tutor" ? "Tutor" : "Student"} Inbox
             </Typography>
           </CardContent>
         </Card>

@@ -143,8 +143,8 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
         const userId = payload.userId || 0;
         setUserID(userId);
 
-        const isTutorLocal = payload.role === "tutor";
-        setIsTutor(isTutorLocal);
+        const isCurrentUserAStudent = payload.role === "tutor";
+        setIsTutor(isCurrentUserAStudent);
 
         // Fetch user details from API
         const userRes = await fetch(`/accounts/data?token=${token}`);
@@ -160,13 +160,11 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
         if (userId) {
           setLoadingInbox(true);
           const query = new URLSearchParams({
-            tutor: isTutorLocal === true ? "true" : "false",
+            tutor: isCurrentUserAStudent === true ? "false" : "true",
             status: "pending",
           });
 
-          const res = await fetch(
-            `/inbox/${userId}/full?${query.toString()}`,
-          );
+          const res = await fetch(`/inbox/${userId}/full?${query.toString()}`);
 
           if (res.ok) {
             const data = (await res.json()) as MailFullMessages[];
@@ -201,11 +199,9 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
         return;
       }
 
-      setMessages(prev =>
-        prev.map(m =>
-          Number(m.id) === meetingId
-            ? { ...m, status: newStatus }
-            : m
+      setMessages((prev) =>
+        prev.map((m) =>
+          Number(m.id) === meetingId ? { ...m, status: newStatus } : m
         )
       );
     } catch (err) {
@@ -440,79 +436,87 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
                     padding: 2,
                   }}
                 >
-                  {messages.filter(msg => msg.status === "pending").map((msg) => (
-                    <Box
-                      key={msg.id}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        paddingY: 2,
-                        borderBottom: "1px solid rgba(60,55,68,0.2)",
-                        ":last-of-type": { borderBottom: "none" },
-                      }}
-                    >
-                      <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-                        <strong>
-                          {msg.senderFirstName} {msg.senderLastName}
-                        </strong>
+                  {messages
+                    .filter((msg) => msg.status === "pending")
+                    .map((msg) => (
+                      <Box
+                        key={msg.id}
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          paddingY: 2,
+                          borderBottom: "1px solid rgba(60,55,68,0.2)",
+                          ":last-of-type": { borderBottom: "none" },
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 0.5,
+                          }}
+                        >
+                          <strong>
+                            {msg.senderFirstName} {msg.senderLastName}
+                          </strong>
 
-                        <div style={{ fontWeight: 600 }}>{msg.subject}</div>
+                          <div style={{ fontWeight: 600 }}>{msg.subject}</div>
 
-                        <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
-                          {msg.snippet}
-                        </div>
+                          <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
+                            {msg.snippet}
+                          </div>
 
-                        <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
-                          Meeting Time:{" "}
-                          {msg.requestedStart
-                            ? new Date(msg.requestedStart).toLocaleString()
-                            : "No requested time"}{" "}
-                          -{" "}
-                          {msg.requestedEnd
-                            ? new Date(msg.requestedEnd).toLocaleString()
-                            : "No requested time"}
-                        </div>
+                          <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
+                            Meeting Time:{" "}
+                            {msg.requestedStart
+                              ? new Date(msg.requestedStart).toLocaleString()
+                              : "No requested time"}{" "}
+                            -{" "}
+                            {msg.requestedEnd
+                              ? new Date(msg.requestedEnd).toLocaleString()
+                              : "No requested time"}
+                          </div>
 
-                        <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
-                          Status: {msg.status ? msg.status : "None"}
-                        </div>
+                          <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
+                            Status: {msg.status ? msg.status : "None"}
+                          </div>
 
-                        <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
-                          Meeting Mode: {msg.meetingMode?.replace(/_/g, " ")}
-                        </div>
+                          <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
+                            Meeting Mode: {msg.meetingMode?.replace(/_/g, " ")}
+                          </div>
+                        </Box>
+
+                        {userRole === "tutor" && msg.status === "pending" && (
+                          <Stack direction="row" spacing={1} sx={{ ml: 2 }}>
+                            <Button
+                              variant="contained"
+                              color="success"
+                              size="small"
+                              disabled={updatingId === Number(msg.id)}
+                              onClick={() =>
+                                handleUpdateStatus(Number(msg.id), "accepted")
+                              }
+                            >
+                              Accept
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              color="error"
+                              size="small"
+                              disabled={updatingId === Number(msg.id)}
+                              onClick={() =>
+                                handleUpdateStatus(Number(msg.id), "declined")
+                              }
+                            >
+                              Deny
+                            </Button>
+                          </Stack>
+                        )}
                       </Box>
-
-                      {userRole === "tutor" && msg.status === "pending" && (
-                        <Stack direction="row" spacing={1} sx={{ ml: 2 }}>
-                          <Button
-                            variant="contained"
-                            color="success"
-                            size="small"
-                            disabled={updatingId === Number(msg.id)}
-                            onClick={() =>
-                              handleUpdateStatus(Number(msg.id), "accepted")
-                            }
-                          >
-                            Accept
-                          </Button>
-                          <Button
-                            variant="outlined"
-                            color="error"
-                            size="small"
-                            disabled={updatingId === Number(msg.id)}
-                            onClick={() =>
-                              handleUpdateStatus(Number(msg.id), "declined")
-                            }
-                          >
-                            Deny
-                          </Button>
-                        </Stack>
-                      )}
-                    </Box>
-                  ))}
+                    ))}
                 </Box>
-              )}            
+              )}
             </Section>
           </Box>
         </Box>

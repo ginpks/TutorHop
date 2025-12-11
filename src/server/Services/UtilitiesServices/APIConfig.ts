@@ -17,6 +17,5 @@ export async function apiStart(mainApp: any) {
   mainApp.use("/accounts", userDataRouter);
   mainApp.use("/tutors", tutorSearchRouter);
   mainApp.use("/meeting-requests", meetingRequestRouter);
-  mainApp.use("/inbox", appointmentsRouter);
-  mainApp.use("/accept-deny", meetingDecisionRouter)
+  mainApp.use("/accept-deny", meetingDecisionRouter);
 }

@@ -32,18 +32,6 @@ export class InboxServices {
       isCurrentUserAStudent
     );
 
-    console.log(
-      "userId",
-      userId,
-      "status:",
-      status,
-      "startDate:",
-      startDate,
-      "endDate:",
-      endDate,
-      isCurrentUserAStudent
-    );
-
     //map it or modify it as you please and then return it.
     const previews: MailPreviewMessages[] = userInbox.map((message) =>
       inboxPreviewMapper(message)
