@@ -34,7 +34,6 @@ import dayjs, { Dayjs } from "dayjs";
 interface TutorDisplay {
   id: number;
   name: string;
-  subject?: string;
   subjects?: Array<{ id: number; code: string; name: string }>;
   online: boolean;
   location: string;
@@ -42,48 +41,67 @@ interface TutorDisplay {
 }
 
 const sampleTutors: TutorDisplay[] = [
-  { id: 1, name: "Marco T.", subject: "Math", online: true, location: "Zoom" },
+  {
+    id: 1,
+    name: "Marco T.",
+    subjects: [{ id: 1, code: "MATH 131", name: "Calculus I" }],
+    online: true,
+    location: "Zoom",
+    meetingPreference: "zoom",
+  },
   {
     id: 2,
     name: "Franco H.",
-    subject: "Physics",
+    subjects: [{ id: 2, code: "PHYSICS 151", name: "Physics I" }],
     online: false,
     location: "Morrill",
+    meetingPreference: "in_person",
   },
   {
     id: 3,
     name: "Kanika K.",
-    subject: "Computer Science",
+    subjects: [
+      { id: 3, code: "COMPSCI 187", name: "Programming with Data Structures" },
+      { id: 4, code: "COMPSCI 220", name: "Programming Methodology" },
+    ],
     online: true,
     location: "ISB",
+    meetingPreference: "either",
   },
   {
     id: 4,
     name: "David M.",
-    subject: "Chemistry",
+    subjects: [{ id: 5, code: "CHEM 111", name: "General Chemistry" }],
     online: true,
     location: "Herter Hall",
+    meetingPreference: "zoom",
   },
   {
     id: 5,
     name: "Fabian D.M.",
-    subject: "Biology",
+    subjects: [{ id: 6, code: "BIOLOGY 151", name: "Biology I" }],
     online: true,
     location: "Worcester",
+    meetingPreference: "zoom",
   },
   {
     id: 6,
     name: "Gin P.",
-    subject: "Psychology",
+    subjects: [{ id: 7, code: "PSYCH 100", name: "Introduction to Psychology" }],
     online: true,
     location: "Campus Center",
+    meetingPreference: "either",
   },
   {
     id: 7,
     name: "Jess B.",
-    subject: "Chemistry",
+    subjects: [
+      { id: 5, code: "CHEM 111", name: "General Chemistry" },
+      { id: 8, code: "CHEM 112", name: "General Chemistry II" },
+    ],
     online: true,
     location: "Goessmann",
+    meetingPreference: "zoom",
   },
 ];
 
@@ -369,12 +387,10 @@ const Results: React.FC = () => {
                     <Typography variant="h5" component="div">
                       {card.name}
                     </Typography>
-                    {card.subjects && card.subjects.length > 0 ? (
+                    {card.subjects && card.subjects.length > 0 && (
                       <Typography variant="body2">
                         {card.subjects.map((s) => s.code).join(", ")}
                       </Typography>
-                    ) : (
-                      <Typography variant="body2">{card.subject}</Typography>
                     )}
                     {card.online ? (
                       <Typography variant="body2" color="success">
