@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import InboxIcon from "@mui/icons-material/Inbox";
 import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces.js";
+import { OutboxOutlined } from "@mui/icons-material";
 
 interface InboxCardComponentProps {
   userType: string;
@@ -96,13 +97,23 @@ function InboxCardComponent({
       >
         <Card sx={{ bgcolor: "#B4C5E4" }}>
           <CardContent sx={{ display: "flex", alignItems: "center" }}>
-            <Typography
-              sx={{ display: "flex", alignItems: "center" }}
-              variant="h5"
-              gutterBottom
-            >
-              <InboxIcon /> {userType} Inbox
-            </Typography>
+            {userType === "tutor" ? (
+              <Typography
+                sx={{ display: "flex", alignItems: "center" }}
+                variant="h5"
+                gutterBottom
+              >
+                <InboxIcon /> {userType} Inbox
+              </Typography>
+            ) : (
+              <Typography
+                sx={{ display: "flex", alignItems: "center" }}
+                variant="h5"
+                gutterBottom
+              >
+                <OutboxOutlined /> Outgoing Meeting Requests
+              </Typography>
+            )}
           </CardContent>
         </Card>
         {inboxDataReturn()}
