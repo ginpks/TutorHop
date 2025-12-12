@@ -135,7 +135,7 @@ export default function Survey() {
         options={classes}
         value={current.primary}
         onChange={onPrimaryChange}
-        placeholder="Select classes or subjects..."
+        placeholder="Select classes..."
       />
     ),
 
