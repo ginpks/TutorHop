@@ -3,7 +3,6 @@ import {
   Avatar,
   Box,
   Button,
-  Chip,
   Divider,
   Paper,
   Stack,
@@ -16,17 +15,16 @@ import DefaultBanner from "../components/main_banner/banner";
 import { useNavigate } from "react-router-dom";
 import { roleLabels, UserRole } from "../../shared/Enums/UserEnums";
 
-interface PendingRequest {
-  student: string;
-  subject: string;
-  status?: "Pending" | "Accepted" | "Rejected";
-}
+type Subject = {
+  id: number;
+  code: string;
+  name: string;
+  role: string;
+};
 
 interface TutorProfileProps {
   name?: string;
   email?: string;
-  subjects?: string[];
-  pendingRequests?: PendingRequest[];
   meetingMode?: string;
 }
 
@@ -55,33 +53,6 @@ const Pill = ({ label }: { label: string }) => (
   </Box>
 );
 
-const StatusChip = ({
-  status,
-}: {
-  status: "Pending" | "Accepted" | "Rejected";
-}) => (
-  <Chip
-    label={status}
-    size="small"
-    sx={{
-      borderRadius: 999,
-      fontWeight: 600,
-      bgcolor:
-        status === "Accepted"
-          ? "#E0F2E9"
-          : status === "Rejected"
-            ? "#FBEAEA"
-            : "#FFF4E5",
-      color:
-        status === "Accepted"
-          ? "#2E7D32"
-          : status === "Rejected"
-            ? "#B00020"
-            : "#E65100",
-    }}
-  />
-);
-
 const Section: React.FC<React.PropsWithChildren<{ title: string }>> = ({
   title,
   children,
@@ -107,16 +78,7 @@ const Section: React.FC<React.PropsWithChildren<{ title: string }>> = ({
   </Paper>
 );
 
-const TutorProfile: React.FC<TutorProfileProps> = ({
-  name = "John Doe",
-  email = "johndoe@umass.edu",
-  subjects = ["CS 240", "CS 311"],
-  pendingRequests = [
-    { student: "Sam Lee", subject: "CS 230", status: "Pending" },
-    { student: "Ava Smith", subject: "CS 311", status: "Accepted" },
-  ],
-  meetingMode = "Hybrid",
-}) => {
+const TutorProfile: React.FC<TutorProfileProps> = () => {
   const [messages, setMessages] = React.useState<MailFullMessages[]>([]);
   const [userID, setUserID] = React.useState<number>(0);
   const [isTutor, setIsTutor] = React.useState<boolean>(false);
@@ -129,6 +91,10 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
   const [lastName, setLastName] = React.useState<string>("");
   const [userEmail, setUserEmail] = React.useState<string>("");
   const [updatingId, setUpdatingId] = React.useState<number | null>(null);
+  const [subjects, setSubjects] = React.useState<Subject[]>([]);
+  const [meetingPreference, setMeetingPreference] = React.useState<string>("");
+  const [loadingSubjects, setLoadingSubjects] = React.useState<boolean>(true);
+  const [bio, setBio] = React.useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -153,7 +119,28 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
           setFirstName(userData.user?.firstName || "");
           setLastName(userData.user?.lastName || "");
           setUserEmail(userData.user?.email || "");
+          setMeetingPreference(userData.user?.meetingPreference || "either");
           setIsTutor(userData.role === "tutor");
+        }
+
+        // Fetch user subjects
+        if (userId) {
+          setLoadingSubjects(true);
+          const subjectsRes = await fetch(`/users/${userId}/subjects`);
+          if (subjectsRes.ok) {
+            const subjectsData = await subjectsRes.json();
+            setSubjects(subjectsData);
+          }
+          setLoadingSubjects(false);
+        }
+
+        // Fetch tutor profile (bio)
+        if (userId && payload.role === "tutor") {
+          const profileRes = await fetch(`/users/${userId}/profile`);
+          if (profileRes.ok) {
+            const profileData = await profileRes.json();
+            setBio(profileData.bio || "");
+          }
         }
 
         // Fetch inbox messages
@@ -175,6 +162,7 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
       } catch (err) {
         console.error("Fetch error: ", err);
         setLoadingInbox(false);
+        setLoadingSubjects(false);
       }
     };
 
@@ -305,6 +293,17 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
             </Stack>
           </Paper>
 
+          {/* Bio Section */}
+          {bio && (
+            <Box sx={{ mt: 3 }}>
+              <Section title="About">
+                <Typography sx={{ color: TEXT_DARK, fontSize: 16, lineHeight: 1.6 }}>
+                  {bio}
+                </Typography>
+              </Section>
+            </Box>
+          )}
+
           {/* Subjects + Meeting Mode */}
           <Box sx={{ mt: 3 }}>
             <Section title="">
@@ -328,11 +327,31 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
                     Subjects
                   </Typography>
 
-                  <Stack spacing={1.25}>
-                    {subjects.map((subject) => (
-                      <Pill key={subject} label={subject} />
-                    ))}
-                  </Stack>
+                  {loadingSubjects ? (
+                    <Typography sx={{ color: TEXT_DARK, opacity: 0.6 }}>
+                      Loading subjects...
+                    </Typography>
+                  ) : subjects.length === 0 ? (
+                    <Typography sx={{ color: TEXT_DARK, opacity: 0.6 }}>
+                      No subjects assigned
+                    </Typography>
+                  ) : (
+                    <Stack spacing={1.25}>
+                      {subjects.map((s) => (
+                        <Stack
+                          key={s.id}
+                          direction="row"
+                          alignItems="center"
+                          spacing={1.25}
+                        >
+                          <Pill label={s.code} />
+                          <Typography sx={{ color: TEXT_DARK, fontSize: 14 }}>
+                            {s.name}
+                          </Typography>
+                        </Stack>
+                      ))}
+                    </Stack>
+                  )}
                 </Box>
 
                 {/* Meeting mode */}
@@ -344,47 +363,13 @@ const TutorProfile: React.FC<TutorProfileProps> = ({
                     Preferred meeting mode
                   </Typography>
                   <Typography sx={{ color: TEXT_DARK, fontSize: 18 }}>
-                    {meetingMode}
+                    {meetingPreference.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
                   </Typography>
                 </Box>
               </Stack>
             </Section>
           </Box>
 
-          {/* Pending Requests */}
-          <Box sx={{ mt: 3 }}>
-            <Section title="Pending Requests">
-              {pendingRequests.length > 0 ? (
-                <Stack spacing={1.25}>
-                  {pendingRequests.map((req, idx) => (
-                    <Stack
-                      key={idx}
-                      direction="row"
-                      alignItems="center"
-                      spacing={1.25}
-                    >
-                      <Typography
-                        sx={{
-                          color: TEXT_DARK,
-                          fontWeight: 600,
-                          fontSize: 16,
-                          minWidth: 160,
-                        }}
-                      >
-                        {req.student}
-                      </Typography>
-                      <Pill label={req.subject} />
-                      {req.status && <StatusChip status={req.status} />}
-                    </Stack>
-                  ))}
-                </Stack>
-              ) : (
-                <Typography sx={{ color: "rgba(60,55,68,0.6)" }}>
-                  No pending requests
-                </Typography>
-              )}
-            </Section>
-          </Box>
 
           <Box sx={{ mt: 3, mb: 2 }}>
             <Section title="Inbox">

@@ -8,6 +8,8 @@ import meetingRequestRouter from "../routes/api/MeetingRequest/create.js";
 import appointmentsRouter from "../routes/api/Inbox/upcoming_apps.js";
 import meetingDecisionRouter from "../routes/api/MeetingRequest/meeting_req_acc_den.js";
 import subjectListRouter from "../routes/api/Subject/list.js";
+import userSubjectsRouter from "../routes/api/User/subjects.js";
+import userProfileRouter from "../routes/api/User/profile.js";
 
 export async function apiStart(mainApp: any) {
   mainApp.use(express.json());
@@ -20,4 +22,6 @@ export async function apiStart(mainApp: any) {
   mainApp.use("/meeting-requests", meetingRequestRouter);
   mainApp.use("/subjects", subjectListRouter);
   mainApp.use("/accept-deny", meetingDecisionRouter);
+  mainApp.use("/users", userSubjectsRouter);
+  mainApp.use("/users", userProfileRouter);
 }
