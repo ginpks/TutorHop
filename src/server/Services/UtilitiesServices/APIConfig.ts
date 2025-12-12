@@ -7,6 +7,7 @@ import tutorSearchRouter from "../routes/api/Tutor/search.js";
 import meetingRequestRouter from "../routes/api/MeetingRequest/create.js";
 import appointmentsRouter from "../routes/api/Inbox/upcoming_apps.js";
 import meetingDecisionRouter from "../routes/api/MeetingRequest/meeting_req_acc_den.js";
+import subjectListRouter from "../routes/api/Subject/list.js";
 
 export async function apiStart(mainApp: any) {
   mainApp.use(express.json());
@@ -17,5 +18,6 @@ export async function apiStart(mainApp: any) {
   mainApp.use("/accounts", userDataRouter);
   mainApp.use("/tutors", tutorSearchRouter);
   mainApp.use("/meeting-requests", meetingRequestRouter);
+  mainApp.use("/subjects", subjectListRouter);
   mainApp.use("/accept-deny", meetingDecisionRouter);
 }

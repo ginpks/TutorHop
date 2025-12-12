@@ -28,67 +28,54 @@ export default function Survey() {
   const [userName, setUserName] = useState<string>("");
   const [userRole, setUserRole] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [classes, setClasses] = useState<string[]>([]);
+  const [loadingSubjects, setLoadingSubjects] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
         setIsLoggedIn(false);
-        return;
+      } else {
+        setIsLoggedIn(true);
+
+        try {
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          setUserName(payload.email || "User");
+          setUserRole(payload.role || "student");
+
+          const userRes = await fetch(`/accounts/data?token=${token}`);
+          if (userRes.ok) {
+            const userData = await userRes.json();
+            setFirstName(userData.user?.firstName || "");
+          }
+        } catch (err) {
+          console.error("Fetch error: ", err);
+        }
       }
 
-      setIsLoggedIn(true);
-
+      // Fetch subjects from API
       try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        setUserName(payload.email || "User");
-        setUserRole(payload.role || "student");
-
-        const userRes = await fetch(`/accounts/data?token=${token}`);
-        if (userRes.ok) {
-          const userData = await userRes.json();
-          setFirstName(userData.user?.firstName || "");
+        const subjectsRes = await fetch("/subjects/list");
+        if (subjectsRes.ok) {
+          const subjectsData = await subjectsRes.json();
+          // Extract just the codes for the PillPicker
+          const subjectCodes = subjectsData.map((s: any) => s.code);
+          setClasses(subjectCodes);
+          console.log(`Loaded ${subjectCodes.length} subjects from database`);
+        } else {
+          console.error("Failed to fetch subjects");
         }
       } catch (err) {
-        console.error("Fetch error: ", err);
+        console.error("Subject fetch error: ", err);
+      } finally {
+        setLoadingSubjects(false);
       }
     };
 
     fetchData();
   }, []);
 
-  const classes = [
-    "CICS 109",
-    "CICS 110",
-    "CICS 127",
-    "CICS 160",
-    "CICS 210",
-    "CICS 256",
-    "CICS 291C",
-    "CICS 291T",
-    "CICS 296P",
-    "CICS 298A",
-    "CICS 305",
-    "CICS 396A",
-    "CICS 590P",
-    "COMPSCI 119",
-    "COMPSCI 198C",
-    "COMPSCI 220",
-    "COMPSCI 230",
-    "COMPSCI 240",
-    "COMPSCI 250",
-    "COMPSCI 311",
-    "COMPSCI 320",
-    "COMPSCI 325",
-    "COMPSCI 326",
-    "COMPSCI 345",
-    "COMPSCI 348",
-    "COMPSCI 360",
-    "COMPSCI 377",
-    "COMPSCI 383",
-    "COMPSCI 389",
-    "COMPSCI 390B",
-  ];
   const questions = [
     "What subjects do you need help with?",
     "When do you want to study?",
@@ -139,12 +126,18 @@ export default function Survey() {
   };
 
   const questionWidgets = [
-    <PillPicker
-      options={classes}
-      value={current.primary}
-      onChange={onPrimaryChange}
-      placeholder="Select classes or subjects..."
-    />,
+    loadingSubjects ? (
+      <Typography variant="h6" color="#3C3744">
+        Loading subjects...
+      </Typography>
+    ) : (
+      <PillPicker
+        options={classes}
+        value={current.primary}
+        onChange={onPrimaryChange}
+        placeholder="Select classes or subjects..."
+      />
+    ),
 
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box
@@ -234,11 +227,28 @@ export default function Survey() {
 
   const onNext = () => {
     if (page + 1 >= questions.length) {
+      // Convert meeting mode: if both selected, use "either"
+      let meetingMode = "either";
+      const selectedModes = answers[2].primary;
+
+      if (selectedModes.length === 1) {
+        // Only one mode selected, convert it to proper format
+        const mode = selectedModes[0].toLowerCase();
+        if (mode.includes("zoom") || mode.includes("remote")) {
+          meetingMode = "zoom";
+        } else if (mode.includes("person")) {
+          meetingMode = "in_person";
+        }
+      } else if (selectedModes.length === 2) {
+        // Both modes selected, use "either"
+        meetingMode = "either";
+      }
+
       // Store survey data and navigate to results with the data
       const surveyData = {
         subjects: answers[0].primary, // subjects from first question
         times: answers[1].primary, // times from second question
-        meetingMode: answers[2].primary[0] || "either", // meeting mode from third question
+        meetingMode: meetingMode, // meeting mode from third question
       };
 
       // Store in localStorage for results page to access

@@ -20,12 +20,19 @@ router.get("/search", async (req, res) => {
 
     // Parse query parameters
     const subjectCodes = req.query.subjects
-      ? (req.query.subjects as string).split(",")
+      ? (req.query.subjects as string).split(",").map((s) => s.trim())
       : [];
     const meetingMode = req.query.meetingMode as string; // "in_person", "zoom", or "either"
 
+    console.log("Tutor search request:", {
+      subjectCodes,
+      meetingMode,
+      rawSubjects: req.query.subjects,
+    });
+
     // If no subjects specified, return empty results
     if (subjectCodes.length === 0) {
+      console.log("No subjects specified, returning empty results");
       res.json([]);
       return;
     }
@@ -36,9 +43,12 @@ router.get("/search", async (req, res) => {
       .from(subjects)
       .where(inArray(subjects.code, subjectCodes));
 
+    console.log("Found subject records:", subjectRecords.length);
+
     const subjectIds = subjectRecords.map((s) => Number(s.id));
 
     if (subjectIds.length === 0) {
+      console.log("No matching subjects found in database for codes:", subjectCodes);
       res.json([]);
       return;
     }
@@ -125,6 +135,7 @@ router.get("/search", async (req, res) => {
       };
     });
 
+    console.log("Returning", results.length, "tutors");
     res.json(results);
   } catch (err: any) {
     console.error("Tutor search error:", err);
