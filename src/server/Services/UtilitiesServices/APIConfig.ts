@@ -10,6 +10,7 @@ import meetingDecisionRouter from "../routes/api/MeetingRequest/meeting_req_acc_
 import subjectListRouter from "../routes/api/Subject/list.js";
 import userSubjectsRouter from "../routes/api/User/subjects.js";
 import userProfileRouter from "../routes/api/User/profile.js";
+import profileEditRouter from "../routes/api/Account/profile_edit.js";
 
 export async function apiStart(mainApp: any) {
   mainApp.use(express.json());
@@ -18,6 +19,7 @@ export async function apiStart(mainApp: any) {
   mainApp.use("/accounts", signUpRouter);
   mainApp.use("/accounts", loginRouter);
   mainApp.use("/accounts", userDataRouter);
+  mainApp.use("/accounts", profileEditRouter);
   mainApp.use("/tutors", tutorSearchRouter);
   mainApp.use("/meeting-requests", meetingRequestRouter);
   mainApp.use("/subjects", subjectListRouter);
