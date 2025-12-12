@@ -25,7 +25,7 @@ router.get("/list", async (req, res) => {
     console.log(`Fetched ${allSubjects.length} subjects`);
 
     // Convert BigInt IDs to numbers for JSON serialization
-    const serializedSubjects = allSubjects.map(s => ({
+    const serializedSubjects = allSubjects.map((s) => ({
       id: Number(s.id),
       code: s.code,
       name: s.name,

@@ -1,5 +1,5 @@
-import { getDatabaseService } from './src/server/Services/UtilitiesServices/DatabaseService.js';
-import { sql } from 'drizzle-orm';
+import { getDatabaseService } from "./src/server/Services/UtilitiesServices/DatabaseService.js";
+import { sql } from "drizzle-orm";
 
 /**
  * Fix PostgreSQL sequence values for auto-incrementing primary keys
@@ -9,14 +9,14 @@ import { sql } from 'drizzle-orm';
  */
 
 async function fixSequences() {
-  console.log('Starting sequence fix...\n');
+  console.log("Starting sequence fix...\n");
 
   try {
     const db = await getDatabaseService();
     const database = db.db;
 
     // Fix meeting_requests sequence
-    console.log('Fixing meeting_requests sequence...');
+    console.log("Fixing meeting_requests sequence...");
     await database.execute(sql`
       SELECT setval(
         pg_get_serial_sequence('meeting_requests', 'id'),
@@ -24,10 +24,10 @@ async function fixSequences() {
         false
       );
     `);
-    console.log('✓ meeting_requests sequence fixed');
+    console.log("✓ meeting_requests sequence fixed");
 
     // Fix users sequence
-    console.log('Fixing users sequence...');
+    console.log("Fixing users sequence...");
     await database.execute(sql`
       SELECT setval(
         'users_id_seq',
@@ -35,10 +35,10 @@ async function fixSequences() {
         false
       );
     `);
-    console.log('✓ users sequence fixed');
+    console.log("✓ users sequence fixed");
 
     // Fix subjects sequence
-    console.log('Fixing subjects sequence...');
+    console.log("Fixing subjects sequence...");
     await database.execute(sql`
       SELECT setval(
         pg_get_serial_sequence('subjects', 'id'),
@@ -46,10 +46,10 @@ async function fixSequences() {
         false
       );
     `);
-    console.log('✓ subjects sequence fixed');
+    console.log("✓ subjects sequence fixed");
 
     // Fix availability_slots sequence
-    console.log('Fixing availability_slots sequence...');
+    console.log("Fixing availability_slots sequence...");
     await database.execute(sql`
       SELECT setval(
         pg_get_serial_sequence('availability_slots', 'id'),
@@ -57,14 +57,14 @@ async function fixSequences() {
         false
       );
     `);
-    console.log('✓ availability_slots sequence fixed');
+    console.log("✓ availability_slots sequence fixed");
 
-    console.log('\n✅ All sequences have been fixed successfully!');
-    console.log('You can now create new records without conflicts.');
+    console.log("\n✅ All sequences have been fixed successfully!");
+    console.log("You can now create new records without conflicts.");
 
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error fixing sequences:', error);
+    console.error("❌ Error fixing sequences:", error);
     process.exit(1);
   }
 }

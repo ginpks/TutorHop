@@ -13,12 +13,9 @@ router.patch("/:id/status", async (req, res) => {
     const answer: MeetingStatus = req.body.status;
     const db = getDatabaseService();
     const inbox_service: InboxServices = (await db).inboxServices;
-    const data = await inbox_service.meetingService(
-      meetingRequestID,
-      answer
-    );
+    const data = await inbox_service.meetingService(meetingRequestID, answer);
 
-  res.status(200).json({success: true});
+    res.status(200).json({ success: true });
   } catch (err: any) {
     console.log(err);
   }

@@ -23,7 +23,7 @@ router.get("/:id/upcoming", async (req, res) => {
       "accepted",
       now,
       undefined,
-      isCurrentUserAStudent
+      isCurrentUserAStudent,
     );
     res.status(200).json(appointments);
   } catch (err: any) {

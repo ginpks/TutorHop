@@ -48,7 +48,10 @@ router.get("/search", async (req, res) => {
     const subjectIds = subjectRecords.map((s) => Number(s.id));
 
     if (subjectIds.length === 0) {
-      console.log("No matching subjects found in database for codes:", subjectCodes);
+      console.log(
+        "No matching subjects found in database for codes:",
+        subjectCodes,
+      );
       res.json([]);
       return;
     }

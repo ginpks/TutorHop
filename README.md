@@ -13,6 +13,7 @@ Tutor hop is a website where UMass students can easily search for, select and co
 ## Prerequisites
 
 Ensure you have the following installed:
+
 - [Node.js](https://nodejs.org/) (v18 or higher recommended)
 - [npm](https://www.npmjs.com/) (comes with Node.js)
 - [PostgreSQL](https://www.postgresql.org/) (if you're not using supabase like us)
@@ -125,6 +126,7 @@ TutorHop/
 ### Database Connection Issues
 
 If you encounter database connection errors:
+
 - Verify PostgreSQL is running: `pg_isready`
 - Check your `DATABASE_URL` in the `.env` file
 - Ensure the database exists and credentials are correct

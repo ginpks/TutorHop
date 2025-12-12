@@ -3,7 +3,6 @@ import {
   Avatar,
   Box,
   Button,
-  Chip,
   Divider,
   Paper,
   Stack,
@@ -16,12 +15,16 @@ import DefaultBanner from "../components/main_banner/banner";
 import { useNavigate } from "react-router-dom";
 import { roleLabels, UserRole } from "../../shared/Enums/UserEnums";
 
-type Subject = { code: string; status: "Open" | "Closed" };
+type Subject = {
+  id: number;
+  code: string;
+  name: string;
+  role: string;
+};
 
 interface StudentProfileProps {
   name?: string;
   email?: string;
-  subjects?: Subject[];
   meetingMode?: string;
 }
 
@@ -50,19 +53,6 @@ const Pill = ({ label }: { label: string }) => (
   </Box>
 );
 
-const StatusChip = ({ status }: { status: "Open" | "Closed" }) => (
-  <Chip
-    label={status}
-    size="small"
-    sx={{
-      borderRadius: 999,
-      fontWeight: 600,
-      bgcolor: status === "Open" ? "#E0F2E9" : "#FBEAEA",
-      color: status === "Open" ? "#2E7D32" : "#B00020",
-    }}
-  />
-);
-
 const Section: React.FC<React.PropsWithChildren<{ title: string }>> = ({
   title,
   children,
@@ -83,18 +73,11 @@ const Section: React.FC<React.PropsWithChildren<{ title: string }>> = ({
   </Paper>
 );
 
-const StudentProfile: React.FC<StudentProfileProps> = ({
-  name = "John doe",
-  email = "johndoe@umass.edu",
-  subjects = [
-    { code: "CS 240", status: "Open" },
-    { code: "CS 311", status: "Open" },
-  ],
-  meetingMode = "In-person",
-}) => {
+const StudentProfile: React.FC<StudentProfileProps> = () => {
   const [messages, setMessages] = React.useState<MailFullMessages[]>([]);
   const [userID, setUserID] = React.useState<number>(0);
-  const [isCurrentUserAStudent, setIsCurrentUserAStudent] = React.useState<boolean>(false);
+  const [isCurrentUserAStudent, setIsCurrentUserAStudent] =
+    React.useState<boolean>(false);
   const [loadingInbox, setLoadingInbox] = React.useState<boolean>(true);
   const [userName, setUserName] = React.useState<string>("");
   const [userRole, setUserRole] = React.useState<string>("");
@@ -103,6 +86,9 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
   const [firstName, setFirstName] = React.useState<string>("");
   const [lastName, setLastName] = React.useState<string>("");
   const [userEmail, setUserEmail] = React.useState<string>("");
+  const [subjects, setSubjects] = React.useState<Subject[]>([]);
+  const [meetingPreference, setMeetingPreference] = React.useState<string>("");
+  const [loadingSubjects, setLoadingSubjects] = React.useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -124,10 +110,22 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
           setFirstName(userData.user?.firstName || "");
           setLastName(userData.user?.lastName || "");
           setUserEmail(userData.user?.email || "");
+          setMeetingPreference(userData.user?.meetingPreference || "either");
         }
 
         const isTutorLocal = payload.role === "tutor";
         setIsCurrentUserAStudent(isTutorLocal);
+
+        // Fetch user subjects
+        if (userId) {
+          setLoadingSubjects(true);
+          const subjectsRes = await fetch(`/users/${userId}/subjects`);
+          if (subjectsRes.ok) {
+            const subjectsData = await subjectsRes.json();
+            setSubjects(subjectsData);
+          }
+          setLoadingSubjects(false);
+        }
 
         // Fetch inbox messages
         if (userId) {
@@ -148,6 +146,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
       } catch (err) {
         console.error("Fetch error: ", err);
         setLoadingInbox(false);
+        setLoadingSubjects(false);
       }
     };
 
@@ -274,19 +273,31 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
                     Subjects
                   </Typography>
 
-                  <Stack spacing={1.25}>
-                    {subjects.map((s) => (
-                      <Stack
-                        key={s.code}
-                        direction="row"
-                        alignItems="center"
-                        spacing={1.25}
-                      >
-                        <Pill label={s.code} />
-                        <StatusChip status={s.status} />
-                      </Stack>
-                    ))}
-                  </Stack>
+                  {loadingSubjects ? (
+                    <Typography sx={{ color: TEXT_DARK, opacity: 0.6 }}>
+                      Loading subjects...
+                    </Typography>
+                  ) : subjects.length === 0 ? (
+                    <Typography sx={{ color: TEXT_DARK, opacity: 0.6 }}>
+                      No subjects assigned
+                    </Typography>
+                  ) : (
+                    <Stack spacing={1.25}>
+                      {subjects.map((s) => (
+                        <Stack
+                          key={s.id}
+                          direction="row"
+                          alignItems="center"
+                          spacing={1.25}
+                        >
+                          <Pill label={s.code} />
+                          <Typography sx={{ color: TEXT_DARK, fontSize: 14 }}>
+                            {s.name}
+                          </Typography>
+                        </Stack>
+                      ))}
+                    </Stack>
+                  )}
                 </Box>
 
                 {/* Preferred meeting mode */}
@@ -298,7 +309,9 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
                     Preferred meeting mode
                   </Typography>
                   <Typography sx={{ color: TEXT_DARK, fontSize: 18 }}>
-                    {meetingMode}
+                    {meetingPreference
+                      .replace(/_/g, " ")
+                      .replace(/\b\w/g, (c) => c.toUpperCase())}
                   </Typography>
                 </Box>
               </Stack>

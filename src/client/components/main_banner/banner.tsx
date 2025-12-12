@@ -57,7 +57,7 @@ function DefaultBanner({
         >
           {title}
         </Typography>
-        
+
         {isLoggedIn &&
           userType === "Student" &&
           location.pathname !== "/survey" && (
@@ -80,7 +80,7 @@ function DefaultBanner({
               Find Tutor
             </Button>
           )}
-        
+
         {isLoggedIn && (
           <ProfileHeader
             profilePicUrl={profilePicUrl}

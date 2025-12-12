@@ -12,7 +12,6 @@ import {
   InputLabel,
   SelectChangeEvent,
   Divider,
-  Grid,
   CardActions,
   Dialog,
   DialogTitle,
@@ -20,6 +19,8 @@ import {
   DialogActions,
   TextField,
   Alert,
+  Chip,
+  OutlinedInput,
 } from "@mui/material";
 import DefaultBanner from "../components/main_banner/banner";
 import PrimaryButton from "../components/primary-button";
@@ -52,6 +53,12 @@ const Results: React.FC = () => {
   const [tutors, setTutors] = useState<TutorDisplay[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  // Filter state
+  const [availableSubjects, setAvailableSubjects] = useState<string[]>([]);
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+  const [selectedMeetingMode, setSelectedMeetingMode] = useState<string>("");
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+
   // Request dialog state
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [selectedTutor, setSelectedTutor] = useState<TutorDisplay | null>(null);
@@ -66,6 +73,50 @@ const Results: React.FC = () => {
   const [topic, setTopic] = useState<string>("");
   const [requestError, setRequestError] = useState<string>("");
   const [requestSuccess, setRequestSuccess] = useState<string>("");
+
+  // Function to fetch tutors based on current filters
+  const fetchTutors = async (subjects?: string[], meetingMode?: string) => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      const subjectsToUse = subjects || selectedSubjects;
+      const modeToUse =
+        meetingMode !== undefined ? meetingMode : selectedMeetingMode;
+
+      if (subjectsToUse.length > 0) {
+        params.append("subjects", subjectsToUse.join(","));
+      }
+      if (modeToUse) {
+        params.append("meetingMode", modeToUse);
+      }
+
+      const queryUrl = `/tutors/search?${params.toString()}`;
+      console.log("Fetching tutors from:", queryUrl);
+
+      const tutorRes = await fetch(queryUrl);
+      if (tutorRes.ok) {
+        const tutorData = await tutorRes.json();
+        console.log("Received tutor data:", tutorData);
+        if (tutorData.length === 0) {
+          console.log("No tutors found, using sample data");
+          setTutors(sampleTutors);
+        } else {
+          setTutors(tutorData);
+        }
+      } else {
+        console.error(
+          "Failed to fetch tutors:",
+          tutorRes.status,
+          tutorRes.statusText,
+        );
+        setTutors(sampleTutors);
+      }
+    } catch (err) {
+      console.error("Tutor fetch error: ", err);
+      setTutors(sampleTutors);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,25 +142,27 @@ const Results: React.FC = () => {
         }
       }
 
-      // Fetch tutors based on survey data
+      // Load available subjects
+      try {
+        const subjectsRes = await fetch("/subjects/list");
+        if (subjectsRes.ok) {
+          const subjectsData = await subjectsRes.json();
+          const subjectCodes = subjectsData.map((s: any) => s.code);
+          setAvailableSubjects(subjectCodes);
+        }
+      } catch (err) {
+        console.error("Subject fetch error: ", err);
+      }
+
+      // Load survey data and set initial filters
       try {
         const surveyDataStr = localStorage.getItem("surveyData");
         if (surveyDataStr) {
           const surveyData = JSON.parse(surveyDataStr);
           console.log("Survey data from localStorage:", surveyData);
 
-          // Build query parameters
-          const params = new URLSearchParams();
-          if (surveyData.subjects && surveyData.subjects.length > 0) {
-            params.append("subjects", surveyData.subjects.join(","));
-          }
-          if (surveyData.meetingMode) {
-            // meetingMode is already in correct format from survey page
-            params.append("meetingMode", surveyData.meetingMode);
-          }
-          if (surveyData.times && surveyData.times.length > 0) {
-            params.append("times", JSON.stringify(surveyData.times));
-          }
+          const subjects = surveyData.subjects || [];
+          const meetingMode = surveyData.meetingMode || "";
 
           const queryUrl = `/tutors/search?${params.toString()}`;
           console.log("Fetching tutors from:", queryUrl);
@@ -132,8 +185,6 @@ const Results: React.FC = () => {
         console.error("Tutor fetch error: ", err);
         setTutors([]);
       }
-
-      setLoading(false);
     };
 
     fetchData();
@@ -141,6 +192,28 @@ const Results: React.FC = () => {
 
   const handleSortChange = (event: SelectChangeEvent<"location" | "name">) => {
     setSortBy(event.target.value as "location" | "name");
+  };
+
+  const handleSubjectChange = (event: SelectChangeEvent<string[]>) => {
+    const value = event.target.value;
+    const subjects = typeof value === "string" ? value.split(",") : value;
+    setSelectedSubjects(subjects);
+  };
+
+  const handleMeetingModeChange = (event: SelectChangeEvent<string>) => {
+    setSelectedMeetingMode(event.target.value);
+  };
+
+  const handleApplyFilters = () => {
+    // Update localStorage with new filter values
+    const surveyDataStr = localStorage.getItem("surveyData");
+    const surveyData = surveyDataStr ? JSON.parse(surveyDataStr) : {};
+    surveyData.subjects = selectedSubjects;
+    surveyData.meetingMode = selectedMeetingMode;
+    localStorage.setItem("surveyData", JSON.stringify(surveyData));
+
+    // Fetch new results
+    fetchTutors();
   };
 
   const sortedTutors = [...tutors].sort((a, b) =>
@@ -188,11 +261,7 @@ const Results: React.FC = () => {
   };
 
   const handleSubmitRequest = async () => {
-    if (
-      !selectedTutor ||
-      !selectedSubjectId ||
-      !requestedStart
-    ) {
+    if (!selectedTutor || !selectedSubjectId || !requestedStart) {
       setRequestError("Please fill in all required fields");
       return;
     }
@@ -281,6 +350,170 @@ const Results: React.FC = () => {
         >
           Tutor Results
         </Typography>
+
+        {/* Filter Panel */}
+        <Paper
+          elevation={3}
+          sx={{
+            p: 4,
+            mb: 4,
+            bgcolor: "#FFFFFF",
+            borderRadius: 3,
+            border: "1px solid #E8E8E8",
+            transition: "all 0.3s ease",
+            "&:hover": {
+              boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+            },
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography
+              variant="h5"
+              sx={{
+                color: "#3C3744",
+                fontWeight: 700,
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              <Box component="span" sx={{ fontSize: "1.5rem" }}>
+                🔍
+              </Box>
+              Filter Results
+            </Typography>
+            <Button
+              onClick={() => setShowFilters(!showFilters)}
+              variant="outlined"
+              sx={{
+                textTransform: "none",
+                borderRadius: 2,
+                px: 3,
+                py: 1,
+                fontWeight: 600,
+                borderColor: "#B4C5E4",
+                color: "#B4C5E4",
+                "&:hover": {
+                  borderColor: "#9AB0D9",
+                  bgcolor: "#F0F4FA",
+                },
+              }}
+            >
+              {showFilters ? "Hide Filters" : "Show Filters"}
+            </Button>
+          </Box>
+
+          {showFilters && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 3,
+                mt: 4,
+                pt: 3,
+                borderTop: "2px solid #F0F0F0",
+              }}
+            >
+              {/* Subjects Filter */}
+              <FormControl fullWidth>
+                <InputLabel id="subjects-label" sx={{ fontWeight: 500 }}>
+                  Subjects
+                </InputLabel>
+                <Select
+                  labelId="subjects-label"
+                  id="subjects-select"
+                  multiple
+                  value={selectedSubjects}
+                  onChange={handleSubjectChange}
+                  input={<OutlinedInput label="Subjects" />}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
+                      {selected.map((value) => (
+                        <Chip
+                          key={value}
+                          label={value}
+                          size="small"
+                          sx={{
+                            bgcolor: "#B4C5E4",
+                            color: "#FFFFFF",
+                            fontWeight: 600,
+                            "&:hover": {
+                              bgcolor: "#9AB0D9",
+                            },
+                          }}
+                        />
+                      ))}
+                    </Box>
+                  )}
+                  sx={{
+                    borderRadius: 2,
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#E0E0E0",
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#B4C5E4",
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#B4C5E4",
+                    },
+                  }}
+                >
+                  {availableSubjects.map((subject) => (
+                    <MenuItem key={subject} value={subject}>
+                      {subject}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {/* Meeting Mode Filter */}
+              <FormControl fullWidth>
+                <InputLabel id="meeting-mode-label" sx={{ fontWeight: 500 }}>
+                  Meeting Mode
+                </InputLabel>
+                <Select
+                  labelId="meeting-mode-label"
+                  id="meeting-mode-select"
+                  value={selectedMeetingMode}
+                  label="Meeting Mode"
+                  onChange={handleMeetingModeChange}
+                  sx={{
+                    borderRadius: 2,
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#E0E0E0",
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#B4C5E4",
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#B4C5E4",
+                    },
+                  }}
+                >
+                  <MenuItem value="">Any</MenuItem>
+                  <MenuItem value="zoom">Virtual / Zoom</MenuItem>
+                  <MenuItem value="in_person">In-Person</MenuItem>
+                  <MenuItem value="either">Either</MenuItem>
+                </Select>
+              </FormControl>
+
+              {/* Apply Button */}
+              <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}>
+                <PrimaryButton
+                  text="Apply Filters"
+                  onClick={handleApplyFilters}
+                />
+              </Box>
+            </Box>
+          )}
+        </Paper>
+
         <FormControl sx={{ mb: 4, minWidth: 200 }}>
           <InputLabel id="sort-label">Sort by</InputLabel>
           <Select
@@ -308,50 +541,176 @@ const Results: React.FC = () => {
             </Typography>
           </Box>
         ) : (
-          <Grid container spacing={2} columns={1}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gap: 2.5,
+              maxWidth: "1200px",
+            }}
+          >
             {sortedTutors.map((card) => (
-              <Grid component={"div"} key={card.id}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="h5" component="div">
-                      {card.name}
+              <Card
+                key={card.id}
+                elevation={2}
+                sx={{
+                  borderRadius: 2,
+                  border: "1px solid #E8E8E8",
+                  transition: "all 0.3s ease",
+                  display: "flex",
+                  flexDirection: "column",
+                  height: "100%",
+                  "&:hover": {
+                    transform: "translateY(-4px)",
+                    boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+                    borderColor: "#B4C5E4",
+                  },
+                }}
+              >
+                <CardContent
+                  sx={{
+                    p: 2.5,
+                    flexGrow: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    component="div"
+                    sx={{
+                      fontWeight: 700,
+                      color: "#3C3744",
+                      mb: 1,
+                      fontSize: "1.1rem",
+                    }}
+                  >
+                    {card.name}
+                  </Typography>
+
+                  {card.meetingPreference === "either" ? (
+                    <Chip
+                      label="Hybrid"
+                      size="small"
+                      sx={{
+                        bgcolor: "#E3F2FD",
+                        color: "#1976D2",
+                        fontWeight: 600,
+                        border: "1px solid #90CAF9",
+                        height: "22px",
+                        fontSize: "0.7rem",
+                        width: "fit-content",
+                        mb: 1.5,
+                      }}
+                    />
+                  ) : card.online || card.meetingPreference === "zoom" ? (
+                    <Chip
+                      label="Virtual"
+                      size="small"
+                      sx={{
+                        bgcolor: "#E8F5E9",
+                        color: "#2E7D32",
+                        fontWeight: 600,
+                        border: "1px solid #A5D6A7",
+                        height: "22px",
+                        fontSize: "0.7rem",
+                        width: "fit-content",
+                        mb: 1.5,
+                      }}
+                    />
+                  ) : (
+                    <Chip
+                      label="In-person"
+                      size="small"
+                      sx={{
+                        bgcolor: "#FFF3E0",
+                        color: "#E65100",
+                        fontWeight: 600,
+                        border: "1px solid #FFCC80",
+                        height: "22px",
+                        fontSize: "0.7rem",
+                        width: "fit-content",
+                        mb: 1.5,
+                      }}
+                    />
+                  )}
+
+                  {card.subjects && card.subjects.length > 0 && (
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                        {card.subjects.map((s) => (
+                          <Chip
+                            key={s.id}
+                            label={s.code}
+                            size="small"
+                            sx={{
+                              bgcolor: "#F5F5F5",
+                              color: "#3C3744",
+                              fontWeight: 600,
+                              border: "1px solid #E0E0E0",
+                              height: "22px",
+                              fontSize: "0.7rem",
+                            }}
+                          />
+                        ))}
+                      </Box>
+                    </Box>
+                  )}
+                </CardContent>
+
+                <Divider />
+
+                <CardActions
+                  sx={{ p: 1.5, bgcolor: "#FAFAFA", justifyContent: "center" }}
+                >
+                  {isLoggedIn && userRole === "student" ? (
+                    <Button
+                      onClick={() => handleOpenRequestDialog(card)}
+                      variant="contained"
+                      size="small"
+                      sx={{
+                        bgcolor: "#B4C5E4",
+                        color: "#FFFFFF",
+                        textTransform: "none",
+                        fontWeight: 600,
+                        fontSize: "0.8rem",
+                        px: 2,
+                        py: 0.75,
+                        borderRadius: 1.5,
+                        "&:hover": {
+                          bgcolor: "#9AB0D9",
+                        },
+                      }}
+                    >
+                      Request
+                    </Button>
+                  ) : !isLoggedIn ? (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: "#757575",
+                        fontStyle: "italic",
+                        fontSize: "0.75rem",
+                      }}
+                    >
+                      Log in to request
                     </Typography>
-                    {card.subjects && card.subjects.length > 0 && (
-                      <Typography variant="body2">
-                        {card.subjects.map((s) => s.code).join(", ")}
-                      </Typography>
-                    )}
-                    {card.online ? (
-                      <Typography variant="body2" color="success">
-                        Virtual Available
-                      </Typography>
-                    ) : (
-                      <Typography variant="body2" color="error">
-                        In-person Only
-                      </Typography>
-                    )}
-                    <Typography variant="body2">{card.location}</Typography>
-                  </CardContent>
-                  <CardActions>
-                    {isLoggedIn && userRole === "student" ? (
-                      <PrimaryButton
-                        text="Request Appointment"
-                        onClick={() => handleOpenRequestDialog(card)}
-                      />
-                    ) : !isLoggedIn ? (
-                      <Typography variant="body2" color="text.secondary">
-                        Log in to request an appointment
-                      </Typography>
-                    ) : (
-                      <Typography variant="body2" color="text.secondary">
-                        Only students can request appointments
-                      </Typography>
-                    )}
-                  </CardActions>
-                </Card>
-              </Grid>
+                  ) : (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: "#757575",
+                        fontStyle: "italic",
+                        fontSize: "0.75rem",
+                      }}
+                    >
+                      Students only
+                    </Typography>
+                  )}
+                </CardActions>
+              </Card>
             ))}
-          </Grid>
+          </Box>
         )}
       </Box>
 
@@ -443,7 +802,10 @@ const Results: React.FC = () => {
               {/* Display calculated end time */}
               {requestedStart && (
                 <Typography variant="body2" color="text.secondary">
-                  End time: {requestedStart.add(duration, "minute").format("MMM D, YYYY h:mm A")}
+                  End time:{" "}
+                  {requestedStart
+                    .add(duration, "minute")
+                    .format("MMM D, YYYY h:mm A")}
                 </Typography>
               )}
 
