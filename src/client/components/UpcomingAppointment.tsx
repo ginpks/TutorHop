@@ -49,6 +49,7 @@ function UpcomingAppointment({
               sx={{
                 display: "flex",
                 gap: 5,
+                marginBottom: 2,
               }}
             >
               <CardContent sx={{ display: "flex", gap: 5 }}>
@@ -61,8 +62,7 @@ function UpcomingAppointment({
                   <Typography
                     sx={{ fontWeight: "bold" }}
                   >{`${element.subject}`}</Typography>
-                  <Typography
-                  >{`${element.snippet ?? "No Preview"}`}</Typography>
+                  <Typography>{`${element.snippet ?? "No Preview"}`}</Typography>
                   <Typography>{`${element.startDate ?? "No date provided"}`}</Typography>
                 </Box>
               </CardContent>
