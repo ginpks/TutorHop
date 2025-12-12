@@ -24,7 +24,7 @@ export class InboxRepository {
     status?: MeetingStatus,
     startDate?: string,
     endDate?: string,
-    isCurrentUserAStudent?: boolean
+    isCurrentUserAStudent?: boolean,
   ) {
     //determine whether the perspective the inbox is a tutor or a student
     const otherUserColumn =
@@ -47,7 +47,7 @@ export class InboxRepository {
     if (startDate && endDate) {
       conditions.push(
         gte(meetingRequests.requestedStart, startDate),
-        lte(meetingRequests.requestedEnd, endDate)
+        lte(meetingRequests.requestedEnd, endDate),
       );
     } else if (startDate && !endDate) {
       conditions.push(gte(meetingRequests.requestedStart, startDate));
@@ -89,7 +89,7 @@ export class InboxRepository {
 
   public async updateMeetingStatus(
     meetingRequestId: number,
-    answer: MeetingStatus
+    answer: MeetingStatus,
   ) {
     return await this.database
       .update(meetingRequests)

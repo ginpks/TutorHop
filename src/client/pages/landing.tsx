@@ -65,7 +65,7 @@ function Landing() {
         }
 
         const res2 = await fetch(
-          `/inbox/${userID}/upcoming?${query.toString()}`
+          `/inbox/${userID}/upcoming?${query.toString()}`,
         );
 
         if (!res2.ok) {

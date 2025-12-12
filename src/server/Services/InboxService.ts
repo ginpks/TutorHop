@@ -21,7 +21,7 @@ export class InboxServices {
     status?: MeetingStatus,
     startDate?: string,
     endDate?: string,
-    isCurrentUserAStudent?: boolean
+    isCurrentUserAStudent?: boolean,
   ): Promise<MailPreviewMessages[]> {
     //retrieve raw data from the repo/database
     const userInbox = await this.inboxRepo.getUserInbox(
@@ -29,12 +29,12 @@ export class InboxServices {
       status,
       startDate,
       endDate,
-      isCurrentUserAStudent
+      isCurrentUserAStudent,
     );
 
     //map it or modify it as you please and then return it.
     const previews: MailPreviewMessages[] = userInbox.map((message) =>
-      inboxPreviewMapper(message)
+      inboxPreviewMapper(message),
     );
     return previews;
   }
@@ -44,7 +44,7 @@ export class InboxServices {
     status?: MeetingStatus,
     startDate?: string,
     endDate?: string,
-    isCurrentUserAStudent?: boolean
+    isCurrentUserAStudent?: boolean,
   ): Promise<MailFullMessages[]> {
     //retrieve raw data from the repo/database
     const userInbox = await this.inboxRepo.getUserInbox(
@@ -52,23 +52,23 @@ export class InboxServices {
       status,
       startDate,
       endDate,
-      isCurrentUserAStudent
+      isCurrentUserAStudent,
     );
     //map it or modify it as you please and then return it.
     const fullMessages: MailFullMessages[] = userInbox.map((message) =>
-      inboxFullMapper(message)
+      inboxFullMapper(message),
     );
     return fullMessages;
   }
 
   public async meetingService(
     meetingRequestId: number,
-    answer: MeetingStatus
+    answer: MeetingStatus,
   ): Promise<any> {
     try {
       const updated = await this.inboxRepo.updateMeetingStatus(
         meetingRequestId,
-        answer
+        answer,
       );
 
       return updated;

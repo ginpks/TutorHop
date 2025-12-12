@@ -53,7 +53,6 @@ const Pill = ({ label }: { label: string }) => (
   </Box>
 );
 
-
 const Section: React.FC<React.PropsWithChildren<{ title: string }>> = ({
   title,
   children,
@@ -77,7 +76,8 @@ const Section: React.FC<React.PropsWithChildren<{ title: string }>> = ({
 const StudentProfile: React.FC<StudentProfileProps> = () => {
   const [messages, setMessages] = React.useState<MailFullMessages[]>([]);
   const [userID, setUserID] = React.useState<number>(0);
-  const [isCurrentUserAStudent, setIsCurrentUserAStudent] = React.useState<boolean>(false);
+  const [isCurrentUserAStudent, setIsCurrentUserAStudent] =
+    React.useState<boolean>(false);
   const [loadingInbox, setLoadingInbox] = React.useState<boolean>(true);
   const [userName, setUserName] = React.useState<string>("");
   const [userRole, setUserRole] = React.useState<string>("");
@@ -309,7 +309,9 @@ const StudentProfile: React.FC<StudentProfileProps> = () => {
                     Preferred meeting mode
                   </Typography>
                   <Typography sx={{ color: TEXT_DARK, fontSize: 18 }}>
-                    {meetingPreference.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                    {meetingPreference
+                      .replace(/_/g, " ")
+                      .replace(/\b\w/g, (c) => c.toUpperCase())}
                   </Typography>
                 </Box>
               </Stack>

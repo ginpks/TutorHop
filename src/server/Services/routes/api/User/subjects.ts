@@ -33,7 +33,7 @@ router.get("/:userId/subjects", async (req, res) => {
       .where(eq(userSubjects.userId, userId));
 
     // Convert BigInt IDs to numbers for JSON serialization
-    const serializedSubjects = userSubjectsList.map(s => ({
+    const serializedSubjects = userSubjectsList.map((s) => ({
       id: Number(s.id),
       code: s.code,
       name: s.name,

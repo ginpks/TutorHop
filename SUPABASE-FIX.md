@@ -35,6 +35,7 @@ psql "postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:54
 ```
 
 **Example:**
+
 ```cmd
 psql "postgresql://postgres:mypassword123@db.abcdefghijklm.supabase.co:5432/postgres" -f fix-sequences.sql
 ```
@@ -42,10 +43,12 @@ psql "postgresql://postgres:mypassword123@db.abcdefghijklm.supabase.co:5432/post
 #### If psql is not installed:
 
 Download and install PostgreSQL client tools:
+
 - Windows: https://www.postgresql.org/download/windows/
 - Or install just the command-line tools from: https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
 
 After installation, add PostgreSQL's bin folder to your PATH:
+
 1. Find the installation path (usually `C:\Program Files\PostgreSQL\16\bin`)
 2. Add it to your system PATH environment variable
 3. Restart Command Prompt

@@ -1,7 +1,7 @@
-import { InboxServices } from '../InboxService.js';
-import { InboxRepository } from '../../Repositories/InboxRepository.js';
-import { inboxPreviewMapper } from '../../../shared/Mappers/InboxMappers.js';
-import mockInboxData from '../../mock/student_inbox.json' with { type: "json" };
+import { InboxServices } from "../InboxService.js";
+import { InboxRepository } from "../../Repositories/InboxRepository.js";
+import { inboxPreviewMapper } from "../../../shared/Mappers/InboxMappers.js";
+import mockInboxData from "../../mock/student_inbox.json" with { type: "json" };
 
 /* 
   Some general tips:
@@ -21,12 +21,12 @@ import mockInboxData from '../../mock/student_inbox.json' with { type: "json" };
 */
 
 // Mock the mapper so we can control its behavior
-jest.mock('../Mappers/InboxMappers.js', () => ({
+jest.mock("../Mappers/InboxMappers.js", () => ({
   inboxPreviewMapper: jest.fn(),
 }));
 
 // Define a test class
-describe('InboxServices with JSON mock data', () => {
+describe("InboxServices with JSON mock data", () => {
   // Create a mock repository
   const mockRepo: jest.Mocked<Partial<InboxRepository>> = {
     getUserInbox: jest.fn(),
@@ -49,9 +49,11 @@ describe('InboxServices with JSON mock data', () => {
   });
 
   // Define a test case
-  it('should map inbox rows into preview messages', async () => {
+  it("should map inbox rows into preview messages", async () => {
     // Mock the value returned by the repo as the mock data
-    (mockRepo.getUserInbox as jest.Mock).mockResolvedValue(mockInboxData as any[]);
+    (mockRepo.getUserInbox as jest.Mock).mockResolvedValue(
+      mockInboxData as any[],
+    );
 
     const result = await service.inboxPreviews(123);
 
@@ -61,15 +63,15 @@ describe('InboxServices with JSON mock data', () => {
       undefined,
       undefined,
       undefined,
-      undefined
+      undefined,
     );
     // How many times it was called
     expect(inboxPreviewMapper).toHaveBeenCalledTimes(mockInboxData.length);
-    expect(result[0]).toHaveProperty('id');
-    expect(result[0]).toHaveProperty('subject');
+    expect(result[0]).toHaveProperty("id");
+    expect(result[0]).toHaveProperty("subject");
   });
 
-  it('should handle empty inbox gracefully', async () => {
+  it("should handle empty inbox gracefully", async () => {
     (mockRepo.getUserInbox as jest.Mock).mockResolvedValue([]);
 
     const result = await service.inboxPreviews(456);

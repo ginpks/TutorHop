@@ -171,7 +171,7 @@ const TutorProfile: React.FC<TutorProfileProps> = () => {
 
   const handleUpdateStatus = async (
     meetingId: number,
-    newStatus: "accepted" | "declined"
+    newStatus: "accepted" | "declined",
   ) => {
     try {
       setUpdatingId(meetingId);
@@ -189,8 +189,8 @@ const TutorProfile: React.FC<TutorProfileProps> = () => {
 
       setMessages((prev) =>
         prev.map((m) =>
-          Number(m.id) === meetingId ? { ...m, status: newStatus } : m
-        )
+          Number(m.id) === meetingId ? { ...m, status: newStatus } : m,
+        ),
       );
     } catch (err) {
       console.error("Error updating status", err);
@@ -297,7 +297,9 @@ const TutorProfile: React.FC<TutorProfileProps> = () => {
           {bio && (
             <Box sx={{ mt: 3 }}>
               <Section title="About">
-                <Typography sx={{ color: TEXT_DARK, fontSize: 16, lineHeight: 1.6 }}>
+                <Typography
+                  sx={{ color: TEXT_DARK, fontSize: 16, lineHeight: 1.6 }}
+                >
                   {bio}
                 </Typography>
               </Section>
@@ -363,13 +365,14 @@ const TutorProfile: React.FC<TutorProfileProps> = () => {
                     Preferred meeting mode
                   </Typography>
                   <Typography sx={{ color: TEXT_DARK, fontSize: 18 }}>
-                    {meetingPreference.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                    {meetingPreference
+                      .replace(/_/g, " ")
+                      .replace(/\b\w/g, (c) => c.toUpperCase())}
                   </Typography>
                 </Box>
               </Stack>
             </Section>
           </Box>
-
 
           <Box sx={{ mt: 3, mb: 2 }}>
             <Section title="Inbox">

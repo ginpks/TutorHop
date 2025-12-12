@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Avatar, IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Divider } from "@mui/material";
+import {
+  Avatar,
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+} from "@mui/material";
 import { Person, Logout } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
@@ -36,7 +44,7 @@ function ProfileHeader({
   const handleLogout = () => {
     handleClose();
     localStorage.removeItem("token");
-   navigate("/");
+    navigate("/");
   };
 
   const getInitial = () => {
@@ -79,8 +87,8 @@ function ProfileHeader({
         open={open}
         onClose={handleClose}
         onClick={handleClose}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         PaperProps={{
           elevation: 3,
           sx: {
@@ -91,25 +99,25 @@ function ProfileHeader({
         }}
       >
         {displayName && (
-          <MenuItem disabled sx={{ opacity: 1, cursor: 'default' }}>
+          <MenuItem disabled sx={{ opacity: 1, cursor: "default" }}>
             <ListItemText
               primary={displayName}
               secondary={userType}
               primaryTypographyProps={{ fontWeight: 600 }}
-              secondaryTypographyProps={{ fontSize: '0.85rem' }}
+              secondaryTypographyProps={{ fontSize: "0.85rem" }}
             />
           </MenuItem>
         )}
-        
+
         {displayName && <Divider />}
-        
+
         <MenuItem onClick={handleProfileClick}>
           <ListItemIcon>
             <Person fontSize="small" />
           </ListItemIcon>
           <ListItemText>Profile</ListItemText>
         </MenuItem>
-        
+
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
