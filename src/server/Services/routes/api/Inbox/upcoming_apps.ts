@@ -12,7 +12,7 @@ const router = express.Router();
 router.get("/:id/upcoming", async (req, res) => {
   try {
     const userID = Number(req.params.id);
-    const fromStudent = req.query.tutor === "true";
+    const isCurrentUserAStudent = req.query.tutor === "false";
     const now = new Date().toISOString();
 
     const db = await getDatabaseService();
@@ -23,7 +23,7 @@ router.get("/:id/upcoming", async (req, res) => {
       "accepted",
       now,
       undefined,
-      fromStudent
+      isCurrentUserAStudent
     );
     res.status(200).json(appointments);
   } catch (err: any) {

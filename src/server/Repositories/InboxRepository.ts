@@ -24,28 +24,23 @@ export class InboxRepository {
     status?: MeetingStatus,
     startDate?: string,
     endDate?: string,
-    fromStudent?: boolean
+    isCurrentUserAStudent?: boolean
   ) {
     //determine whether the perspective the inbox is a tutor or a student
-    const currentUserColumn =
-      fromStudent === true
+    const otherUserColumn =
+      isCurrentUserAStudent === true
         ? meetingRequests.tutorId
         : meetingRequests.studentId;
 
-    const otherUserColumn =
-      fromStudent === true
+    const currentUserColumn =
+      isCurrentUserAStudent === true
         ? meetingRequests.studentId
         : meetingRequests.tutorId;
+
     const conditions = [eq(currentUserColumn, Number(userId))];
 
-    //if student, return "accepted" and "declined" meetings and if tutor return "pending" meetings
-    if (fromStudent === false) {
-      const statusCondition = or(eq(meetingRequests.status, "declined"), eq(meetingRequests.status, "accepted"));
-      if (statusCondition) {
-        conditions.push(statusCondition);
-      }
-    } else {
-      conditions.push(eq(meetingRequests.status, "pending"));
+    if (status) {
+      conditions.push(eq(meetingRequests.status, status));
     }
 
     //dates should be formatted as yyyy-mm-dd
@@ -61,7 +56,8 @@ export class InboxRepository {
     }
     console.log("Inbox preview database call made");
     //using the database that is passed into the class we call the database
-    return await this.database
+
+    const databaseCall = await this.database
       .select({
         //specify the information that we want from the schema which includes the foreign keys from the database
         id: meetingRequests.id,
@@ -88,17 +84,17 @@ export class InboxRepository {
       .leftJoin(users, eq(users.id, otherUserColumn))
       .leftJoin(subjects, eq(subjects.id, meetingRequests.subjectId))
       .where(and(...conditions));
+    return databaseCall;
   }
 
   public async updateMeetingStatus(
     meetingRequestId: number,
-    answer: MeetingStatus,
-  )
-  {
+    answer: MeetingStatus
+  ) {
     return await this.database
       .update(meetingRequests)
       .set({ status: answer })
-      .where(eq(meetingRequests.id, BigInt(meetingRequestId))
-    ).returning();
+      .where(eq(meetingRequests.id, BigInt(meetingRequestId)))
+      .returning();
   }
 }

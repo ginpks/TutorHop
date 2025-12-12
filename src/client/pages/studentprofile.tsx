@@ -94,7 +94,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
 }) => {
   const [messages, setMessages] = React.useState<MailFullMessages[]>([]);
   const [userID, setUserID] = React.useState<number>(0);
-  const [isTutor, setIsTutor] = React.useState<boolean>(false);
+  const [isCurrentUserAStudent, setIsCurrentUserAStudent] = React.useState<boolean>(false);
   const [loadingInbox, setLoadingInbox] = React.useState<boolean>(true);
   const [userName, setUserName] = React.useState<string>("");
   const [userRole, setUserRole] = React.useState<string>("");
@@ -127,19 +127,17 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
         }
 
         const isTutorLocal = payload.role === "tutor";
-        setIsTutor(isTutorLocal);
+        setIsCurrentUserAStudent(isTutorLocal);
 
         // Fetch inbox messages
         if (userId) {
           setLoadingInbox(true);
           const query = new URLSearchParams({
-            tutor: isTutor === true ? "true" : "false",
+            tutor: isCurrentUserAStudent === true ? "false" : "true",
             status: "pending",
           });
 
-          const res = await fetch(
-            `/inbox/${userId}/full?${query.toString()}`,
-          );
+          const res = await fetch(`/inbox/${userId}/full?${query.toString()}`);
 
           if (res.ok) {
             const data = (await res.json()) as MailFullMessages[];
