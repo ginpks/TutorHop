@@ -20,6 +20,8 @@ import {
   DialogActions,
   TextField,
   Alert,
+  Chip,
+  OutlinedInput,
 } from "@mui/material";
 import DefaultBanner from "../components/main_banner/banner";
 import PrimaryButton from "../components/primary-button";
@@ -117,6 +119,12 @@ const Results: React.FC = () => {
   const [tutors, setTutors] = useState<TutorDisplay[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  // Filter state
+  const [availableSubjects, setAvailableSubjects] = useState<string[]>([]);
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+  const [selectedMeetingMode, setSelectedMeetingMode] = useState<string>("");
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+
   // Request dialog state
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [selectedTutor, setSelectedTutor] = useState<TutorDisplay | null>(null);
@@ -131,6 +139,45 @@ const Results: React.FC = () => {
   const [topic, setTopic] = useState<string>("");
   const [requestError, setRequestError] = useState<string>("");
   const [requestSuccess, setRequestSuccess] = useState<string>("");
+
+  // Function to fetch tutors based on current filters
+  const fetchTutors = async (subjects?: string[], meetingMode?: string) => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      const subjectsToUse = subjects || selectedSubjects;
+      const modeToUse = meetingMode !== undefined ? meetingMode : selectedMeetingMode;
+
+      if (subjectsToUse.length > 0) {
+        params.append("subjects", subjectsToUse.join(","));
+      }
+      if (modeToUse) {
+        params.append("meetingMode", modeToUse);
+      }
+
+      const queryUrl = `/tutors/search?${params.toString()}`;
+      console.log("Fetching tutors from:", queryUrl);
+
+      const tutorRes = await fetch(queryUrl);
+      if (tutorRes.ok) {
+        const tutorData = await tutorRes.json();
+        console.log("Received tutor data:", tutorData);
+        if (tutorData.length === 0) {
+          console.log("No tutors found, using sample data");
+          setTutors(sampleTutors);
+        } else {
+          setTutors(tutorData);
+        }
+      } else {
+        console.error("Failed to fetch tutors:", tutorRes.status, tutorRes.statusText);
+        setTutors(sampleTutors);
+      }
+    } catch (err) {
+      console.error("Tutor fetch error: ", err);
+      setTutors(sampleTutors);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -156,55 +203,43 @@ const Results: React.FC = () => {
         }
       }
 
-      // Fetch tutors based on survey data
+      // Load available subjects
+      try {
+        const subjectsRes = await fetch("/subjects/list");
+        if (subjectsRes.ok) {
+          const subjectsData = await subjectsRes.json();
+          const subjectCodes = subjectsData.map((s: any) => s.code);
+          setAvailableSubjects(subjectCodes);
+        }
+      } catch (err) {
+        console.error("Subject fetch error: ", err);
+      }
+
+      // Load survey data and set initial filters
       try {
         const surveyDataStr = localStorage.getItem("surveyData");
         if (surveyDataStr) {
           const surveyData = JSON.parse(surveyDataStr);
           console.log("Survey data from localStorage:", surveyData);
 
-          // Build query parameters
-          const params = new URLSearchParams();
-          if (surveyData.subjects && surveyData.subjects.length > 0) {
-            params.append("subjects", surveyData.subjects.join(","));
-          }
-          if (surveyData.meetingMode) {
-            // meetingMode is already in correct format from survey page
-            params.append("meetingMode", surveyData.meetingMode);
-          }
-          if (surveyData.times && surveyData.times.length > 0) {
-            params.append("times", JSON.stringify(surveyData.times));
-          }
+          const subjects = surveyData.subjects || [];
+          const meetingMode = surveyData.meetingMode || "";
 
-          const queryUrl = `/tutors/search?${params.toString()}`;
-          console.log("Fetching tutors from:", queryUrl);
+          setSelectedSubjects(subjects);
+          setSelectedMeetingMode(meetingMode);
 
-          const tutorRes = await fetch(queryUrl);
-          if (tutorRes.ok) {
-            const tutorData = await tutorRes.json();
-            console.log("Received tutor data:", tutorData);
-            // If no results, fall back to sample tutors
-            if (tutorData.length === 0) {
-              console.log("No tutors found, using sample data");
-              setTutors(sampleTutors);
-            } else {
-              setTutors(tutorData);
-            }
-          } else {
-            console.error("Failed to fetch tutors:", tutorRes.status, tutorRes.statusText);
-            setTutors(sampleTutors);
-          }
+          // Fetch tutors with initial survey data
+          await fetchTutors(subjects, meetingMode);
         } else {
-          // No survey data, use sample tutors
           console.log("No survey data found, using sample tutors");
           setTutors(sampleTutors);
+          setLoading(false);
         }
       } catch (err) {
         console.error("Tutor fetch error: ", err);
-        setTutors(sampleTutors); // Fallback to sample data
+        setTutors(sampleTutors);
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     fetchData();
@@ -212,6 +247,28 @@ const Results: React.FC = () => {
 
   const handleSortChange = (event: SelectChangeEvent<"location" | "name">) => {
     setSortBy(event.target.value as "location" | "name");
+  };
+
+  const handleSubjectChange = (event: SelectChangeEvent<string[]>) => {
+    const value = event.target.value;
+    const subjects = typeof value === 'string' ? value.split(',') : value;
+    setSelectedSubjects(subjects);
+  };
+
+  const handleMeetingModeChange = (event: SelectChangeEvent<string>) => {
+    setSelectedMeetingMode(event.target.value);
+  };
+
+  const handleApplyFilters = () => {
+    // Update localStorage with new filter values
+    const surveyDataStr = localStorage.getItem("surveyData");
+    const surveyData = surveyDataStr ? JSON.parse(surveyDataStr) : {};
+    surveyData.subjects = selectedSubjects;
+    surveyData.meetingMode = selectedMeetingMode;
+    localStorage.setItem("surveyData", JSON.stringify(surveyData));
+
+    // Fetch new results
+    fetchTutors();
   };
 
   const sortedTutors = [...tutors].sort((a, b) =>
@@ -352,6 +409,85 @@ const Results: React.FC = () => {
         >
           Tutor Results
         </Typography>
+
+        {/* Filter Panel */}
+        <Paper
+          elevation={2}
+          sx={{
+            p: 3,
+            mb: 4,
+            bgcolor: "#FFFFFF",
+            borderRadius: 2,
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
+            <Typography variant="h6" sx={{ color: "#3C3744", fontWeight: 600 }}>
+              Filter Results
+            </Typography>
+            <Button
+              onClick={() => setShowFilters(!showFilters)}
+              sx={{ textTransform: "none" }}
+            >
+              {showFilters ? "Hide Filters" : "Show Filters"}
+            </Button>
+          </Box>
+
+          {showFilters && (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 3, mt: 3 }}>
+              {/* Subjects Filter */}
+              <FormControl fullWidth>
+                <InputLabel id="subjects-label">Subjects</InputLabel>
+                <Select
+                  labelId="subjects-label"
+                  id="subjects-select"
+                  multiple
+                  value={selectedSubjects}
+                  onChange={handleSubjectChange}
+                  input={<OutlinedInput label="Subjects" />}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip key={value} label={value} size="small" />
+                      ))}
+                    </Box>
+                  )}
+                >
+                  {availableSubjects.map((subject) => (
+                    <MenuItem key={subject} value={subject}>
+                      {subject}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {/* Meeting Mode Filter */}
+              <FormControl fullWidth>
+                <InputLabel id="meeting-mode-label">Meeting Mode</InputLabel>
+                <Select
+                  labelId="meeting-mode-label"
+                  id="meeting-mode-select"
+                  value={selectedMeetingMode}
+                  label="Meeting Mode"
+                  onChange={handleMeetingModeChange}
+                >
+                  <MenuItem value="">Any</MenuItem>
+                  <MenuItem value="zoom">Virtual / Zoom</MenuItem>
+                  <MenuItem value="in_person">In-Person</MenuItem>
+                  <MenuItem value="either">Either</MenuItem>
+                </Select>
+              </FormControl>
+
+              {/* Apply Button */}
+              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <PrimaryButton
+                  text="Apply Filters"
+                  onClick={handleApplyFilters}
+                />
+              </Box>
+            </Box>
+          )}
+        </Paper>
+
         <FormControl sx={{ mb: 4, minWidth: 200 }}>
           <InputLabel id="sort-label">Sort by</InputLabel>
           <Select
