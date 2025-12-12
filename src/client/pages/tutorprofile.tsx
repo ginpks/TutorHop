@@ -14,6 +14,7 @@ import { MailFullMessages } from "../../shared/Interfaces/InboxInterfaces";
 import DefaultBanner from "../components/main_banner/banner";
 import { useNavigate } from "react-router-dom";
 import { roleLabels, UserRole } from "../../shared/Enums/UserEnums";
+import EditTutorProfile from "../components/EditTutorProfile";
 
 type Subject = {
   id: number;
@@ -94,7 +95,11 @@ const TutorProfile: React.FC<TutorProfileProps> = () => {
   const [subjects, setSubjects] = React.useState<Subject[]>([]);
   const [meetingPreference, setMeetingPreference] = React.useState<string>("");
   const [loadingSubjects, setLoadingSubjects] = React.useState<boolean>(true);
+  const [loadingAllSubjects, setLoadingAllSubjects] =
+    React.useState<boolean>(true);
   const [bio, setBio] = React.useState<string>("");
+  const [openEdit, setOpenEdit] = React.useState<boolean>(false);
+  const [allClasses, setAllClasses] = React.useState<string[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -132,6 +137,23 @@ const TutorProfile: React.FC<TutorProfileProps> = () => {
             setSubjects(subjectsData);
           }
           setLoadingSubjects(false);
+        }
+        try {
+          setLoadingAllSubjects(true);
+          const subjectsRes = await fetch("/subjects/list");
+          if (subjectsRes.ok) {
+            const subjectsData = await subjectsRes.json();
+            // Extract just the codes for the PillPicker
+            const subjectCodes = subjectsData.map((s: any) => s.code);
+            setAllClasses(subjectCodes);
+            console.log(`Loaded ${subjectCodes.length} subjects from database`);
+          } else {
+            console.error("Failed to fetch subjects");
+          }
+        } catch (err) {
+          console.error("Subject fetch error: ", err);
+        } finally {
+          setLoadingAllSubjects(false);
         }
 
         // Fetch tutor profile (bio)
@@ -171,7 +193,7 @@ const TutorProfile: React.FC<TutorProfileProps> = () => {
 
   const handleUpdateStatus = async (
     meetingId: number,
-    newStatus: "accepted" | "declined",
+    newStatus: "accepted" | "declined"
   ) => {
     try {
       setUpdatingId(meetingId);
@@ -189,8 +211,8 @@ const TutorProfile: React.FC<TutorProfileProps> = () => {
 
       setMessages((prev) =>
         prev.map((m) =>
-          Number(m.id) === meetingId ? { ...m, status: newStatus } : m,
-        ),
+          Number(m.id) === meetingId ? { ...m, status: newStatus } : m
+        )
       );
     } catch (err) {
       console.error("Error updating status", err);
@@ -286,6 +308,9 @@ const TutorProfile: React.FC<TutorProfileProps> = () => {
                   fontWeight: 700,
                   textTransform: "none",
                   ":hover": { bgcolor: "#AEB7E3" },
+                }}
+                onClick={() => {
+                  setOpenEdit(true);
                 }}
               >
                 Edit Profile
@@ -509,6 +534,16 @@ const TutorProfile: React.FC<TutorProfileProps> = () => {
           </Box>
         </Box>
       </Box>
+      <EditTutorProfile
+        isOpen={openEdit}
+        onClose={() => {
+          setOpenEdit(false);
+        }}
+        allSubjects={allClasses}
+        subjects={subjects.map((element) => {
+          return element.name;
+        })}
+      ></EditTutorProfile>
     </Box>
   );
 };
