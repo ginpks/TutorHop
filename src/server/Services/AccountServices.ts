@@ -10,18 +10,20 @@ export class AccountServices {
   async updateUserProfile(
     userId: number,
     role: "student" | "tutor",
-    deleted: any,
-    added: any,
-    meeting_pref: any
+    deleted: (string | number)[] | null | undefined,
+    added: (string | number)[] | null | undefined,
+    meeting_pref: string | null | undefined
   ) {
     // Map the fields to database acceptable values and then pass to repo
-    const deletedSubjectIds: number[] = Array.isArray(deleted)
-      ? deleted.map((id) => (typeof id === "number" ? id : Number(id)))
-      : [];
+    const deletedSubjectIds: number[] =
+      Array.isArray(deleted) && deleted.length > 0
+        ? deleted.map((id) => (typeof id === "number" ? id : Number(id)))
+        : [];
 
-    const addedSubjectIds: number[] = Array.isArray(added)
-      ? added.map((id) => (typeof id === "number" ? id : Number(id)))
-      : [];
+    const addedSubjectIds: number[] =
+      Array.isArray(added) && added.length > 0
+        ? added.map((id) => (typeof id === "number" ? id : Number(id)))
+        : [];
 
     // Map meeting preference to acceptable enum values
     let meetingPreference: "in_person" | "zoom" | "either" = "either";

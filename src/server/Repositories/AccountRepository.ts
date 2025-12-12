@@ -1,7 +1,7 @@
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { users, userSubjects } from "../../../drizzle/schema.js";
 import * as schema from "../../../drizzle/schema.js";
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 
 export class AccountRepository {
   private readonly database: NodePgDatabase<typeof schema>;
@@ -30,17 +30,15 @@ export class AccountRepository {
   ) {
     if (subjectIds.length === 0) return;
 
-    for (const subjectId of subjectIds) {
-      await this.database
-        .delete(userSubjects)
-        .where(
-          and(
-            eq(userSubjects.userId, userId),
-            eq(userSubjects.subjectId, subjectId),
-            eq(userSubjects.role, role)
-          )
-        );
-    }
+    await this.database
+      .delete(userSubjects)
+      .where(
+        and(
+          eq(userSubjects.userId, userId),
+          inArray(userSubjects.subjectId, subjectIds),
+          eq(userSubjects.role, role)
+        )
+      );
   }
 
   public async addUserSubjects(
