@@ -40,71 +40,6 @@ interface TutorDisplay {
   meetingPreference?: "in_person" | "zoom" | "either";
 }
 
-const sampleTutors: TutorDisplay[] = [
-  {
-    id: 1,
-    name: "Marco T.",
-    subjects: [{ id: 1, code: "MATH 131", name: "Calculus I" }],
-    online: true,
-    location: "Zoom",
-    meetingPreference: "zoom",
-  },
-  {
-    id: 2,
-    name: "Franco H.",
-    subjects: [{ id: 2, code: "PHYSICS 151", name: "Physics I" }],
-    online: false,
-    location: "Morrill",
-    meetingPreference: "in_person",
-  },
-  {
-    id: 3,
-    name: "Kanika K.",
-    subjects: [
-      { id: 3, code: "COMPSCI 187", name: "Programming with Data Structures" },
-      { id: 4, code: "COMPSCI 220", name: "Programming Methodology" },
-    ],
-    online: true,
-    location: "ISB",
-    meetingPreference: "either",
-  },
-  {
-    id: 4,
-    name: "David M.",
-    subjects: [{ id: 5, code: "CHEM 111", name: "General Chemistry" }],
-    online: true,
-    location: "Herter Hall",
-    meetingPreference: "zoom",
-  },
-  {
-    id: 5,
-    name: "Fabian D.M.",
-    subjects: [{ id: 6, code: "BIOLOGY 151", name: "Biology I" }],
-    online: true,
-    location: "Worcester",
-    meetingPreference: "zoom",
-  },
-  {
-    id: 6,
-    name: "Gin P.",
-    subjects: [{ id: 7, code: "PSYCH 100", name: "Introduction to Psychology" }],
-    online: true,
-    location: "Campus Center",
-    meetingPreference: "either",
-  },
-  {
-    id: 7,
-    name: "Jess B.",
-    subjects: [
-      { id: 5, code: "CHEM 111", name: "General Chemistry" },
-      { id: 8, code: "CHEM 112", name: "General Chemistry II" },
-    ],
-    online: true,
-    location: "Goessmann",
-    meetingPreference: "zoom",
-  },
-];
-
 const Results: React.FC = () => {
   const navigate = useNavigate();
   const [sortBy, setSortBy] = useState<"location" | "name">("location");
@@ -183,25 +118,19 @@ const Results: React.FC = () => {
           if (tutorRes.ok) {
             const tutorData = await tutorRes.json();
             console.log("Received tutor data:", tutorData);
-            // If no results, fall back to sample tutors
-            if (tutorData.length === 0) {
-              console.log("No tutors found, using sample data");
-              setTutors(sampleTutors);
-            } else {
-              setTutors(tutorData);
-            }
+            setTutors(tutorData);
           } else {
             console.error("Failed to fetch tutors:", tutorRes.status, tutorRes.statusText);
-            setTutors(sampleTutors);
+            setTutors([]);
           }
         } else {
-          // No survey data, use sample tutors
-          console.log("No survey data found, using sample tutors");
-          setTutors(sampleTutors);
+          // No survey data, show empty results
+          console.log("No survey data found");
+          setTutors([]);
         }
       } catch (err) {
         console.error("Tutor fetch error: ", err);
-        setTutors(sampleTutors); // Fallback to sample data
+        setTutors([]);
       }
 
       setLoading(false);
