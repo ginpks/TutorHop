@@ -6,17 +6,24 @@ import { InboxServices } from "../InboxService.js";
 import { AuthRepository } from "../../Repositories/AuthRepository.js";
 import { AuthService } from "../AuthService.js";
 import "dotenv/config";
+import { AccountRepository } from "../../Repositories/AccountRepository.js";
+import { AccountServices } from "../AccountServices.js";
 let database: DatabaseService | null = null;
 
 export class DatabaseService {
   public readonly db: NodePgDatabase<typeof schema>;
-  public authRepository: AuthRepository;
+  private readonly authRepository: AuthRepository;
   public authServices: AuthService;
-  public inboxRepository: InboxRepository;
+  private readonly inboxRepository: InboxRepository;
   public inboxServices: InboxServices;
+  private readonly accountRepository: AccountRepository;
+  public accountServices: AccountServices;
   constructor(db: NodePgDatabase<typeof schema>) {
     this.db = db;
 
+    //Account
+    this.accountRepository = new AccountRepository(db);
+    this.accountServices = new AccountServices(this.accountRepository);
     // Auth
     this.authRepository = new AuthRepository(db);
     this.authServices = new AuthService(this.authRepository);
