@@ -229,6 +229,42 @@ const TutorProfile: React.FC<TutorProfileProps> = () => {
     }
   };
 
+  const handleSaveProfile = async (data: {
+    subjects: string[];
+    meetingPreference: string;
+  }) => {
+    try {
+      console.log("Saving profile data:", data);
+
+      // TODO: Implement API call to update tutor profile
+      // Example API call:
+      // const res = await fetch(`/users/${userID}/profile`, {
+      //   method: 'PATCH',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     subjects: data.subjects,
+      //     meetingPreference: data.meetingPreference
+      //   })
+      // });
+      //
+      // if (res.ok) {
+      //   // Refresh subjects from API
+      //   const subjectsRes = await fetch(`/users/${userID}/subjects`);
+      //   if (subjectsRes.ok) {
+      //     const subjectsData = await subjectsRes.json();
+      //     setSubjects(subjectsData);
+      //   }
+      //   setMeetingPreference(data.meetingPreference);
+      // }
+
+      // For now, just update local state
+      setMeetingPreference(data.meetingPreference);
+      console.log("Profile updated successfully");
+    } catch (err) {
+      console.error("Error updating profile:", err);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -540,10 +576,9 @@ const TutorProfile: React.FC<TutorProfileProps> = () => {
           setOpenEdit(false);
         }}
         allSubjects={allClasses}
-        subjects={subjects.map((element) => {
-          return element.name;
-        })}
-      ></EditTutorProfile>
+        subjects={subjects.map((element) => element.code)}
+        onSave={handleSaveProfile}
+      />
     </Box>
   );
 };
