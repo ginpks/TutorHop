@@ -30,8 +30,6 @@ function Landing() {
         setUserName(payload.email || "User");
         setUserRole(payload.role || "student");
         setUserID(payload.userId);
-
-        setIsCurrentUserAStudent(payload.role === "student");
         console.log(payload.userId);
       } catch (e) {
         console.error("Failed to decode token", e);
@@ -54,9 +52,11 @@ function Landing() {
       setLoadingInbox(true);
       try {
         const query = new URLSearchParams({
-          tutor: isCurrentUserAStudent ? "false" : "true",
+          tutor: userRole === "student" ? "false" : "true",
           status: "pending",
         });
+
+        console.log("query", query);
 
         const res = await fetch(`/inbox/${userID}/preview?${query.toString()}`);
 

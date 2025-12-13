@@ -24,7 +24,7 @@ export class InboxRepository {
     status?: MeetingStatus,
     startDate?: string,
     endDate?: string,
-    isCurrentUserAStudent?: boolean,
+    isCurrentUserAStudent?: boolean
   ) {
     //determine whether the perspective the inbox is a tutor or a student
     const otherUserColumn =
@@ -37,6 +37,19 @@ export class InboxRepository {
         ? meetingRequests.studentId
         : meetingRequests.tutorId;
 
+    console.log(
+      "userId",
+      userId,
+      "statis",
+      status,
+      "start ",
+      startDate,
+      "enddate ",
+      endDate,
+      "student? ",
+      isCurrentUserAStudent
+    );
+
     const conditions = [eq(currentUserColumn, Number(userId))];
 
     if (status) {
@@ -47,14 +60,14 @@ export class InboxRepository {
     if (startDate && endDate) {
       conditions.push(
         gte(meetingRequests.requestedStart, startDate),
-        lte(meetingRequests.requestedEnd, endDate),
+        lte(meetingRequests.requestedEnd, endDate)
       );
     } else if (startDate && !endDate) {
       conditions.push(gte(meetingRequests.requestedStart, startDate));
     } else if (endDate) {
       conditions.push(lte(meetingRequests.requestedEnd, endDate));
     }
-    console.log("Inbox preview database call made");
+    console.log("Inbox preview database call made repo");
     //using the database that is passed into the class we call the database
 
     const databaseCall = await this.database
@@ -89,7 +102,7 @@ export class InboxRepository {
 
   public async updateMeetingStatus(
     meetingRequestId: number,
-    answer: MeetingStatus,
+    answer: MeetingStatus
   ) {
     return await this.database
       .update(meetingRequests)
