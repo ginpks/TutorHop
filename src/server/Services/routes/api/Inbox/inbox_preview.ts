@@ -26,6 +26,9 @@ router.get("/:id/preview", async (req, res) => {
       endDate,
       isCurrentUserAStudent,
     );
+
+    console.log(isCurrentUserAStudent)
+
     //respond with the data retrieved as a JSon
     res.status(200).json(data);
   } catch (err: any) {
