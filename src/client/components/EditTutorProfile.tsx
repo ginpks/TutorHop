@@ -61,8 +61,9 @@ function EditTutorProfile({
           <FormControl fullWidth>
             <InputLabel>Meeting Preferences</InputLabel>
             <Select onChange={handleChange}>
-              <MenuItem value={0}>In Person</MenuItem>
-              <MenuItem value={1}>Online</MenuItem>
+              <MenuItem value={"in_person"}>In Person</MenuItem>
+              <MenuItem value={"zoom"}>Online</MenuItem>
+              <MenuItem value={"either"}>Either</MenuItem>
             </Select>
           </FormControl>
         </Box>
