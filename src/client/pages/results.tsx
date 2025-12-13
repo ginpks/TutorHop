@@ -64,10 +64,10 @@ const Results: React.FC = () => {
   const [selectedTutor, setSelectedTutor] = useState<TutorDisplay | null>(null);
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | "">("");
   const [selectedMode, setSelectedMode] = useState<"in_person" | "zoom">(
-    "zoom",
+    "zoom"
   );
   const [requestedStart, setRequestedStart] = useState<Dayjs | null>(
-    dayjs().add(1, "day"),
+    dayjs().add(1, "day")
   );
   const [duration, setDuration] = useState<number>(60); // Duration in minutes
   const [topic, setTopic] = useState<string>("");
@@ -107,7 +107,7 @@ const Results: React.FC = () => {
         console.error(
           "Failed to fetch tutors:",
           tutorRes.status,
-          tutorRes.statusText,
+          tutorRes.statusText
         );
         setTutors(sampleTutors);
       }
@@ -164,6 +164,14 @@ const Results: React.FC = () => {
           const subjects = surveyData.subjects || [];
           const meetingMode = surveyData.meetingMode || "";
 
+          const params = new URLSearchParams();
+          if (subjects.length > 0) {
+            params.append("subjects", subjects.join(","));
+          }
+          if (meetingMode) {
+            params.append("meetingMode", meetingMode);
+          }
+
           const queryUrl = `/tutors/search?${params.toString()}`;
           console.log("Fetching tutors from:", queryUrl);
 
@@ -173,7 +181,11 @@ const Results: React.FC = () => {
             console.log("Received tutor data:", tutorData);
             setTutors(tutorData);
           } else {
-            console.error("Failed to fetch tutors:", tutorRes.status, tutorRes.statusText);
+            console.error(
+              "Failed to fetch tutors:",
+              tutorRes.status,
+              tutorRes.statusText
+            );
             setTutors([]);
           }
         } else {
@@ -185,6 +197,8 @@ const Results: React.FC = () => {
         console.error("Tutor fetch error: ", err);
         setTutors([]);
       }
+
+      setLoading(false);
     };
 
     fetchData();
@@ -219,7 +233,7 @@ const Results: React.FC = () => {
   const sortedTutors = [...tutors].sort((a, b) =>
     sortBy === "location"
       ? a.location.localeCompare(b.location)
-      : a.name.localeCompare(b.name),
+      : a.name.localeCompare(b.name)
   );
 
   const handleProfileClick = () => {
@@ -311,7 +325,7 @@ const Results: React.FC = () => {
         const errorData = await res.json();
         console.error("Request failed:", errorData);
         setRequestError(
-          errorData.error || "Failed to create appointment request",
+          errorData.error || "Failed to create appointment request"
         );
       }
     } catch (err) {
