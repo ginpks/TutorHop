@@ -30,6 +30,8 @@ function Landing() {
         setUserName(payload.email || "User");
         setUserRole(payload.role || "student");
         setUserID(payload.userId);
+
+        setIsCurrentUserAStudent(payload.role === "student");
         console.log(payload.userId);
       } catch (e) {
         console.error("Failed to decode token", e);
@@ -52,7 +54,7 @@ function Landing() {
       setLoadingInbox(true);
       try {
         const query = new URLSearchParams({
-          tutor: isCurrentUserAStudent === true ? "false" : "true",
+          tutor: isCurrentUserAStudent ? "false" : "true",
           status: "pending",
         });
 
@@ -65,7 +67,7 @@ function Landing() {
         }
 
         const res2 = await fetch(
-          `/inbox/${userID}/upcoming?${query.toString()}`,
+          `/inbox/${userID}/upcoming?${query.toString()}`
         );
 
         if (!res2.ok) {
