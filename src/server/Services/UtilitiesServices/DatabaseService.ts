@@ -6,6 +6,8 @@ import { InboxServices } from "../InboxService.js";
 import { AuthRepository } from "../../Repositories/AuthRepository.js";
 import { AuthService } from "../AuthService.js";
 import "dotenv/config";
+import { MeetingRepository } from "../../Repositories/MeetingRepo.js";
+import { MeetingServices } from "../MeetingService.js";
 let database: DatabaseService | null = null;
 
 export class DatabaseService {
@@ -14,8 +16,14 @@ export class DatabaseService {
   public authServices: AuthService;
   public inboxRepository: InboxRepository;
   public inboxServices: InboxServices;
+  public meetingRepo: MeetingRepository;
+  public meetingService: MeetingServices;
   constructor(db: NodePgDatabase<typeof schema>) {
     this.db = db;
+
+    //meetings
+    this.meetingRepo = new MeetingRepository(db);
+    this.meetingService = new MeetingServices(this.meetingRepo);
 
     // Auth
     this.authRepository = new AuthRepository(db);
