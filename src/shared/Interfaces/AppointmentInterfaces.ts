@@ -14,3 +14,17 @@ export interface TutorAppointmentPreview {
   date?: string;
   time?: string;
 }
+
+export interface MeetingRequest {
+  studentId: number;
+  tutorId: number;
+  subjectId: number;
+  requestedStart: string;
+  requestedEnd: string;
+  mode: "in_person" | "zoom";
+  topic: string | null;
+  id: number;
+  status: "pending" | "accepted" | "declined" | "canceled";
+  createdAt: string;
+  updatedAt: string;
+}
