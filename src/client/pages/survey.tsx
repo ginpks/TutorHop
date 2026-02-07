@@ -87,7 +87,7 @@ export default function Survey() {
     Array.from({ length: questions.length }, () => ({
       primary: [],
       secondary: "",
-    }))
+    })),
   );
 
   const current = answers[page];
@@ -199,7 +199,7 @@ export default function Survey() {
                     updated[page] = {
                       ...updated[page],
                       primary: updated[page].primary.filter(
-                        (_, i) => i !== index
+                        (_, i) => i !== index,
                       ),
                     };
                     return updated;
