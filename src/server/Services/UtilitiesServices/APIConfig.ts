@@ -10,6 +10,7 @@ import meetingDecisionRouter from "../routes/api/MeetingRequest/meeting_req_acc_
 import subjectListRouter from "../routes/api/Subject/list.js";
 import userSubjectsRouter from "../routes/api/User/subjects.js";
 import userProfileRouter from "../routes/api/User/profile.js";
+import campusNewsRouter from "../routes/api/News/campus_news.js";
 
 export async function apiStart(mainApp: any) {
   mainApp.use(express.json());
@@ -24,4 +25,5 @@ export async function apiStart(mainApp: any) {
   mainApp.use("/accept-deny", meetingDecisionRouter);
   mainApp.use("/users", userSubjectsRouter);
   mainApp.use("/users", userProfileRouter);
+  mainApp.use("/news", campusNewsRouter);
 }

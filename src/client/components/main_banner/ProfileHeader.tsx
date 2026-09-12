@@ -62,6 +62,11 @@ function ProfileHeader({
           p: 0,
           m: 0,
           bgcolor: "transparent",
+          "&:hover": { bgcolor: "transparent" },
+          "&:hover .MuiAvatar-root": {
+            transform: "scale(1.06)",
+            boxShadow: "0 4px 12px rgba(60, 55, 68, 0.35)",
+          },
         }}
       >
         <Avatar
@@ -76,6 +81,9 @@ function ProfileHeader({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            border: "2px solid rgba(255, 255, 255, 0.7)",
+            boxShadow: "0 2px 6px rgba(60, 55, 68, 0.25)",
+            transition: "transform 0.2s ease, box-shadow 0.2s ease",
           }}
         >
           {getInitial()}
@@ -95,6 +103,7 @@ function ProfileHeader({
             mt: 1.5,
             minWidth: 180,
             borderRadius: 2,
+            overflow: "hidden",
           },
         }}
       >

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="320" viewBox="0 0 640 320" role="img" aria-label="UMass Amherst">
+  <!--
+    Placeholder card image for the Campus News widget.
+    Replace this file with the official UMass logo image (keep the same
+    filename, e.g. umass-logo.png, and update the import in
+    src/client/components/CampusNews.tsx) to use the real mark.
+  -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#881C1C"/>
+      <stop offset="1" stop-color="#6B1414"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="320" fill="url(#bg)"/>
+  <rect x="0" y="228" width="640" height="6" fill="#FFFFFF" opacity="0.85"/>
+  <g fill="#FFFFFF">
+    <rect x="88" y="86" width="88" height="88" rx="14" fill="none" stroke="#FFFFFF" stroke-width="8"/>
+    <rect x="112" y="110" width="40" height="40" rx="6"/>
+    <text x="216" y="132" font-family="Georgia, 'Times New Roman', serif" font-size="64" font-weight="bold">UMass</text>
+    <text x="216" y="182" font-family="Georgia, 'Times New Roman', serif" font-size="30" opacity="0.92">Amherst</text>
+  </g>
+</svg>

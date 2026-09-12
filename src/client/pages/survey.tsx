@@ -59,7 +59,6 @@ export default function Survey() {
         const subjectsRes = await fetch("/subjects/list");
         if (subjectsRes.ok) {
           const subjectsData = await subjectsRes.json();
-          // Extract just the codes for the PillPicker
           const subjectCodes = subjectsData.map((s: any) => s.code);
           setClasses(subjectCodes);
           console.log(`Loaded ${subjectCodes.length} subjects from database`);
@@ -286,8 +285,31 @@ export default function Survey() {
         bgcolor="#FBFFF1"
         sx={{ boxSizing: "border-box", p: 4 }}
       >
+        {/* --- Progress dots --- */}
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          gap={1}
+          mt={1}
+        >
+          {questions.map((_, i) => (
+            <Box
+              key={i}
+              sx={{
+                width: i === page ? 28 : 10,
+                height: 10,
+                borderRadius: 999,
+                bgcolor:
+                  i === page ? "#3D52D5" : "rgba(60, 55, 68, 0.18)",
+                transition: "all 0.3s ease",
+              }}
+            />
+          ))}
+        </Box>
+
         {/* --- TOP: Question --- */}
-        <Box textAlign="center" mb={4}>
+        <Box textAlign="center" mb={4} mt={3}>
           <Typography variant="h2" fontWeight="bold" color="#3C3744">
             {questions[page]}
           </Typography>
@@ -333,6 +355,7 @@ export default function Survey() {
             />
           </Stack>
         </Box>
+
       </Box>
     </Box>
   );

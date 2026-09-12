@@ -127,9 +127,18 @@ function Signup() {
           component="form"
           onSubmit={handleSubmit}
           noValidate
-          sx={{ width: "100%", maxWidth: 480, mx: "auto" }}
+          sx={{
+            width: "100%",
+            maxWidth: 480,
+            mx: "auto",
+            bgcolor: "#FFFFFF",
+            borderRadius: 4,
+            border: "1px solid rgba(60, 55, 68, 0.1)",
+            boxShadow: "0 10px 30px rgba(60, 55, 68, 0.1)",
+            p: { xs: 3, sm: 5 },
+          }}
         >
-          <Stack spacing={2}>
+          <Stack spacing={2.5}>
             <TextField
               select
               label="Account type"
@@ -219,21 +228,20 @@ function Signup() {
                 text="Create Account"
                 type="submit"
               ></PrimaryButton>
+            </Stack>              <Typography
+                variant="body2"
+                color="primary"
+                align="center"
+                sx={{ mt: 1, cursor: "pointer", textDecoration: "underline" }}
+                onClick={() => navigate("/")}
+              >
+                Already have an account? Sign in
+              </Typography>
             </Stack>
+          </Box>
 
-            <Typography
-              variant="body2"
-              color="primary"
-              align="center"
-              sx={{ mt: 1, cursor: "pointer", textDecoration: "underline" }}
-              onClick={() => navigate("/")}
-            >
-              Already have an account? Sign in
-            </Typography>
-          </Stack>
-        </Box>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
   );
 }
 

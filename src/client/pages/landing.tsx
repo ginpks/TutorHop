@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { MailPreviewMessages } from "../../shared/Interfaces/InboxInterfaces";
 import { roleLabels, UserRole } from "../../shared/Enums/UserEnums";
 import UpcomingAppointment from "../components/UpcomingAppointment";
+import CampusNews from "../components/CampusNews";
 import { useNavigate } from "react-router-dom";
 
 function Landing() {
@@ -43,6 +44,10 @@ function Landing() {
     } else {
       navigate("/studentprofile");
     }
+  };
+
+  const handleInboxClick = () => {
+    handleProfileClick();
   };
 
   useEffect(() => {
@@ -125,19 +130,36 @@ function Landing() {
           userType={userRole}
           messages={messages}
           loading={loadingInbox}
+          onClick={handleInboxClick}
         />
         <Box
           sx={{
             display: "flex",
-            overflowY: "scroll",
-            borderRadius: "10px",
-            boxShadow: "inset 0 0 10px grey",
+            overflowY: "auto",
+            borderRadius: "12px",
+            boxShadow: "0 2px 12px rgba(60, 55, 68, 0.08)",
+            border: "1px solid rgba(60, 55, 68, 0.08)",
             margin: 5,
             width: "40vw",
-            bgcolor: "#D3D3D3",
+            bgcolor: "rgba(255, 255, 255, 0.55)",
           }}
         >
           <UpcomingAppointment userType={userRole} appointments={upcoming} />
+        </Box>
+      </Box>
+
+      {/* --- Campus News (fills the bottom of the page) --- */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          px: { xs: 2, sm: 5 },
+          pb: 5,
+          flexGrow: 1,
+        }}
+      >
+        <Box sx={{ width: "100%", maxWidth: "80vw" }}>
+          <CampusNews />
         </Box>
       </Box>
     </Box>

@@ -27,7 +27,7 @@ export type LoginSelect = Omit<
 export function mapRawSignUpFormToInterface(data: any): UserSelect {
   return {
     id: data.id,
-    email: data.email,
+    email: data.email.trim().toLowerCase(),
     password: data.password,
     firstName: data.firstName,
     lastName: data.lastName,
@@ -38,7 +38,7 @@ export function mapRawSignUpFormToInterface(data: any): UserSelect {
 
 export function mapRawLoginInfoToInterface(data: any): LoginSelect {
   return {
-    email: data.email,
+    email: data.email.trim().toLowerCase(),
     password: data.password,
   };
 }

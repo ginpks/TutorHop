@@ -55,7 +55,7 @@ SELECT setval(
 If you want to use CMD with psql:
 
 ```cmd
-psql "postgresql://postgres.iycjickelelgmcdkztkl:2iWpA6dUyRRL%7q@aws-1-us-east-2.pooler.supabase.com:5432/postgres" -f fix-sequences.sql
+psql "$env:DATABASE_URL" -f fix-sequences.sql
 ```
 
 **Note:** Changed port from `6543` to `5432` and removed `?pgbouncer=true` for direct connection.

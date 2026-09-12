@@ -21,7 +21,9 @@ import {
   Alert,
   Chip,
   OutlinedInput,
+  CircularProgress,
 } from "@mui/material";
+import SearchOffIcon from "@mui/icons-material/SearchOff";
 import DefaultBanner from "../components/main_banner/banner";
 import PrimaryButton from "../components/primary-button";
 import SecondaryButton from "../components/secondary-button";
@@ -352,13 +354,22 @@ const Results: React.FC = () => {
         onProfileClick={handleProfileClick}
         userType={roleLabels[userRole as UserRole] || "Student"}
       />
-      <Box sx={{ flexGrow: 1, p: 4, boxSizing: "border-box" }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          p: 4,
+          boxSizing: "border-box",
+          maxWidth: "1200px",
+          width: "100%",
+          mx: "auto",
+        }}
+      >
         <Typography
           variant="h3"
           sx={{
             mb: 4,
             color: "#3C3744",
-            fontWeight: 600,
+            fontWeight: 800,
             textAlign: "center",
           }}
         >
@@ -543,15 +554,40 @@ const Results: React.FC = () => {
           </Select>
         </FormControl>
         {loading ? (
-          <Box sx={{ textAlign: "center", py: 4 }}>
+          <Box
+            sx={{
+              textAlign: "center",
+              py: 6,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
+            <CircularProgress size={36} sx={{ color: "#3D52D5" }} />
             <Typography variant="h6" color="#3C3744">
               Loading tutors...
             </Typography>
           </Box>
         ) : sortedTutors.length === 0 ? (
-          <Box sx={{ textAlign: "center", py: 4 }}>
+          <Box
+            sx={{
+              textAlign: "center",
+              py: 6,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <SearchOffIcon
+              sx={{ fontSize: 48, color: "rgba(60, 55, 68, 0.25)" }}
+            />
             <Typography variant="h6" color="#3C3744">
-              No tutors found matching your criteria. Try adjusting your search.
+              No tutors found matching your criteria.
+            </Typography>
+            <Typography color="text.secondary">
+              Try adjusting your filters.
             </Typography>
           </Box>
         ) : (
@@ -845,6 +881,7 @@ const Results: React.FC = () => {
           />
         </DialogActions>
       </Dialog>
+
     </Box>
   );
 };

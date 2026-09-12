@@ -16,7 +16,7 @@ router.post("/signup", async (req, res) => {
     const data = await req.body;
     const auth_service: AuthService = (await db).authServices;
 
-    const newUser = auth_service.register(data);
+    const newUser = await auth_service.register(data);
     //respond with the data retrieved as a JSon
     res.status(200).json(newUser);
   } catch (err: any) {

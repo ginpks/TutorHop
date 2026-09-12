@@ -1,4 +1,6 @@
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import theme from "./theme";
 import Landing from "./pages/landing";
 import Results from "./pages/results";
 import Survey from "./pages/survey";
@@ -11,7 +13,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
-    <Router>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Login />} />
@@ -66,8 +70,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-      </Routes>
-    </Router>
+      </Routes>      </Router>
+    </ThemeProvider>
   );
 }
 

@@ -1,8 +1,10 @@
 import React from "react";
-import { AppBar, Button, Toolbar, Typography } from "@mui/material";
+import { AppBar, Toolbar, Typography } from "@mui/material";
+import AutoStoriesRoundedIcon from "@mui/icons-material/AutoStoriesRounded";
 import ProfileHeader from "./ProfileHeader";
 import { roleLabels, UserRole } from "../../../shared/Enums/UserEnums";
 import { useNavigate, useLocation } from "react-router-dom";
+import { alpha } from "@mui/material/styles";
 
 interface DefaultBannerProps {
   title: string;
@@ -40,6 +42,7 @@ function DefaultBanner({
       sx={{
         ...(bannerStyle ?? styles),
         background: "linear-gradient(90deg, #B4C5E4 0%, #7A93C9 100%)",
+        boxShadow: "0 2px 12px rgba(60, 55, 68, 0.15)",
       }}
     >
       <Toolbar
@@ -51,6 +54,7 @@ function DefaultBanner({
             flexGrow: 1,
             fontWeight: "bold",
             cursor: isLoggedIn ? "pointer" : "default",
+            transition: "opacity 0.2s ease",
             "&:hover": isLoggedIn ? { opacity: 0.85 } : {},
           }}
           onClick={() => isLoggedIn && navigate("/landing")}
@@ -61,24 +65,32 @@ function DefaultBanner({
         {isLoggedIn &&
           userType === "Student" &&
           location.pathname !== "/survey" && (
-            <Button
-              variant="contained"
-              sx={{
-                bgcolor: "#FBFFF1",
-                color: "#3C3744",
-                fontWeight: 700,
-                textTransform: "none",
-                px: 3,
-                py: 1,
-                borderRadius: 2,
-                "&:hover": {
-                  bgcolor: "#F0F5E1",
-                },
-              }}
+            <Typography
               onClick={() => navigate("/survey")}
+              sx={{
+                cursor: "pointer",
+                fontWeight: 700,
+                px: 2.5,
+                py: 1,
+                borderRadius: 2.5,
+                color: "#3C3744",
+                bgcolor: "rgba(255, 255, 255, 0.85)",
+                backdropFilter: "blur(6px)",
+                border: "1px solid rgba(60, 55, 68, 0.12)",
+                transition: "all 0.2s ease",
+                "&:hover": {
+                  bgcolor: "rgba(255, 255, 255, 1)",
+                  transform: "translateY(-1px)",
+                  boxShadow: "0 4px 12px rgba(60, 55, 68, 0.18)",
+                },
+                display: { xs: "none", sm: "flex" },
+                alignItems: "center",
+                gap: 1,
+              }}
             >
+              <AutoStoriesRoundedIcon fontSize="small" />
               Find Tutor
-            </Button>
+            </Typography>
           )}
 
         {isLoggedIn && (

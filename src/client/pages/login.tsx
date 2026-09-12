@@ -113,7 +113,14 @@ function Login() {
               align="center"
               sx={{ mb: 2 }}
             >
-              Login
+              Welcome back
+            </Typography>
+            <Typography
+              color="text.secondary"
+              align="center"
+              sx={{ mt: -1 }}
+            >
+              Log in to your Tutor Hop account
             </Typography>
           </Stack>
 
@@ -121,9 +128,18 @@ function Login() {
             component="form"
             onSubmit={handleSubmit}
             noValidate
-            sx={{ width: "100%", maxWidth: 480, mx: "auto" }}
+            sx={{
+              width: "100%",
+              maxWidth: 480,
+              mx: "auto",
+              bgcolor: "#FFFFFF",
+              borderRadius: 4,
+              border: "1px solid rgba(60, 55, 68, 0.1)",
+              boxShadow: "0 10px 30px rgba(60, 55, 68, 0.1)",
+              p: { xs: 3, sm: 5 },
+            }}
           >
-            <Stack spacing={2}>
+            <Stack spacing={2.5}>
               <TextField
                 label="Email Address"
                 name="email"
@@ -173,6 +189,7 @@ function Login() {
               </Typography>
             </Stack>
           </Box>
+
         </CardContent>
       </Card>
     </>

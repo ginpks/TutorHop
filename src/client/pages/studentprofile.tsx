@@ -215,6 +215,8 @@ const StudentProfile: React.FC<StudentProfileProps> = () => {
                     bgcolor: "#3C3744",
                     fontSize: "2.5rem",
                     fontWeight: "bold",
+                    border: "4px solid #FFFFFF",
+                    boxShadow: "0 6px 18px rgba(60, 55, 68, 0.2)",
                   }}
                 >
                   {firstName ? firstName.charAt(0).toUpperCase() : "?"}
@@ -435,6 +437,7 @@ const StudentProfile: React.FC<StudentProfileProps> = () => {
               )}
             </Section>
           </Box>
+
         </Box>
       </Box>
     </Box>
